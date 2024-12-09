@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Introducción a la Ciberseguridad</title>
+    <link rel="stylesheet" href="../assets/css/quiz-styles.css">
+    <script src="../assets/js/quiz1-script.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">MIPYME Financiero</div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Inicio</a></li>
+                <li><a href="#quiz">Quiz</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="quiz">
+            <h1>Quiz: Introducción a la Ciberseguridad</h1>
+            <form id="quiz-form">
+                <!-- Preguntas del quiz -->
+                <div class="quiz-question" id="question1">
+                    <h3>Pregunta 1: ¿Qué es la ciberseguridad?</h3> <label><input type="radio" name="q1" value="a">
+                        Protección de datos digitales.</label><br> <label><input type="radio" name="q1" value="b">
+                        Creación de software.</label><br> <label><input type="radio" name="q1" value="c"> Diseño de
+                        hardware.</label><br>
+                </div>
+                <div class="quiz-question" id="question2">
+                    <h3>Pregunta 2: ¿Cuál de los siguientes es un tipo de malware?</h3> <label><input type="radio"
+                            name="q2" value="a"> Antivirus.</label><br> <label><input type="radio" name="q2" value="b">
+                        Firewall.</label><br> <label><input type="radio" name="q2" value="c"> Ransomware.</label><br>
+                </div>
+                <div class="quiz-question" id="question3">
+                    <h3>Pregunta 3: ¿Qué es el phishing?</h3> <label><input type="radio" name="q3" value="a"> Un tipo de
+                        virus informático.</label><br> <label><input type="radio" name="q3" value="b"> Un ataque que
+                        busca obtener información personal a través de engaños.</label><br> <label><input type="radio"
+                            name="q3" value="c"> Un software de seguridad.</label><br>
+                </div>
+                <div class="quiz-question" id="question4">
+                    <h3>Pregunta 4: ¿Qué es un firewall?</h3> <label><input type="radio" name="q4" value="a"> Un
+                        dispositivo de hardware que filtra el tráfico de red no autorizado.</label><br> <label><input
+                            type="radio" name="q4" value="b"> Un software que permite el acceso remoto a una
+                        computadora.</label><br> <label><input type="radio" name="q4" value="c"> Un tipo de
+                        malware.</label><br>
+                </div>
+                <div class="quiz-question" id="question5">
+                    <h3>Pregunta 5: ¿Cuál es la función de un antivirus?</h3> <label><input type="radio" name="q5"
+                            value="a"> Crear copias de seguridad.</label><br> <label><input type="radio" name="q5"
+                            value="b"> Detectar y eliminar software malicioso.</label><br> <label><input type="radio"
+                            name="q5" value="c"> Gestionar contraseñas.</label><br>
+                </div>
+                <div class="quiz-question" id="question6">
+                    <h3>Pregunta 6: ¿Qué es el cifrado de datos?</h3> <label><input type="radio" name="q6" value="a"> El
+                        proceso de convertir datos en un código para prevenir accesos no autorizados.</label><br>
+                    <label><input type="radio" name="q6" value="b"> La eliminación de datos no deseados.</label><br>
+                    <label><input type="radio" name="q6" value="c"> La creación de contraseñas fuertes.</label><br>
+                </div>
+                <div class="quiz-question" id="question7">
+                    <h3>Pregunta 7: ¿Qué es el ransomware?</h3> <label><input type="radio" name="q7" value="a"> Un tipo
+                        de firewall.</label><br> <label><input type="radio" name="q7" value="b"> Un tipo de malware que
+                        restringe el acceso a la información y pide un rescate a cambio.</label><br> <label><input
+                            type="radio" name="q7" value="c"> Un software de protección de datos.</label><br>
+                </div>
+                <div class="quiz-question" id="question8">
+                    <h3>Pregunta 8: ¿Qué es la autenticación multifactor (MFA)?</h3> <label><input type="radio"
+                            name="q8" value="a"> Una medida de seguridad que requiere más de una forma de verificación
+                        para acceder a un sistema.</label><br> <label><input type="radio" name="q8" value="b"> Un
+                        software para gestionar contraseñas.</label><br> <label><input type="radio" name="q8" value="c">
+                        Un tipo de cifrado de datos.</label><br>
+                </div>
+                <div class="quiz-question" id="question9">
+                    <h3>Pregunta 9: ¿Qué es el malware?</h3> <label><input type="radio" name="q9" value="a"> Un software
+                        diseñado para dañar o explotar cualquier dispositivo, servicio o red.</label><br> <label><input
+                            type="radio" name="q9" value="b"> Un software de protección de datos.</label><br>
+                    <label><input type="radio" name="q9" value="c"> Un tipo de hardware de red.</label><br>
+                </div>
+                <div class="quiz-question" id="question10">
+                    <h3>Pregunta 10: ¿Qué es el spear phishing?</h3> <label><input type="radio" name="q10" value="a"> Un
+                        ataque dirigido a obtener datos personales mediante mensajes fraudulentos altamente
+                        personalizados.</label><br> <label><input type="radio" name="q10" value="b"> Un tipo de
+                        malware.</label><br> <label><input type="radio" name="q10" value="c"> Un software de gestión de
+                        contraseñas.</label><br>
+                </div> <button type="submit">Enviar</button> <button type="button" id="retry-button"
+                    style="display:none;">Reintentar</button>
+            </form>
+        </section>
+        <section id="navegacion">
+            <div class="navigation-buttons">
+                <a href="../index.html" class="nav-button">Regresa al Inicio</a>
+                <a href="quiz2.html" class="nav-button">Siguiente Quiz</a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2024 MIPYME Financiero. Todos los derechos reservados.</p>
+    </footer>
+</body>
+
+</html>

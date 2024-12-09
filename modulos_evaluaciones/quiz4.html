@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Respuesta ante Incidentes</title>
+    <link rel="stylesheet" href="../assets/css/quiz-styles.css">
+    <script src="../assets/js/quiz4-script.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">MIPYME Financiero</div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Inicio</a></li>
+                <li><a href="#quiz">Quiz</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="quiz">
+            <h1>Quiz: Respuesta ante Incidentes</h1>
+            <form id="quiz-form">
+                <!-- Preguntas del quiz -->
+                <div class="quiz-question" id="question1">
+                    <h3>Pregunta 1: ¿Cuál es la primera fase de la respuesta ante incidentes?</h3>
+                    <label><input type="radio" name="q1" value="a"> Preparación.</label><br>
+                    <label><input type="radio" name="q1" value="b"> Erradicación.</label><br>
+                    <label><input type="radio" name="q1" value="c"> Contención.</label><br>
+                </div>
+
+                <div class="quiz-question" id="question2">
+                    <h3>Pregunta 2: ¿Qué se debe hacer durante la fase de identificación de un incidente?</h3>
+                    <label><input type="radio" name="q2" value="a"> Implementar controles temporales.</label><br>
+                    <label><input type="radio" name="q2" value="b"> Detectar y reportar incidentes de
+                        seguridad.</label><br>
+                    <label><input type="radio" name="q2" value="c"> Restaurar la funcionalidad de los sistemas
+                        afectados.</label><br>
+                </div>
+
+                <div class="quiz-question" id="question3">
+                    <h3>Pregunta 3: ¿Qué se busca en la fase de contención de un incidente?</h3>
+                    <label><input type="radio" name="q3" value="a"> Limitar el alcance y el daño del
+                        incidente.</label><br>
+                    <label><input type="radio" name="q3" value="b"> Eliminar malware y amenazas.</label><br>
+                    <label><input type="radio" name="q3" value="c"> Realizar análisis post-incidente.</label><br>
+                </div>
+
+                <div class="quiz-question" id="question4">
+                    <h3>Pregunta 4: ¿Qué se realiza en la fase de erradicación?</h3>
+                    <label><input type="radio" name="q4" value="a"> Desarrollar un plan de respuesta.</label><br>
+                    <label><input type="radio" name="q4" value="b"> Eliminar la causa raíz del incidente.</label><br>
+                    <label><input type="radio" name="q4" value="c"> Restaurar datos desde copias de
+                        seguridad.</label><br>
+                </div>
+
+                <div class="quiz-question" id="question5">
+                    <h3>Pregunta 5: ¿Qué se debe hacer durante la fase de recuperación?</h3>
+                    <label><input type="radio" name="q5" value="a"> Limitar el alcance del incidente.</label><br>
+                    <label><input type="radio" name="q5" value="b"> Realizar una revisión del incidente.</label><br>
+                    <label><input type="radio" name="q5" value="c"> Restaurar la funcionalidad del sistema
+                        afectado.</label><br>
+                </div>
+
+                <div class="quiz-question" id="question6">
+                    <h3>Pregunta 6: ¿Cuál es el objetivo de la fase de lecciones aprendidas?</h3>
+                    <label><input type="radio" name="q6" value="a"> Documentar las lecciones aprendidas y mejorar la
+                        respuesta futura.</label><br>
+                    <label><input type="radio" name="q6" value="b"> Detectar y reportar incidentes.</label><br>
+                    <label><input type="radio" name="q6" value="c"> Implementar controles temporales.</label><br>
+                </div>
+
+                <div class="quiz-question" id="question7">
+                    <h3>Pregunta 7: ¿Qué se debe incluir en un plan de respuesta ante incidentes?</h3>
+                    <label><input type="radio" name="q7" value="a"> Políticas y procedimientos claros, equipo de
+                        respuesta, evaluaciones de riesgos.</label><br>
+                    <label><input type="radio" name="q7" value="b"> Solo una lista de contactos de
+                        emergencia.</label><br>
+                    <label><input type="radio" name="q7" value="c"> Reportes anuales de actividades.</label><br>
+                </div>
+
+                <div class="quiz-question" id="question8">
+                    <h3>Pregunta 8: ¿Qué es un análisis post-incidente?</h3>
+                    <label><input type="radio" name="q8" value="a"> Un análisis realizado para entender el incidente y
+                        mejorar futuras respuestas.</label><br>
+                    <label><input type="radio" name="q8" value="b"> Un informe diario de actividades de la
+                        red.</label><br>
+                    <label><input type="radio" name="q8" value="c"> Un procedimiento para instalar software
+                        nuevo.</label><br>
+                </div>
+
+                <div class="quiz-question" id="question9">
+                    <h3>Pregunta 9: ¿Cuál de los siguientes no es una fase de la respuesta ante incidentes?</h3>
+                    <label><input type="radio" name="q9" value="a"> Preparación.</label><br>
+                    <label><input type="radio" name="q9" value="b"> Monitorización.</label><br>
+                    <label><input type="radio" name="q9" value="c"> Contención.</label><br>
+                </div>
+
+                <div class="quiz-question" id="question10">
+                    <h3>Pregunta 10: ¿Qué se debe hacer en la fase de preparación?</h3>
+                    <label><input type="radio" name="q10" value="a"> Desarrollar un plan de respuesta y realizar
+                        simulacros.</label><br>
+                    <label><input type="radio" name="q10" value="b"> Recuperar datos desde copias de
+                        seguridad.</label><br>
+                    <label><input type="radio" name="q10" value="c"> Eliminar malware y amenazas.</label><br>
+                </div>
+
+                <button type="submit">Enviar</button>
+                <button type="button" id="retry-button" style="display:none;">Reintentar</button>
+            </form>
+        </section>
+        <section id="navegacion">
+            <div class="navigation-buttons">
+                <a href="quiz3.html" class="nav-button">Anterior Quiz</a>
+                <a href="../index.html" class="nav-button">Regresar al Inicio</a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2024 MIPYME Financiero. Todos los derechos reservados.</p>
+    </footer>
+</body>
+
+</html>

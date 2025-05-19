@@ -1,0 +1,95 @@
+.next-steps {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.next-steps h2 {
+  color: #2c3e50;
+  margin: 0 0 1.5rem 0;
+  font-size: 1.5rem;
+}
+
+.next-steps h3 {
+  color: #34495e;
+  margin: 1rem 0;
+  font-size: 1.2rem;
+}
+
+.module-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.module-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.module-info h4 {
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.module-info p {
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.module-progress {
+  margin-top: 1rem;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #27ae60;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.module-progress span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.all-completed {
+  text-align: center;
+  padding: 2rem;
+  background: #e8f5e9;
+  border-radius: 8px;
+}
+
+.all-completed h3 {
+  color: #27ae60;
+  margin-bottom: 1rem;
+}
+
+.all-completed p {
+  color: #666;
+  margin: 0.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .next-steps {
+    padding: 1rem;
+  }
+
+  .module-card {
+    padding: 0.8rem;
+  }
+} 

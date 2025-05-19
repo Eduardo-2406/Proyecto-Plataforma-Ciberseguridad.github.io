@@ -1,0 +1,47 @@
+.main-layout {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-container {
+  display: flex;
+  flex: 1;
+  background-color: white;
+}
+
+.layout-content {
+  flex: 1;
+  padding: 0.5rem;
+  padding-top: 40px;
+  background-color: #f8f9fa;
+  overflow-y: auto;
+  position: relative;
+}
+
+.layout-content.sidebar-open {
+  margin-left: 250px;
+}
+
+.layout-content.sidebar-closed {
+  margin-left: 80px;
+}
+
+.main-content {
+  flex: 1;
+  background-color: #f8f9fa;
+  overflow-y: auto;
+}
+
+/* Media Queries para main-content padding-top */
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding-top: 0.5rem;
+  }
+} 

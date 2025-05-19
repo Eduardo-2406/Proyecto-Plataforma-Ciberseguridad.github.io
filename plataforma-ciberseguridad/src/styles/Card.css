@@ -1,0 +1,67 @@
+.card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.card-subtitle {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.card-footer {
+  padding: 1.25rem;
+  border-top: 1px solid #e2e8f0;
+  background-color: #f7fafc;
+}
+
+/* Variantes */
+.card-interactive {
+  cursor: pointer;
+}
+
+.card-interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Tamaños */
+.card-sm {
+  max-width: 24rem;
+}
+
+.card-md {
+  max-width: 32rem;
+}
+
+.card-lg {
+  max-width: 48rem;
+}
+
+.card-full {
+  width: 100%;
+} 

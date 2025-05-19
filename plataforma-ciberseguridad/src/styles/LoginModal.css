@@ -1,0 +1,226 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* backdrop-filter: blur(5px); */
+  /* -webkit-backdrop-filter: blur(5px); */
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  margin: auto;
+}
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.close-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.modal-container {
+  display: flex;
+  min-height: 500px;
+  gap: 3rem;
+}
+
+.login-section {
+  flex: 1;
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.login-section .form-group {
+  margin-bottom: 35px;
+  position: relative;
+  width: 100%;
+  max-width: 450px;
+}
+
+.login-section .form-group input {
+  width: 400px !important;
+  max-width: 100% !important;
+  padding: 12px 20px !important;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #2d3748;
+  background-color: white;
+  transition: all 0.3s ease;
+  height: 50px;
+  box-sizing: border-box;
+}
+
+.login-section .form-group label {
+  position: absolute;
+  left: 20px;
+  top: 14px;
+  color: #718096;
+  font-weight: 500;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  background-color: transparent;
+}
+
+.login-section .form-group input:focus + label,
+.login-section .form-group input:not(:placeholder-shown) + label {
+  transform: translateY(-30px) scale(0.85);
+  color: var(--primary-color);
+  background-color: white;
+  padding: 0 8px;
+  left: 20px;
+}
+
+.logo-section {
+  flex: 1;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  color: var(--text-color);
+  border-left: 1px solid #eee;
+}
+
+.company-logo {
+  width: 200px;
+  height: auto;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
+}
+
+.company-logo:hover {
+  transform: scale(1.05);
+}
+
+.login-section h2 {
+  font-size: 50px !important;
+  margin-bottom: 20px;
+  color: var(--text-color);
+  font-weight: 900;
+  text-align: center;
+  margin-top: 0;
+  line-height: 1;
+  letter-spacing: -4px;
+  text-transform: uppercase;
+}
+
+h3 {
+  font-size: 1.75rem;
+  text-align: center;
+  margin-top: 20px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.login-button {
+  width: 100%;
+  padding: 15px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 30px;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.login-button:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.login-button:disabled {
+  background-color: #cbd5e0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.error-message {
+  background-color: #fff5f5;
+  color: #c53030;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  border: 1px solid #feb2b2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.error-message::before {
+  content: "⚠️";
+  font-size: 1.2rem;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .modal-container {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .logo-section {
+    display: none;
+  }
+
+  .login-section {
+    padding: 2rem;
+  }
+
+  .modal-content {
+    width: 95%;
+  }
+
+  .login-section h2 {
+    font-size: 2rem;
+  }
+} 

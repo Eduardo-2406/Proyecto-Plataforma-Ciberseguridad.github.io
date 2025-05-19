@@ -1,0 +1,238 @@
+.home-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.welcome-section {
+  height: auto;
+  overflow: hidden;
+  position: relative;
+  margin-top: -70px;
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+}
+
+.welcome-background {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.welcome-content {
+  position: relative;
+  z-index: 2;
+  color: #000000;
+  background-color: transparent;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 90%;
+  box-sizing: border-box;
+}
+
+.welcome-content .animated-title h1 {
+  color: #000000;
+  margin-top: 0;
+  font-size: 3.5rem;
+  font-weight: 500;
+}
+
+.welcome-content .animated-subtitle h2 {
+  color: #000000;
+  margin-top: 0;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.features-section,
+.evaluations-section {
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+  background: var(--background-light);
+  padding-top: 2rem;
+  margin-top: 0;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.feature-card {
+  padding: 1rem;
+  background: var(--background);
+  border-radius: 8px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card i {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.feature-card p {
+  color: var(--text-color);
+  line-height: 1.5;
+  font-size: 1.25rem;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.hero-buttons a {
+  padding: 0.75rem 1.25rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.hero-buttons .primary-button {
+  background: var(--primary-color);
+  color: white;
+}
+
+.hero-buttons .secondary-button {
+  background: var(--secondary-color);
+  color: white;
+}
+
+.hero-buttons a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.hero-section {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: white;
+  border-radius: 8px;
+  margin-bottom: 4rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hero-section h1 {
+  font-size: 2.5rem;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+}
+
+.hero-section p {
+  font-size: 1.25rem;
+  color: #4a5568;
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-section {
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--primary-color);
+  border-radius: 8px;
+  color: white;
+  margin-top: 2rem;
+}
+
+.cta-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.cta-section p {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: white;
+  color: var(--primary-color);
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.cta-button:hover {
+  background-color: #f7fafc;
+  transform: translateY(-2px);
+}
+
+/* Media Queries */
+@media (min-width: 360px) {
+  .welcome-section {
+    margin-bottom: 1rem;
+  }
+
+  .features-section,
+  .evaluations-section {
+    margin-bottom: 1rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 768px) {
+  .welcome-section {
+    margin-bottom: 1rem;
+  }
+
+  .features-section,
+  .evaluations-section {
+    margin-bottom: 1rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .welcome-section {
+    margin-bottom: 1rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1440px) {
+  .welcome-section {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .welcome-section {
+    margin-bottom: 1rem;
+  }
+} 

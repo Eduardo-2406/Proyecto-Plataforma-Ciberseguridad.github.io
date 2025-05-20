@@ -277,7 +277,7 @@ const StyledNavbar = styled.nav`
 
     .avatar-icon {
       font-size: 1.25rem;
-      color: #4a90e2;
+      color: #95b9e6;
       width: 1.25rem;
       height: 1.25rem;
     }
@@ -331,5 +331,5 @@ const StyledNavbar = styled.nav`
     }
   }
 `;
-
+ 
 export default Navbar; 

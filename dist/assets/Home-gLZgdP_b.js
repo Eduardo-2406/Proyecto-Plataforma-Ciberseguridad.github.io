@@ -1,0 +1,294 @@
+import{u as m,R as e,m as s,a as p,d as c,g as u}from"./index-BS11OSAT.js";import{A as a}from"./AnimatedText-CXYuW4VG.js";const g="/assets/hero-image-CZ4IM9Z6.jpg",t=({title:i,description:d,navigateLink:o})=>{const n=p(),l=()=>{const r=document.querySelector(".home-container");r?u.to(r,{opacity:0,duration:.3,onComplete:()=>{n(o)}}):n(o)};return e.createElement(f,null,e.createElement("div",{className:"card"},e.createElement("div",{className:"card-details"},e.createElement("p",{className:"text-title"},i),e.createElement("p",{className:"text-body"},d)),e.createElement("button",{className:"card-button",onClick:l},"Ver más")))},f=c.div`
+  .card {
+   width: 300px; /* Increased fixed width for larger cards */
+   height: 350px; /* Increased fixed height for uniform size */
+   border-radius: 20px;
+   background: #f5f5f5;
+   position: relative;
+   padding: 1.8rem;
+   border: 2px solid #c3c6ce;
+   transition: 0.5s ease-out;
+   overflow: hidden; /* Hide overflow */
+   display: flex; /* Use flexbox for internal layout */
+   flex-direction: column;
+   justify-content: space-between;
+   padding-bottom: 4rem; /* Add padding at the bottom for the button */
+  }
+
+  .card-details {
+   color: black;
+   gap: .5em;
+   display: flex; /* Use flexbox for details */
+   flex-direction: column;
+   flex-grow: 1;
+   margin-bottom: 1rem; /* Space before button */
+   overflow: hidden; /* Hide overflow to prevent text pushing button down */
+  }
+
+  .card-button {
+   transform: translate(-50%, 125%); /* Keep original transform for initial state */
+   width: 80%; /* Increase button width */
+   border-radius: 1rem;
+   border: none;
+   background-color: #008bf8;
+   color: #fff;
+   font-size: 1rem;
+   padding: .75rem 1rem;
+   position: absolute;
+   left: 50%;
+   bottom: 0; /* Start at the very bottom */
+   opacity: 0;
+   transition: 0.3s ease-out;
+   cursor: pointer;
+   z-index: 10;
+  }
+
+  .text-body {
+   color: #555; /* Darker gray text color */
+   flex-grow: 1;
+   overflow: hidden;
+   text-overflow: ellipsis;
+  }
+
+  /*Text*/
+  .text-title {
+   font-size: 1.5em;
+   font-weight: bold;
+   margin-bottom: 0.5em;
+  }
+
+  /*Hover*/
+  .card:hover {
+   border-color: #008bf8;
+   box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  /* Adjust hover effect on button to be fully visible */
+  .card:hover .card-button {
+   transform: translate(-50%, -10%); /* Adjust transform to be fully visible */
+   opacity: 1;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .card {
+      width: 95%; /* Adjust width for smaller screens */
+      height: auto; /* Allow height to adjust */
+      min-height: 300px; /* Minimum height for smaller screens */
+      max-width: none; /* Remove max-width on smaller screens */
+    }
+  }
+`;c.div`
+  /* Estilos base (desktop) */
+  .welcome-section {
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: white;
+  }
+
+  .welcome-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .text-content {
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      color: #666;
+    }
+  }
+
+  .image-content {
+    img {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+    }
+  }
+
+  .features-section {
+    padding: 4rem 2rem;
+    background-color: #f8f9fa;
+
+    h3 {
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .cta-section {
+    padding: 4rem 2rem;
+    background-color: #2563eb;
+    color: white;
+    text-align: center;
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+  }
+
+  /* Tablet (1024px y menos) */
+  @media (max-width: 1024px) {
+    .welcome-content {
+      max-width: 90%;
+      gap: 1.5rem;
+    }
+
+    .text-content {
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+      }
+    }
+
+    .features-grid {
+      max-width: 90%;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .cta-section {
+      h2 {
+        font-size: 1.8rem;
+      }
+
+      p {
+        font-size: 1.1rem;
+        padding: 0 1rem;
+      }
+    }
+  }
+
+  /* Móvil (768px y menos) */
+  @media (max-width: 768px) {
+    .welcome-section {
+      padding: 0.5rem;
+      min-height: calc(100vh - 4rem);
+      margin-top: 4rem;
+    }
+
+    .welcome-content {
+      grid-template-columns: 1fr;
+      text-align: center;
+      gap: 0.5rem;
+    }
+
+    .text-content {
+      h1 {
+        font-size: 1.2rem;
+        line-height: 1.2;
+      }
+
+      h2 {
+        font-size: 1rem;
+        line-height: 1.2;
+      }
+    }
+
+    .image-content {
+      order: -1;
+      img {
+        max-width: 60%;
+        margin: 0 auto;
+      }
+    }
+
+    .features-section {
+      padding: 1rem 0.5rem;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .cta-section {
+      padding: 1rem 0.5rem;
+    }
+
+    /* Deshabilitar sidebar en móvil */
+    .sidebar {
+      display: none !important;
+      width: 0 !important;
+      position: absolute !important;
+      visibility: hidden !important;
+    }
+
+    /* Ajustar el contenido principal para que ocupe todo el ancho */
+    .main-content {
+      width: 100% !important;
+      margin-left: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* Ajustar el contenedor principal */
+    .home-container {
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+
+  /* Móvil pequeño (360px y menos) */
+  @media (max-width: 360px) {
+    .welcome-section {
+      padding: 0.8rem;
+    }
+
+    .text-content {
+      h1 {
+        font-size: 1.3rem;
+      }
+
+      h2 {
+        font-size: 1rem;
+      }
+    }
+
+    .image-content img {
+      max-width: 85%;
+    }
+
+    .features-section h3 {
+      font-size: 1.2rem;
+    }
+
+    .cta-section {
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      p {
+        font-size: 0.85rem;
+      }
+    }
+  }
+`;const b=()=>{const{currentUser:i}=m();return e.createElement("div",{className:"home-container",style:{backgroundColor:"white"}},e.createElement("section",{className:"welcome-section",style:{height:"calc(100vh - 64px)",display:"flex",alignItems:"center",justifyContent:"center",backgroundColor:"white"}},e.createElement("div",{className:"welcome-background",style:{backgroundColor:"white"}},e.createElement("div",{className:"welcome-content",style:{display:"flex",flexDirection:"row",alignItems:"center",gap:"40px",maxWidth:"100%",position:"relative"}},e.createElement("div",{style:{flex:1,padding:"4.2rem",zIndex:2}},e.createElement(a,{text:"BIENVENIDO A LA PLATAFORMA DE CIBERSEGURIDAD",className:"animated-title",type:"h1"}),e.createElement(a,{text:"Tu centro de aprendizaje en seguridad informática",className:"animated-subtitle",type:"h2"})),e.createElement("div",{style:{flex:1,display:"flex",justifyContent:"center",position:"relative",zIndex:1}},e.createElement("img",{src:g,alt:"Ciberseguridad Hero",style:{maxWidth:"80%",height:"auto",transform:"scale(1.7)"}}))))),e.createElement(s.div,{initial:{opacity:0},animate:{opacity:1},transition:{delay:.5,duration:.5},className:"features-section"},e.createElement(a,{text:"Recursos Clave para tu Desarrollo Profesional",className:"animated-heading",type:"h3"}),e.createElement("div",{className:"features-grid",style:{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))",gap:"20px",padding:"20px",justifyContent:"center"}},e.createElement(t,{title:"Módulos de Aprendizaje",description:"Accede a contenido especializado y actualizado en diversas áreas de ciberseguridad, diseñado para potenciar tus habilidades técnicas y conocimientos estratégicos.",navigateLink:"/modules"}),e.createElement(t,{title:"Evaluaciones y Certificaciones",description:"Mide tu comprensión con evaluaciones prácticas y obtén certificados reconocidos que validan tus competencias en seguridad informática ante la empresa.",navigateLink:"/evaluations"}),e.createElement(t,{title:"Foro de Colaboración",description:"Conéctate con colegas y expertos en ciberseguridad. Comparte conocimientos, resuelve dudas y participa en discusiones relevantes para fortalecer la seguridad en nuestro entorno de trabajo.",navigateLink:"/forum"}),e.createElement(t,{title:"Seguimiento de Progreso",description:"Visualiza tu trayectoria de aprendizaje, identifica tus logros y mantente al tanto de tus avances en los diferentes módulos y evaluaciones para un desarrollo continuo.",navigateLink:"/progress"}),e.createElement(t,{title:"Certificados Obtenidos",description:"Revisa y gestiona los certificados que has obtenido al completar exitosamente los módulos y evaluaciones. Documenta tus logros y especializaciones en ciberseguridad.",navigateLink:"/certificates"}))),e.createElement(s.div,{initial:{opacity:0},animate:{opacity:1},transition:{delay:.7,duration:.5},className:"evaluations-section"}),e.createElement("section",{className:"cta-section"},e.createElement("h2",null,"¡Fortalece tu Perfil en Ciberseguridad!"),e.createElement("p",null,"Accede a contenido especializado, obtén certificaciones reconocidas y forma parte de una comunidad comprometida con la seguridad digital.")))};export{b as default};

@@ -1,0 +1,78 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "quizAttempts": {
+      "$uid": {
+        "$moduleId": {
+          ".indexOn": ["timestamp"],
+          "$attemptId": {
+            ".validate": "newData.hasChildren(['score', 'timestamp', 'attemptNumber'])",
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        }
+      }
+    },
+    "bestQuizScores": {
+      "$uid": {
+        "$moduleId": {
+          ".indexOn": ["timestamp"],
+          ".write": "auth != null && auth.uid === $uid"
+        }
+      }
+    },
+    "videoProgress": {
+      "$uid": {
+        "$moduleId": {
+          ".indexOn": ["timestamp"],
+          ".write": "auth != null && auth.uid === $uid"
+        }
+      }
+    },
+    "moduleProgress": {
+      "$uid": {
+        "$moduleId": {
+          ".indexOn": ["completedAt"],
+          ".write": "auth != null && auth.uid === $uid"
+        }
+      }
+    },
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "points": {
+          ".write": "auth != null && auth.uid === $uid"
+        },
+        "lastUpdated": {
+          ".write": "auth != null && auth.uid === $uid"
+        },
+        "progress": {
+          "$moduleId": {
+            ".indexOn": ["lastUpdated"],
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        },
+        "evaluations": {
+          "$evaluationId": {
+            ".indexOn": ["completedAt"],
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        },
+        "certificates": {
+          "$certificateId": {
+            ".indexOn": ["issueDate"],
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        }
+      }
+    },
+    "evaluations": {
+      "$evaluationId": {
+        ".read": "auth != null",
+        ".write": "auth != null && newData.child('userId').val() === auth.uid",
+        ".validate": "newData.hasChildren(['userId', 'evaluationId', 'score', 'completedAt', 'points', 'completed', 'correctAnswers', 'incorrectAnswers', 'answers'])"
+      }
+    }
+  }
+} 

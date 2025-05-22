@@ -1,0 +1,402 @@
+.evaluations-container {
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.evaluations-container h1 {
+  font-family: 'EB Garamond', serif;
+  font-size: 3.5rem;
+  font-weight: 500;
+  color: #000000;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.evaluations-container .title {
+  font-family: 'EB Garamond', serif;
+  font-size: 2.5rem;
+  font-weight: 500;
+  color: #000000;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.evaluations-container .subtitle {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #000000;
+  margin-bottom: 2rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.evaluations-container .animated-title {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.evaluations-container .animated-title h1 {
+  font-family: 'EB Garamond', serif;
+  font-size: 3.5rem;
+  font-weight: 500;
+  color: #000000;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.evaluations-container .animated-subtitle {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.evaluations-container .animated-subtitle h2 {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #000000;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.evaluations-description {
+  text-align: center;
+  color: #4a5568;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.evaluations-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.evaluation-card {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.evaluation-card:hover {
+  transform: translateY(-4px);
+}
+
+.evaluation-header {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+}
+
+.evaluation-image-wrapper {
+  width: 100%;
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem 1rem 0 0;
+}
+
+.evaluation-skeleton {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(90deg, #f0f9ff 25%, #e0e7ef 50%, #f0f9ff 75%);
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.2s infinite linear;
+  z-index: 1;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.evaluation-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #f0f9ff;
+  margin: 0 auto;
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1), transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  z-index: 2;
+}
+
+.evaluation-image.loaded {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.evaluation-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.5rem;
+  border-radius: 50%;
+  color: #2563eb;
+}
+
+.evaluation-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.evaluation-content h3 {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.evaluation-description {
+  color: #4a5568;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.evaluation-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: #2d3748;
+  font-size: 1rem;
+}
+
+.detail-item i {
+  color: #2563eb;
+  font-size: 1.25rem;
+}
+
+.evaluation-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.evaluation-tags .tag {
+  background: #ebf8ff;
+  color: #2563eb;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.evaluation-status {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-badge.completed {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.status-badge.in-progress {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.status-badge.not-started {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.start-evaluation-button {
+  width: 100%;
+  padding: 0.875rem;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.start-evaluation-button:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.start-evaluation-button i {
+  font-size: 1.125rem;
+}
+
+.score-display {
+  text-align: center;
+  padding: 0.75rem;
+  background: #f0fdf4;
+  border-radius: 6px;
+  color: #16a34a;
+  font-weight: 600;
+  font-size: 1.125rem;
+  width: 100%;
+}
+
+.login-prompt {
+  text-align: center;
+  max-width: 600px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.login-prompt h2 {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.75rem;
+  color: #1a202c;
+  margin-bottom: 1rem;
+}
+
+.login-prompt p {
+  color: #4a5568;
+  margin-bottom: 2rem;
+  font-size: 1.125rem;
+}
+
+.prompt-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.login-button,
+.register-button {
+  padding: 0.875rem 1.75rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login-button {
+  background: #2563eb;
+  color: white;
+  border: none;
+}
+
+.login-button:hover {
+  background: #1d4ed8;
+}
+
+.register-button {
+  background: white;
+  color: #2563eb;
+  border: 2px solid #2563eb;
+}
+
+.register-button:hover {
+  background: #ebf8ff;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #718096;
+}
+
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  color: #e53e3e;
+  background: #fff5f5;
+  border-radius: 8px;
+  margin: 2rem auto;
+  max-width: 600px;
+}
+
+@media (max-width: 768px) {
+  .evaluations-container {
+    padding: 1rem;
+  }
+
+  .evaluations-container .animated-title h1 {
+    font-size: 2.5rem;
+  }
+
+  .evaluations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .evaluation-details {
+    grid-template-columns: 1fr;
+  }
+
+  .prompt-buttons {
+    flex-direction: column;
+  }
+
+  .login-button,
+  .register-button {
+    width: 100%;
+  }
+} 

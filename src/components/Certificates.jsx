@@ -42,47 +42,93 @@ const Certificates = () => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       
-      // Configurar el tamaño del canvas
-      canvas.width = 1200;
-      canvas.height = 800;
+      // Configurar el tamaño del canvas (tamaño estándar de certificado)
+      canvas.width = 1400; // Ancho para un certificado apaisado más grande
+      canvas.height = 1000;
       
-      // Fondo del certificado
-      ctx.fillStyle = '#ffffff';
+      // Fondo del certificado (un degradado suave con colores de la paleta)
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, '#e0f7fa'); // Un celeste muy claro
+      gradient.addColorStop(0.5, '#e0f2f7'); // Azul claro
+      gradient.addColorStop(1, '#cce9f1'); // Azul aún más claro
+      ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Borde decorativo
-      ctx.strokeStyle = '#2563eb';
-      ctx.lineWidth = 20;
+      // Borde decorativo (diseño más elaborado)
+      ctx.strokeStyle = '#0077cc'; // Azul vibrante
+      ctx.lineWidth = 25; // Borde más notorio
+      ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
+
+      ctx.strokeStyle = '#005599'; // Azul más oscuro para un segundo borde
+      ctx.lineWidth = 5;
       ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
       
-      // Título
-      ctx.fillStyle = '#1a202c';
-      ctx.font = 'bold 48px Arial';
+      // Fuente principal para títulos (considerar fuentes personalizadas si están disponibles)
+      const titleFontFamily = '' // Aquí podrías especificar una fuente personalizada si la tienes cargada
+
+      // Título principal
+      ctx.fillStyle = '#003366'; // Azul muy oscuro
+      ctx.font = `bold 70px 'Arial, sans-serif'`; // Tamaño y peso
       ctx.textAlign = 'center';
-      ctx.fillText('Certificado de Ciberseguridad', canvas.width / 2, 120);
+      ctx.fillText('CERTIFICADO DE RECONOCIMIENTO', canvas.width / 2, 180);
       
-      // Subtítulo
-      ctx.font = '32px Arial';
-      ctx.fillText(certificate.title, canvas.width / 2, 180);
+      // Texto de otorgamiento
+      ctx.fillStyle = '#1a202c';
+      ctx.font = `40px 'Arial, sans-serif'`;
+      ctx.fillText('Este certificado se otorga a', canvas.width / 2, 280);
+
+      // Nombre del destinatario (resaltado y estilizado)
+      ctx.fillStyle = '#001f3f'; // Casi negro, un azul muy oscuro
+      ctx.font = `bold 65px 'Georgia, serif'`; // Fuente con serifa para distinción
+      ctx.fillText(certificate.recipientName.toUpperCase(), canvas.width / 2, 380);
+
+      // Texto intermedio
+      ctx.fillStyle = '#1a202c';
+      ctx.font = `35px 'Arial, sans-serif'`;
+      ctx.fillText('por la exitosa completación de la evaluación', canvas.width / 2, 460);
+
+      // Título de la evaluación (resaltado)
+      ctx.fillStyle = '#001f3f';
+      ctx.font = `bold 45px 'Arial, sans-serif'`;
+      ctx.fillText(certificate.evaluationTitle, canvas.width / 2, 530);
+
+      // Detalles adicionales (organizados)
+      ctx.fillStyle = '#4a5568';
+      ctx.font = `30px 'Arial, sans-serif'`;
       
-      // Contenido
-      ctx.font = '24px Arial';
-      ctx.fillText(`Otorgado a: ${certificate.recipientName}`, canvas.width / 2, 300);
-      ctx.fillText(`Por completar exitosamente: ${certificate.evaluationTitle}`, canvas.width / 2, 350);
-      ctx.fillText(`Con una puntuación de: ${certificate.score}%`, canvas.width / 2, 400);
-      ctx.fillText(`Fecha de emisión: ${new Date(certificate.issueDate).toLocaleDateString()}`, canvas.width / 2, 450);
-      
-      // Código de verificación
-      ctx.font = '20px Arial';
-      ctx.fillText(`Código de verificación: ${certificate.verificationCode}`, canvas.width / 2, 550);
-      
+      // Calcular posiciones para los detalles centrados
+      const detailYStart = 650;
+      const detailLineHeight = 40;
+
+      ctx.fillText(`Puntuación obtenida: ${certificate.score}%`, canvas.width / 2, detailYStart);
+      ctx.fillText(`Emitido por: ${certificate.issuer}`, canvas.width / 2, detailYStart + detailLineHeight);
+      ctx.fillText(`Fecha de emisión: ${new Date(certificate.issueDate).toLocaleDateString()}`, canvas.width / 2, detailYStart + detailLineHeight * 2);
+
+      // Código de verificación (más pequeño y discreto en la parte inferior)
+      ctx.fillStyle = '#718096';
+      ctx.font = `22px 'Arial, sans-serif'`;
+      ctx.fillText(`Código de verificación: ${certificate.verificationCode}`, canvas.width / 2, canvas.height - 40);
+
+      // Firma o logo (opcional)
+      // const logo = new Image();
+      // logo.src = '/images/logo.png'; // Asegúrate de tener un logo
+      // logo.onload = () => { // Dibujar logo una vez cargado
+      //   ctx.drawImage(logo, 100, canvas.height - 150, 100, 100); // Ajustar posición y tamaño
+      //   // Convertir canvas a imagen y descargar (mover esto dentro del onload si usas logo)
+      //   const link = document.createElement('a');
+      //   link.download = `certificado-${certificate.id}.png`;
+      //   link.href = canvas.toDataURL('image/png');
+      //   link.click();
+      // };
+
       // Convertir canvas a imagen y descargar
       const link = document.createElement('a');
       link.download = `certificado-${certificate.id}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
+
     } catch (error) {
-      console.error('Error al generar el certificado:', error);
+      console.error('Error al generar el certificado en canvas:', error);
       alert('Error al generar el certificado');
     }
   };

@@ -5,6 +5,8 @@ import { useProgress } from '../contexts/ProgressContext';
 import { evaluationsData } from '../data/evaluations';
 import { db } from '../config/firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { database } from '../config/firebase';
+import { ref, set } from 'firebase/database';
 import '../styles/Evaluation.css';
 
 const Evaluation = () => {
@@ -32,6 +34,8 @@ const Evaluation = () => {
         if (data) {
           setEvaluation(data);
           setTimeLeft(data.duration * 60);
+          console.log('Evaluation.jsx - Evaluación cargada:', data);
+          console.log('Evaluation.jsx - Passing score para esta evaluación:', data.passingScore);
           setLoading(false);
         } else {
           setError('Evaluación no encontrada');
@@ -149,13 +153,18 @@ const Evaluation = () => {
         verificationCode: `CERT-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
       };
 
-      const certificateRef = doc(db, 'users', currentUser.uid, 'certificates', certificateId);
-      await setDoc(certificateRef, certificate);
+      console.log('Evaluation.jsx - Datos del certificado a guardar:', certificate); // LOGGING
+
+      // **GUARDAR CERTIFICADO EN REALTIME DATABASE**
+      const certificateRef = ref(database, `users/${currentUser.uid}/certificates/${certificateId}`);
+      await set(certificateRef, certificate);
       
+      console.log('Evaluation.jsx - Certificado guardado exitosamente en Realtime Database.'); // LOGGING DE ÉXITO
+
       return certificate;
     } catch (error) {
-      console.error('Error al generar certificado:', error);
-      throw error;
+      console.error('Evaluation.jsx - Error en generateCertificate (set): ', error); // LOGGING ESPECÍFICO DEL ERROR
+      throw error; // Re-lanzar el error para que sea capturado arriba si es necesario
     }
   };
 
@@ -218,12 +227,17 @@ const Evaluation = () => {
       await saveEvaluation(id, result);
       
       // Si el usuario pasa la evaluación, generamos certificado
+      console.log(`Evaluation.jsx - Puntuación calculada: ${score}%, Puntuación requerida: ${evaluation.passingScore}%`); // LOGGING
       if (score >= evaluation.passingScore) {
+        console.log('Evaluation.jsx - Condición de certificado cumplida. Generando certificado...'); // LOGGING
         try {
           await generateCertificate(score);
+          console.log('Evaluation.jsx - generateCertificate llamada completada.'); // LOGGING
         } catch (certError) {
-          console.error('Error al generar certificado:', certError);
+          console.error('Evaluation.jsx - Error DETALLADO al generar certificado:', certError); // LOGGING DETALLADO
         }
+      } else {
+        console.log('Evaluation.jsx - Condición de certificado NO cumplida.'); // LOGGING
       }
       
       setSubmitted(true);

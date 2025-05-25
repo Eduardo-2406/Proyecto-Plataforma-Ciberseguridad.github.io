@@ -62,12 +62,14 @@ const BaseModule = ({
     if (moduleProgress?.completed) {
       setModuleStatus('Completado');
       setIsModuleCompleted(true);
-    } else if (videoProgressData || quizAttempts > 0) {
+    } else if (videoProgressData || (quizAttemptsData && quizAttemptsData.length > 0)) {
       setModuleStatus('En Proceso');
+      setIsModuleCompleted(false);
     } else {
       setModuleStatus('No Iniciado');
+      setIsModuleCompleted(false);
     }
-  }, [moduleProgress, videoProgressData, quizAttempts]);
+  }, [moduleProgress, videoProgressData, quizAttemptsData]);
 
   useEffect(() => {
     if (quizAttemptsData && quizAttemptsData.length > 0) {
@@ -156,10 +158,10 @@ const BaseModule = ({
   };
 
   const getModuleStatus = () => {
-    if (quizCompleted && bestScore >= 80) {
+    if (moduleProgress?.completed) {
       return "completed";
     }
-    if (allVideosWatched || quizAttempts > 0) {
+    if (allVideosWatched || (quizAttemptsData && quizAttemptsData.length > 0)) {
       return "in-progress";
     }
     return "not-started";

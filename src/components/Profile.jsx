@@ -132,111 +132,116 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
-      <div className="profile-header">
-        <div className="profile-avatar-container">
-          <div 
-            className="profile-avatar" 
-            onClick={() => setShowAvatarSelector(true)}
-          >
-            <CurrentAvatar className="avatar-icon" />
-            <div className="avatar-overlay">
-              <FaUser />
-              <span>Cambiar avatar</span>
+      <div className="profile-sidebar">
+        <div className="profile-header">
+          <div className="profile-avatar-container">
+            <div 
+              className="profile-avatar" 
+              onClick={() => setShowAvatarSelector(true)}
+            >
+              <CurrentAvatar className="avatar-icon" />
+              <div className="avatar-overlay">
+                <FaUser />
+                <span>Cambiar avatar</span>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="profile-info">
-          <h1>{userData.displayName || 'Usuario'}</h1>
-          <p className="profile-email">{userData.email}</p>
-        </div>
-      </div>
-
-      {showAvatarSelector && (
-        <div className="avatar-selector">
-          <h3>Selecciona tu avatar</h3>
-          <div className="avatar-grid">
-            {AVATAR_OPTIONS.map(({ id, icon: Icon, name }) => (
-              <div
-                key={id}
-                className={`avatar-option ${userData.avatarId === id ? 'selected' : ''}`}
-                onClick={() => handleAvatarSelect(id)}
-              >
-                <Icon className="avatar-icon" />
-                <span>{name}</span>
-              </div>
-            ))}
+          <div className="profile-info">
+            <h1>{userData.displayName || 'Usuario'}</h1>
+            <p className="profile-email">{userData.email}</p>
           </div>
         </div>
-      )}
 
-      <div className="profile-stats">
-        <div className="stat-card">
-          <FaComments className="stat-icon" />
-          <span className="stat-value">{stats.posts}</span>
-          <span className="stat-label">Posts</span>
-        </div>
-        <div className="stat-card">
-          <FaCommentDots className="stat-icon" />
-          <span className="stat-value">{stats.comments}</span>
-          <span className="stat-label">Comentarios</span>
-        </div>
-        <div className="stat-card">
-          <FaHeart className="stat-icon" />
-          <span className="stat-value">{stats.likes}</span>
-          <span className="stat-label">Likes</span>
-        </div>
-      </div>
+        <form onSubmit={handleSubmit} className="profile-form">
+          {error && <div className="error-message">{error}</div>}
+          {success && <div className="success-message">{success}</div>}
 
-      <form onSubmit={handleSubmit} className="profile-form">
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
+          <div className="form-group">
+            <label htmlFor="displayName">Nombre</label>
+            <input
+              type="text"
+              id="displayName"
+              name="displayName"
+              value={userData.displayName}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="displayName">Nombre</label>
-          <input
-            type="text"
-            id="displayName"
-            name="displayName"
-            value={userData.displayName}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+          <div className="form-group">
+            <label htmlFor="bio">Biografía</label>
+            <textarea
+              id="bio"
+              name="bio"
+              value={userData.bio}
+              onChange={handleInputChange}
+              rows="4"
+              placeholder="Cuéntanos un poco sobre ti..."
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="bio">Biografía</label>
-          <textarea
-            id="bio"
-            name="bio"
-            value={userData.bio}
-            onChange={handleInputChange}
-            rows="4"
-            placeholder="Cuéntanos un poco sobre ti..."
-          />
-        </div>
+          <button type="submit" className="save-button" disabled={loading}>
+            {loading ? 'Guardando...' : 'Guardar cambios'}
+          </button>
+        </form>
 
-        <button type="submit" className="save-button" disabled={loading}>
-          {loading ? 'Guardando...' : 'Guardar cambios'}
-        </button>
-      </form>
-
-      {stats.badges.length > 0 && (
-        <div className="badges-section">
-          <h2>Insignias</h2>
-          <div className="badges-grid">
-            {stats.badges.map((badge, index) => (
-              <div key={index} className="badge-card">
-                <i className={`fas ${badge.icon}`} />
-                <span>{badge.name}</span>
-              </div>
-            ))}
+        <div className="profile-stats">
+          <div className="stat-card">
+            <FaComments className="stat-icon" />
+            <span className="stat-value">{stats.posts}</span>
+            <span className="stat-label">Posts</span>
+          </div>
+          <div className="stat-card">
+            <FaCommentDots className="stat-icon" />
+            <span className="stat-value">{stats.comments}</span>
+            <span className="stat-label">Comentarios</span>
+          </div>
+          <div className="stat-card">
+            <FaHeart className="stat-icon" />
+            <span className="stat-value">{stats.likes}</span>
+            <span className="stat-label">Likes</span>
           </div>
         </div>
-      )}
 
-      <div className="profile-content">
-        <UserProgress />
-        <Achievements />
+      </div>
+
+      <div className="profile-main-content">
+        {showAvatarSelector && (
+          <div className="avatar-selector">
+            <h3>Selecciona tu avatar</h3>
+            <div className="avatar-grid">
+              {AVATAR_OPTIONS.map(({ id, icon: Icon, name }) => (
+                <div
+                  key={id}
+                  className={`avatar-option ${userData.avatarId === id ? 'selected' : ''}`}
+                  onClick={() => handleAvatarSelect(id)}
+                >
+                  <Icon className="avatar-icon" />
+                  <span>{name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="profile-content">
+          <UserProgress />
+          <Achievements />
+        </div>
+
+        {stats.badges.length > 0 && (
+          <div className="badges-section">
+            <h2>Insignias</h2>
+            <div className="badges-grid">
+              {stats.badges.map((badge, index) => (
+                <div key={index} className="badge-card">
+                  <i className={`fas ${badge.icon}`} />
+                  <span>{badge.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

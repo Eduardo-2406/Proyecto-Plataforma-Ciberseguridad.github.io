@@ -1,7 +1,11 @@
 .certificates-container {
-  max-width: 1200px;
+  width: 100%;
+  max-width: 100%; /* Asegurar que ocupe todo el ancho disponible */
   margin: 0 auto;
   padding: 2rem;
+  background: #f8fafc; /* Cambiar fondo para mejor contraste */
+  min-height: 100vh; /* Ocupar al menos el alto completo de la vista */
+  box-sizing: border-box; /* Incluir padding en el ancho/alto */
 }
 
 .certificates-container h1 {
@@ -27,181 +31,263 @@
   font-size: 1.125rem;
 }
 
+.animated-title,
+.animated-subtitle {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
 .certificates-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
+  padding: 1rem 0;
 }
 
 .certificate-card {
-  background: white;
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  background: #ffffff;
+  border-radius: 16px; /* Bordes más redondeados */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem; /* Aumentar padding */
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem; /* Ajustar gap entre secciones */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none; /* Eliminar borde si la sombra es prominente */
+  overflow: hidden; /* Asegurar que nada se salga de los bordes redondeados */
 }
 
 .certificate-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-8px); /* Efecto hover más pronunciado */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25); /* Sombra más intensa al pasar el mouse */
 }
 
 .certificate-header {
-  background: #2563eb;
-  color: white;
-  padding: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.2rem; /* Espacio en el header */
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #ebf4ff; /* Borde muy sutil */
 }
 
 .certificate-icon {
-  font-size: 2rem;
+  font-size: 3.2rem; /* Icono más grande */
+  color: #0077cc; /* Azul más vibrante */
 }
 
 .certificate-info h3 {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.45rem; /* Título más grande */
+  color: #1a202c;
+  margin-bottom: 0.15rem;
+  line-height: 1.3; /* Altura de línea */
 }
 
 .issue-date {
-  font-size: 0.875rem;
-  opacity: 0.9;
+  font-size: 0.95rem; /* Fecha más legible */
+  color: #5a678f; /* Gris azulado */
 }
 
 .certificate-details {
-  padding: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem; /* Espacio entre detalles */
 }
 
 .detail-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem; /* Espacio entre icono y texto */
   color: #4a5568;
-  font-size: 0.875rem;
-  margin-bottom: 0.75rem;
-}
-
-.detail-item:last-child {
-  margin-bottom: 0;
+  font-size: 1.05rem; /* Tamaño de fuente ligeramente mayor */
 }
 
 .detail-item i {
-  color: #2563eb;
-  width: 1rem;
+  color: #0077cc; /* Iconos del mismo azul primario */
+  font-size: 1.3rem; /* Iconos de detalle más grandes */
 }
 
 .certificate-actions {
-  padding: 1.5rem;
   display: flex;
-  gap: 1rem;
+  gap: 1.2rem; /* Espacio entre botones */
+  margin-top: auto;
+  padding-top: 1.8rem; /* Aumentar padding superior */
+  border-top: 1px solid #ebf4ff; /* Borde superior muy sutil */
 }
 
 .download-button,
 .share-button {
   flex: 1;
-  padding: 0.75rem;
+  padding: 0.9rem 1.5rem; /* Padding generoso */
   border: none;
-  border-radius: 0.375rem;
-  font-weight: 500;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 1.05rem; /* Tamaño de fuente ligeramente mayor */
+  font-weight: 600; /* Peso de fuente más notorio */
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  transition: background-color 0.2s;
+  gap: 0.6rem; /* Espacio entre icono y texto del botón */
+  transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 .download-button {
-  background: #2563eb;
+  background-color: #0077cc; /* Azul primario */
   color: white;
 }
 
 .download-button:hover {
-  background: #1d4ed8;
+  background-color: #005ea6; /* Azul más oscuro */
+  transform: translateY(-1px); /* Ligero efecto hover */
 }
 
 .share-button {
-  background: #e2e8f0;
-  color: #4a5568;
+  background-color: #e0e7ff; /* Fondo azul claro */
+  color: #374151; /* Texto gris oscuro */
+  border: 1px solid #c7d2fe; /* Borde azul claro */
 }
 
 .share-button:hover {
-  background: #cbd5e0;
+  background-color: #c3dafe; /* Fondo azul un poco más oscuro */
+  transform: translateY(-1px); /* Ligero efecto hover */
 }
 
 .no-certificates {
-  background: white;
-  border-radius: 1rem;
-  padding: 3rem 2rem;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 3rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 500px;
+  margin: 2rem auto;
 }
 
 .no-certificates-icon {
-  color: #e2e8f0;
   font-size: 4rem;
-  margin-bottom: 1.5rem;
+  color: #cbd5e0;
+  margin-bottom: 1rem;
 }
 
 .no-certificates h3 {
-  color: #1a202c;
   font-size: 1.5rem;
-  margin-bottom: 1rem;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
 }
 
 .no-certificates p {
   color: #718096;
-  font-size: 1rem;
-  max-width: 400px;
-  margin: 0 auto;
-  line-height: 1.5;
 }
 
-.loading {
+.loading,
+.error-message {
   text-align: center;
   padding: 2rem;
-  color: #718096;
+  font-size: 1.2rem;
 }
 
-.error-message {
-  background: #fee2e2;
-  color: #dc2626;
-  padding: 1rem;
-  border-radius: 0.375rem;
-  text-align: center;
-}
-
-/* Responsive */
+/* Media Queries */
 @media (max-width: 768px) {
   .certificates-container {
     padding: 1rem;
   }
 
-  .certificates-header {
-    margin-bottom: 2rem;
-  }
-
-  .certificates-header h2 {
-    font-size: 1.5rem;
-  }
-
-  .certificates-header p {
-    font-size: 1rem;
-  }
-
   .certificates-grid {
-    grid-template-columns: 1fr;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Ajuste para tablets */
   }
 
   .certificate-card {
-    max-width: 400px;
-    margin: 0 auto;
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .certificate-icon {
+    font-size: 2.8rem;
+  }
+
+  .certificate-info h3 {
+    font-size: 1.3rem;
+  }
+
+  .detail-item {
+    font-size: 1rem;
+  }
+
+  .detail-item i {
+    font-size: 1.2rem;
+  }
+
+  .download-button,
+  .share-button {
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .certificates-container {
+    padding: 0.75rem;
+  }
+
+  .certificates-grid {
+    gap: 0.75rem;
+    grid-template-columns: 1fr; /* Apilar tarjetas en móviles */
+  }
+
+  .certificate-card {
+    padding: 1.2rem;
+    gap: 1.2rem;
+  }
+
+  .certificate-header {
+    flex-direction: column; 
+    text-align: center;
+    gap: 0.8rem;
+    padding-bottom: 1.2rem;
+  }
+
+  .certificate-icon {
+    font-size: 2.5rem;
+  }
+
+  .certificate-info h3 {
+    font-size: 1.2rem;
+  }
+
+  .issue-date {
+    font-size: 0.85rem;
+  }
+
+  .detail-item {
+    font-size: 0.95rem;
+  }
+
+  .detail-item i {
+    font-size: 1.1rem;
   }
 
   .certificate-actions {
     flex-direction: column;
+    gap: 1rem;
+    padding-top: 1.2rem;
+  }
+
+  .download-button,
+  .share-button {
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+  }
+
+  .no-certificates {
+    padding: 1.5rem;
+    margin: 1rem auto;
+  }
+
+  .no-certificates-icon {
+    font-size: 3rem;
+  }
+
+  .no-certificates h3 {
+    font-size: 1.3rem;
   }
 }
 

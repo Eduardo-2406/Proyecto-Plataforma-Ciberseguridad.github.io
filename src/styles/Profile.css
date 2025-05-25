@@ -1,18 +1,39 @@
 .profile-container {
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   padding: 2rem;
   background: #ffffff;
-  border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: 300px 1fr; /* Sidebar y contenido principal */
+  gap: 2rem;
+}
+
+.profile-sidebar {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 10px;
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+}
+
+.profile-main-content {
+  display: flex; /* Usar flexbox para el contenido principal */
+  flex-direction: column; /* Apilar secciones principales: selector, estadísticas, progreso, logros */
+  gap: 2rem;
+  overflow-x: hidden; /* Prevenir scroll horizontal */
+  width: 100%;
 }
 
 .profile-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
   border-bottom: 1px solid #eaeaea;
 }
 
@@ -71,12 +92,14 @@
   opacity: 1;
 }
 
-.avatar-selector {
-  background: white;
+.avatar-selector,
+.badges-section {
+  background: #ffffff;
   padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin: 1rem 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .avatar-selector h3 {
@@ -85,11 +108,11 @@
   text-align: center;
 }
 
-.avatar-grid {
+.avatar-grid,
+.badges-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 1rem;
-  padding: 1rem;
 }
 
 .avatar-option {
@@ -127,7 +150,7 @@
 }
 
 .profile-info {
-  flex: 1;
+  flex-grow: 1;
 }
 
 .profile-info h1 {
@@ -153,18 +176,21 @@
 }
 
 .profile-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex; /* Usar flexbox para las estadísticas */
+  flex-wrap: wrap; /* Permitir que los elementos se envuelvan */
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
 }
 
 .stat-card {
-  background: #f8fafc;
-  padding: 1.5rem;
-  border-radius: 10px;
+  flex: 1 1 150px; /* Base size para tarjetas de estadísticas */
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
   text-align: center;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .stat-card:hover {
@@ -192,10 +218,13 @@
 }
 
 .profile-form {
-  background: #f8fafc;
-  padding: 2rem;
+  background: #ffffff;
+  padding: 1.5rem;
   border-radius: 10px;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group {
@@ -307,19 +336,9 @@
   cursor: not-allowed;
 }
 
-.badges-section {
-  margin-top: 2rem;
-}
-
 .badges-section h2 {
   color: #2d3748;
   margin-bottom: 1rem;
-}
-
-.badges-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 1rem;
 }
 
 .badge-card {
@@ -364,8 +383,15 @@
 }
 
 .profile-content {
-  display: grid;
+  display: flex; /* Usar flexbox para progreso y logros */
+  flex-wrap: wrap; /* Permitir que se envuelvan horizontalmente */
   gap: 2rem;
+  width: 100%;
+}
+
+.UserProgress,
+.Achievements {
+  flex: 1 1 300px; /* Base size para progreso y logros */
 }
 
 .uploading-spinner {
@@ -390,36 +416,196 @@
   }
 }
 
-@media (max-width: 768px) {
+.UserProgress,
+.Achievements,
+.badges-section {
+  width: 100%; /* Asegurar que estos componentes ocupen todo el ancho en la columna */
+  box-sizing: border-box;
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Grid para insignias */
+  gap: 1rem;
+}
+
+/* Media Queries */
+
+@media (max-width: 1024px) {
   .profile-container {
-    padding: 1rem;
+    grid-template-columns: 250px 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .profile-sidebar {
+    padding: 1.2rem;
+  }
+
+  .profile-main-content {
+    gap: 1.5rem;
   }
 
   .profile-header {
-    flex-direction: column;
-    text-align: center;
     gap: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .profile-form,
+  .avatar-selector,
+  .badges-section {
+    padding: 1.2rem;
   }
 
   .profile-stats {
-    grid-template-columns: 1fr;
+    gap: 0.75rem; /* Ajustar gap para estadísticas */
   }
 
-  .avatar-grid {
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  .stat-card {
+     flex: 1 1 120px; /* Ajustar base size para estadísticas */
+  }
+
+  .profile-content {
+    gap: 1.5rem; /* Ajustar gap para progreso/logros */
+  }
+
+  .UserProgress,
+  .Achievements {
+    flex: 1 1 250px; /* Ajustar base size para progreso/logros */
+  }
+
+  .badges-grid {
+     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+     gap: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-container {
+    grid-template-columns: 1fr; /* Sidebar vertical */
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .profile-sidebar {
+    position: static;
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+
+  .profile-main-content {
+    gap: 1.5rem;
+  }
+
+  .profile-header {
+    flex-direction: row; /* Header horizontal */
+    text-align: left;
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .avatar-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .profile-info h1 {
+    font-size: 1.875rem;
+  }
+
+  .profile-form,
+  .avatar-selector,
+  .badges-section {
+    padding: 1rem;
+  }
+
+  .profile-stats {
+    grid-template-columns: unset; /* Eliminar grid en stats */
+    flex-direction: row; /* Asegurar dirección horizontal */
+    gap: 1rem; /* Ajustar gap */
+  }
+
+  .stat-card {
+    flex: 1 1 100px; /* Ajustar base size para estadísticas */
+  }
+
+  .profile-content {
+    gap: 1rem; /* Ajustar gap para progreso/logros */
+  }
+
+  .UserProgress,
+  .Achievements {
+    flex: 1 1 100%; /* Ocupar todo el ancho en la columna principal */
+  }
+
+  .badges-grid {
+     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+     gap: 0.5rem;
   }
 }
 
 @media (max-width: 480px) {
+  .profile-container {
+    padding: 0.75rem;
+    gap: 1rem;
+  }
+
+  .profile-sidebar {
+    padding: 0.75rem;
+  }
+
+   .profile-main-content {
+    gap: 1rem;
+  }
+
   .profile-header {
-    padding: 1rem;
+    flex-direction: column; /* Header vertical */
+    text-align: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .avatar-icon {
+    width: 50px;
+    height: 50px;
   }
 
   .profile-info h1 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
 
-  .badges-grid {
-    grid-template-columns: 1fr;
+  .profile-form,
+  .avatar-selector,
+  .badges-section {
+    padding: 0.75rem;
+  }
+
+  .profile-stats {
+    flex-direction: column; /* Estadísticas verticales en móviles */
+    gap: 0.5rem; /* Ajustar gap */
+  }
+
+  .stat-card {
+     flex: unset; /* Reset flex para apilarlos */
+     width: 100%;
+  }
+
+   .profile-content {
+    gap: 0.75rem; /* Ajustar gap para progreso/logros */
+  }
+
+   .badges-grid {
+     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+     gap: 0.5rem;
   }
 } 

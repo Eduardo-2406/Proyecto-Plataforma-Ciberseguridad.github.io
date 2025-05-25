@@ -20,7 +20,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const rtdb = getDatabase(app);
+export const database = getDatabase(app);
+export const rtdb = database; // Alias para mantener compatibilidad
 export const storage = getStorage(app);
 
 // Initialize Analytics only if supported and not blocked

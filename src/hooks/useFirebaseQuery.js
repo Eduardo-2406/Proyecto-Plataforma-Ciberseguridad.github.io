@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ref, onValue, off, query, orderByChild, limitToLast, startAt, endAt } from 'firebase/database';
 import { collection, query as firestoreQuery, where, orderBy, limit, getDocs } from 'firebase/firestore';
-import { db, rtdb } from '../config/firebase';
+import { db, database } from '../config/firebase';
 
 export const useFirebaseQuery = (path, options = {}) => {
   const [data, setData] = useState(null);
@@ -26,7 +26,7 @@ export const useFirebaseQuery = (path, options = {}) => {
       setError(null);
 
       if (type === 'realtime') {
-        let dbRef = ref(rtdb, path);
+        let dbRef = ref(database, path);
 
         // Aplicar ordenamiento si se especifica
         if (orderByField) {

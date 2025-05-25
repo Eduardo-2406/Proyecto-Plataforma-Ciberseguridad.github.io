@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
 import useStore from '../../store/useStore';
 import { useFirebaseQuery } from '../../hooks/useFirebaseQuery';
-import { auth, rtdb } from '../../config/firebase';
+import { auth, database } from '../../config/firebase';
 import { ref, set } from 'firebase/database';
 import confetti from 'canvas-confetti';
 import { modulesData } from '../../data/modules';
@@ -139,7 +139,7 @@ const Quiz = () => {
 
     // Registrar intento en Firebase
     if (auth.currentUser) {
-      const attemptRef = ref(rtdb, `quizAttempts/${auth.currentUser.uid}/${moduleId}/${Date.now()}`);
+      const attemptRef = ref(database, `quizAttempts/${auth.currentUser.uid}/${moduleId}/${Date.now()}`);
       await set(attemptRef, {
         questionId: currentQuestion,
         answer,
@@ -166,7 +166,7 @@ const Quiz = () => {
           const currentAttempts = Array.isArray(quizAttempts) ? quizAttempts : [];
           const attemptNumber = Math.max(1, currentAttempts.length + 1);
           
-          const attemptRef = ref(rtdb, `quizAttempts/${auth.currentUser.uid}/${moduleId}/${Date.now()}`);
+          const attemptRef = ref(database, `quizAttempts/${auth.currentUser.uid}/${moduleId}/${Date.now()}`);
           await set(attemptRef, {
             score: finalScore,
             points: Math.round((finalScore / 100) * 30),
@@ -175,7 +175,7 @@ const Quiz = () => {
           });
 
           // Guardar la mejor puntuación
-          const bestScoreRef = ref(rtdb, `bestQuizScores/${auth.currentUser.uid}/${moduleId}`);
+          const bestScoreRef = ref(database, `bestQuizScores/${auth.currentUser.uid}/${moduleId}`);
           await set(bestScoreRef, {
             score: finalScore,
             timestamp: Date.now()
@@ -183,7 +183,7 @@ const Quiz = () => {
 
           // Actualizar el estado del módulo si se aprobó
           if (finalScore >= 80) {
-            const userProgressRef = ref(rtdb, `users/${auth.currentUser.uid}/progress/${moduleId}`);
+            const userProgressRef = ref(database, `users/${auth.currentUser.uid}/progress/${moduleId}`);
             await set(userProgressRef, {
               quizCompleted: true,
               quizScore: finalScore,

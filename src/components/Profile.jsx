@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { rtdb } from '../config/firebase';
+import { database } from '../config/firebase';
 import { ref, update, onValue } from 'firebase/database';
 import { updateProfile } from 'firebase/auth';
 import UserProgress from './gamification/UserProgress';
@@ -47,7 +47,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (currentUser) {
-      const userRef = ref(rtdb, `users/${currentUser.uid}`);
+      const userRef = ref(database, `users/${currentUser.uid}`);
       onValue(userRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
@@ -58,7 +58,7 @@ const Profile = () => {
         }
       });
 
-      const statsRef = ref(rtdb, `users/${currentUser.uid}/stats`);
+      const statsRef = ref(database, `users/${currentUser.uid}/stats`);
       onValue(statsRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
@@ -97,7 +97,7 @@ const Profile = () => {
       });
 
       // Actualizar en Realtime Database
-      const userRef = ref(rtdb, `users/${currentUser.uid}`);
+      const userRef = ref(database, `users/${currentUser.uid}`);
       await update(userRef, {
         displayName: userData.displayName,
         bio: userData.bio,

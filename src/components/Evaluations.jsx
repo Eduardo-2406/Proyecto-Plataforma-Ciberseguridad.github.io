@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useProgress } from '../contexts/ProgressContext';
 import { evaluationsData } from '../data/evaluations';
-import { rtdb } from '../config/firebase';
-import { ref, onValue } from 'firebase/database';
+import { db } from '../config/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import AnimatedText from './animations/AnimatedText';
 import '../styles/Evaluations.css';
 
@@ -15,7 +15,7 @@ const evaluationImages = {
 
 const Evaluations = () => {
   const [evaluations, setEvaluations] = useState([]);
-  const [userResults, setUserResults] = useState({});
+  const [userEvaluationProgress, setUserEvaluationProgress] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { currentUser } = useAuth();
@@ -33,15 +33,16 @@ const Evaluations = () => {
         }));
         setEvaluations(evalsArray);
 
-        // Cargar resultados del usuario si está autenticado
+        // Cargar resultados del usuario desde Firestore si está autenticado
         if (currentUser) {
-          const resultsRef = ref(rtdb, `users/${currentUser.uid}/evaluations`);
-          onValue(resultsRef, (snapshot) => {
-            if (snapshot.exists()) {
-              const results = snapshot.val();
-              setUserResults(results);
-            }
+          // Load user evaluation progress from Firestore
+          const evaluationsCollectionRef = collection(db, 'users', currentUser.uid, 'evaluations');
+          const querySnapshot = await getDocs(evaluationsCollectionRef);
+          const evaluationProgressData = {};
+          querySnapshot.forEach((doc) => {
+            evaluationProgressData[doc.id] = doc.data();
           });
+          setUserEvaluationProgress(evaluationProgressData);
         }
         setLoading(false);
       } catch (error) {
@@ -55,7 +56,7 @@ const Evaluations = () => {
   }, [currentUser]);
 
   const getEvaluationStatus = (evaluationId) => {
-    const result = userResults[evaluationId];
+    const result = userEvaluationProgress[evaluationId];
     if (!result) return { status: 'not_started', score: null };
     
     return {

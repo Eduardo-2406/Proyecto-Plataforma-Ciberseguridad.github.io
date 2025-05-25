@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { rtdb } from '../../config/firebase';
+import { database } from '../../config/firebase';
 import { ref, onValue } from 'firebase/database';
 import { 
   FaUserAstronaut, FaUserNinja, FaUserSecret, FaUserTie,
@@ -39,7 +39,7 @@ const Navbar = ({ onOpenLoginModal }) => {
     const loadUserData = async () => {
       if (currentUser) {
         setIsLoading(true);
-        const userRef = ref(rtdb, `users/${currentUser.uid}`);
+        const userRef = ref(database, `users/${currentUser.uid}`);
         
         const unsubscribe = onValue(userRef, (snapshot) => {
           if (!mounted) return;

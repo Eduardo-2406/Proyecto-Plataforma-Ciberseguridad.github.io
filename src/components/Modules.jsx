@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { rtdb } from '../config/firebase';
+import { database } from '../config/firebase';
 import { ref, onValue } from 'firebase/database';
 import { useAuth } from '../contexts/AuthContext';
 import { modulesData } from '../data/modules';
@@ -37,7 +37,7 @@ const Modules = () => {
 
         // Cargar progreso del usuario si está autenticado
         if (currentUser) {
-          const progressRef = ref(rtdb, `users/${currentUser.uid}/progress`);
+          const progressRef = ref(database, `users/${currentUser.uid}/progress`);
           onValue(progressRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {

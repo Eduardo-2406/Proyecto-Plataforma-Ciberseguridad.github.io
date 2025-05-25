@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { rtdb } from '../config/firebase';
+import { database } from '../config/firebase';
 import { ref, onValue } from 'firebase/database';
 import { useAuth } from '../contexts/AuthContext';
 import { useProgress } from '../contexts/ProgressContext';
@@ -26,7 +26,7 @@ const Progress = () => {
   useEffect(() => {
     if (!currentUser) return;
 
-    const userRef = ref(rtdb, `users/${currentUser.uid}`);
+    const userRef = ref(database, `users/${currentUser.uid}`);
     const unsubscribe = onValue(userRef, (snapshot) => {
       try {
         const data = snapshot.val();

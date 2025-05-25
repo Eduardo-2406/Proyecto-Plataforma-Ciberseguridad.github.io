@@ -43,11 +43,19 @@ const Evaluation = () => {
         const progressSnap = await getDoc(progressRef);
         if (progressSnap.exists()) {
           const progress = progressSnap.data();
-          if (!progress.completed) {
+          if (progress.completed) {
+            // Load completed results state
+            setAnswers(progress.answers || {});
+            setSubmitted(true);
+          } else {
+            // Load in-progress state
             setCurrentQuestion(progress.currentQuestion || 0);
             setAnswers(progress.answers || {});
           }
+        } else {
+          // No progress found, start fresh
         }
+        setLoading(false);
       } catch (error) {
         console.error('Error al cargar la evaluación:', error);
         setError('Error al cargar la evaluación');
@@ -105,7 +113,20 @@ const Evaluation = () => {
   const calculateScore = () => {
     let correctAnswers = 0;
     evaluation.questions.forEach((question) => {
-      if (answers[question.id] === question.correctAnswer) {
+      const userAnswer = answers[question.id];
+      const correctAnswer = question.correctAnswer;
+
+      let isCorrect = false;
+      if (question.type === 'multiple_choice') {
+        isCorrect = userAnswer === question.options[correctAnswer];
+      } else if (question.type === 'true_false') {
+        const normalizedUserAnswer = typeof userAnswer === 'string' ? (userAnswer === 'Verdadero') : userAnswer;
+        isCorrect = normalizedUserAnswer === correctAnswer;
+      } else {
+        isCorrect = userAnswer === correctAnswer;
+      }
+
+      if (isCorrect) {
         correctAnswers++;
       }
     });
@@ -146,11 +167,37 @@ const Evaluation = () => {
       console.log('Estado de autenticación:', currentUser?.uid);
 
       const score = calculateScore();
-      const correctAnswers = Object.values(answers).filter(
-        (answer, index) => answer === evaluation.questions[index].correctAnswer
+      const correctAnswers = evaluation.questions.filter(
+        (question) => {
+          const userAnswer = answers[question.id];
+          const correctAnswer = question.correctAnswer;
+
+          if (question.type === 'multiple_choice') {
+            return userAnswer === question.options[correctAnswer];
+          } else if (question.type === 'true_false') {
+            const normalizedUserAnswer = typeof userAnswer === 'string' ? (userAnswer === 'Verdadero') : userAnswer;
+            return normalizedUserAnswer === correctAnswer;
+          } else {
+            return userAnswer === correctAnswer;
+          }
+        }
       ).length;
-      const incorrectAnswers = Object.values(answers).filter(
-        (answer, index) => answer !== evaluation.questions[index].correctAnswer
+      const incorrectAnswers = evaluation.questions.filter(
+        (question) => {
+          const userAnswer = answers[question.id];
+          if (!(question.id in answers)) return false;
+
+          const correctAnswer = question.correctAnswer;
+
+          if (question.type === 'multiple_choice') {
+            return userAnswer !== question.options[correctAnswer];
+          } else if (question.type === 'true_false') {
+            const normalizedUserAnswer = typeof userAnswer === 'string' ? (userAnswer === 'Verdadero') : userAnswer;
+            return normalizedUserAnswer !== correctAnswer;
+          } else {
+            return userAnswer !== correctAnswer;
+          }
+        }
       ).length;
 
       const result = {
@@ -261,8 +308,20 @@ const Evaluation = () => {
                   </div>
                   <div className="summary-content">
                     <span className="summary-value">
-                      {Object.values(answers).filter(
-                        (answer, index) => answer === evaluation.questions[index].correctAnswer
+                      {evaluation.questions.filter(
+                        (question) => {
+                          const userAnswer = answers[question.id];
+                          const correctAnswer = question.correctAnswer;
+
+                          if (question.type === 'multiple_choice') {
+                            return userAnswer === question.options[correctAnswer];
+                          } else if (question.type === 'true_false') {
+                            const normalizedUserAnswer = typeof userAnswer === 'string' ? (userAnswer === 'Verdadero') : userAnswer;
+                            return normalizedUserAnswer === correctAnswer;
+                          } else {
+                            return userAnswer === correctAnswer;
+                          }
+                        }
                       ).length}
                     </span>
                     <span className="summary-label">Respuestas correctas</span>
@@ -274,8 +333,22 @@ const Evaluation = () => {
                   </div>
                   <div className="summary-content">
                     <span className="summary-value">
-                      {Object.values(answers).filter(
-                        (answer, index) => answer !== evaluation.questions[index].correctAnswer
+                      {evaluation.questions.filter(
+                        (question) => {
+                          const userAnswer = answers[question.id];
+                          if (!(question.id in answers)) return false;
+
+                          const correctAnswer = question.correctAnswer;
+
+                          if (question.type === 'multiple_choice') {
+                            return userAnswer !== question.options[correctAnswer];
+                          } else if (question.type === 'true_false') {
+                            const normalizedUserAnswer = typeof userAnswer === 'string' ? (userAnswer === 'Verdadero') : userAnswer;
+                            return normalizedUserAnswer !== correctAnswer;
+                          } else {
+                            return userAnswer !== correctAnswer;
+                          }
+                        }
                       ).length}
                     </span>
                     <span className="summary-label">Respuestas incorrectas</span>
@@ -303,14 +376,57 @@ const Evaluation = () => {
                       <span className="question-text">{question.text}</span>
                     </div>
                     <div className="answer-review">
-                      <div className={`answer-status ${answers[question.id] === question.correctAnswer ? 'correct' : 'incorrect'}`}>
-                        <i className={`fas fa-${answers[question.id] === question.correctAnswer ? 'check' : 'times'}-circle`} />
-                        <span>Tu respuesta: {answers[question.id]}</span>
+                      <div className={`answer-status ${
+                        (() => {
+                          const userAnswer = answers[question.id];
+                          const correctAnswer = question.correctAnswer;
+
+                          if (question.type === 'multiple_choice') {
+                            return userAnswer === question.options[correctAnswer];
+                          } else if (question.type === 'true_false') {
+                            const normalizedUserAnswer = typeof userAnswer === 'string' ? (userAnswer === 'Verdadero') : userAnswer;
+                            return normalizedUserAnswer === correctAnswer;
+                          } else {
+                            return userAnswer === correctAnswer;
+                          }
+                        })()
+                        ? 'correct' : 'incorrect'}`}>
+                        <i className={`fas fa-${
+                          (() => {
+                            const userAnswer = answers[question.id];
+                            const correctAnswer = question.correctAnswer;
+
+                            if (question.type === 'multiple_choice') {
+                              return userAnswer === question.options[correctAnswer];
+                            } else if (question.type === 'true_false') {
+                              const normalizedUserAnswer = typeof userAnswer === 'string' ? (userAnswer === 'Verdadero') : userAnswer;
+                              return normalizedUserAnswer === correctAnswer;
+                            } else {
+                              return userAnswer === correctAnswer;
+                            }
+                          })()
+                        ? 'check' : 'times'}-circle`} />
+                        <span>Tu respuesta: {typeof answers[question.id] === 'boolean' ? (answers[question.id] ? 'Verdadero' : 'Falso') : answers[question.id]}</span>
                       </div>
-                      {answers[question.id] !== question.correctAnswer && (
+                      {!(
+                        (() => {
+                          const userAnswer = answers[question.id];
+                          const correctAnswer = question.correctAnswer;
+
+                          if (question.type === 'multiple_choice') {
+                            return userAnswer === question.options[correctAnswer];
+                          } else if (question.type === 'true_false') {
+                            const normalizedUserAnswer = typeof userAnswer === 'string' ? (userAnswer === 'Verdadero') : userAnswer;
+                            return normalizedUserAnswer === correctAnswer;
+                          } else {
+                            return userAnswer === correctAnswer;
+                          }
+                        })()
+                      )
+                        && (
                         <div className="correct-answer">
                           <i className="fas fa-check-circle" />
-                          <span>Respuesta correcta: {question.correctAnswer}</span>
+                          <span>Respuesta correcta: {question.type === 'multiple_choice' ? question.options[question.correctAnswer] : (typeof question.correctAnswer === 'boolean' ? (question.correctAnswer ? 'Verdadero' : 'Falso') : question.correctAnswer)}</span>
                         </div>
                       )}
                     </div>
@@ -369,9 +485,6 @@ const Evaluation = () => {
                 <div className="option-content">
                   <span className="option-text">{option}</span>
                 </div>
-                {answers[question.id] === option && (
-                  <i className="fas fa-check option-check" />
-                )}
               </button>
             ))}
             {question?.type === 'true_false' && (
@@ -383,9 +496,6 @@ const Evaluation = () => {
                   <div className="option-content">
                     <span className="option-text">Verdadero</span>
                   </div>
-                  {answers[question.id] === true && (
-                    <i className="fas fa-check option-check" />
-                  )}
                 </button>
                 <button
                   className={`option-button ${answers[question.id] === false ? 'selected' : ''}`}
@@ -394,9 +504,6 @@ const Evaluation = () => {
                   <div className="option-content">
                     <span className="option-text">Falso</span>
                   </div>
-                  {answers[question.id] === false && (
-                    <i className="fas fa-check option-check" />
-                  )}
                 </button>
               </div>
             )}
@@ -444,11 +551,10 @@ const Evaluation = () => {
             {evaluation.questions.map((q, index) => (
               <div
                 key={index}
-                className={`progress-item ${index === currentQuestion ? 'current' : ''} ${answers[q.id] ? 'answered' : ''}`}
+                className={`progress-item ${index === currentQuestion ? 'current' : ''} ${q.id in answers ? 'answered' : ''}`}
                 onClick={() => setCurrentQuestion(index)}
               >
                 <div className="progress-number">{index + 1}</div>
-                <span>Pregunta {index + 1}</span>
               </div>
             ))}
           </div>

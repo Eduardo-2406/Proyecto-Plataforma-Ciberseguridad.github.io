@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { rtdb } from '../config/firebase';
+import { database } from '../config/firebase';
 import { ref, onValue, update } from 'firebase/database';
 import { useAuth } from '../contexts/AuthContext';
 import '../styles/Notifications.css';
@@ -13,7 +13,7 @@ const Notifications = () => {
   useEffect(() => {
     if (!currentUser) return;
 
-    const notificationsRef = ref(rtdb, `users/${currentUser.uid}/notifications`);
+    const notificationsRef = ref(database, `users/${currentUser.uid}/notifications`);
     const unsubscribe = onValue(notificationsRef, (snapshot) => {
       try {
         const data = snapshot.val();
@@ -39,7 +39,7 @@ const Notifications = () => {
   const handleMarkAsRead = async (notificationId) => {
     try {
       const notificationRef = ref(
-        rtdb,
+        database,
         `users/${currentUser.uid}/notifications/${notificationId}`
       );
       await update(notificationRef, {
@@ -58,7 +58,7 @@ const Notifications = () => {
           updates[`users/${currentUser.uid}/notifications/${notification.id}/read`] = true;
         }
       });
-      await update(ref(rtdb), updates);
+      await update(ref(database), updates);
     } catch (error) {
       setError('Error al marcar todas las notificaciones como leídas');
     }

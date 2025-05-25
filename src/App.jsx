@@ -144,6 +144,13 @@ const AppContent = () => {
                 </motion.div>
               </PrivateRoute>
             } />
+            <Route path="/evaluation/:id/results" element={
+              <PrivateRoute>
+                <motion.div className="page-content" {...pageTransition}>
+                  <Evaluation />
+                </motion.div>
+              </PrivateRoute>
+            } />
             <Route path="/forum" element={
               <motion.div className="page-content" {...pageTransition}>
                 <Forum />

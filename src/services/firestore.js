@@ -11,6 +11,8 @@ import {
   limit
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { ref, set } from 'firebase/database';
+import { database } from '../config/firebase';
 
 // Perfil de Usuario
 export const createUserProfile = async (userId, userData) => {
@@ -114,6 +116,14 @@ export const saveEvaluationResult = async (userId, evaluationId, result) => {
     // Guardamos la evaluación en el subdocumento del usuario
     const userEvaluationRef = doc(db, 'users', userId, 'evaluations', evaluationId);
     await setDoc(userEvaluationRef, evaluationData);
+
+    // Actualizamos Realtime Database
+    const userEvaluationProgressRef = ref(database, `users/${userId}/evaluationProgress/${evaluationId}`);
+    await set(userEvaluationProgressRef, {
+      completed: true,
+      score: result.score || 0,
+      lastUpdated: new Date().toISOString()
+    });
 
     return true;
   } catch (error) {

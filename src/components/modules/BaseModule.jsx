@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import useStore from '../../store/useStore';
 import { useFirebaseQuery } from '../../hooks/useFirebaseQuery';
-import { auth, rtdb } from '../../config/firebase';
+import { auth, database } from '../../config/firebase';
 import { ref, set } from 'firebase/database';
 
 const MAX_ATTEMPTS = 2; // Máximo de intentos permitidos para el quiz
@@ -94,7 +94,7 @@ const BaseModule = ({
       // Guardar progreso en Firebase
       if (auth.currentUser) {
         // Actualizar progreso del video
-        const progressRef = ref(rtdb, `videoProgress/${auth.currentUser.uid}/${moduleId}/${videoId}`);
+        const progressRef = ref(database, `videoProgress/${auth.currentUser.uid}/${moduleId}/${videoId}`);
         await set(progressRef, {
           id: videoId,
           watched: true,
@@ -102,7 +102,7 @@ const BaseModule = ({
         });
 
         // Actualizar el estado del módulo a "En Proceso"
-        const userProgressRef = ref(rtdb, `users/${auth.currentUser.uid}/progress/${moduleId}`);
+        const userProgressRef = ref(database, `users/${auth.currentUser.uid}/progress/${moduleId}`);
         await set(userProgressRef, {
           status: 'in-progress',
           lastUpdated: Date.now()
@@ -121,7 +121,7 @@ const BaseModule = ({
         // Guardar progreso en Firebase
         if (auth.currentUser) {
           // Actualizar el progreso del módulo
-          const moduleRef = ref(rtdb, `moduleProgress/${auth.currentUser.uid}/${moduleId}`);
+          const moduleRef = ref(database, `moduleProgress/${auth.currentUser.uid}/${moduleId}`);
           await set(moduleRef, {
             completed: true,
             completedAt: Date.now(),
@@ -130,7 +130,7 @@ const BaseModule = ({
           });
 
           // Actualizar el progreso general del usuario
-          const userProgressRef = ref(rtdb, `users/${auth.currentUser.uid}/progress/${moduleId}`);
+          const userProgressRef = ref(database, `users/${auth.currentUser.uid}/progress/${moduleId}`);
           await set(userProgressRef, {
             completed: true,
             completedAt: Date.now(),

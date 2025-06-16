@@ -342,7 +342,7 @@ const Home = () => {
   return (
     <div className="home-container" style={{ backgroundColor: 'white' }}>
       <section className="welcome-section" style={{ 
-        height: 'calc(100vh - 64px)', 
+        height: 'calc(100vh - 10px)', 
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center',
@@ -392,6 +392,29 @@ const Home = () => {
               />
             </div>
           </div>
+          {/* Flecha animada al final de la sección de bienvenida */}
+          <div style={{
+            position: 'absolute',
+            left: '50%',
+            bottom: '2rem',
+            transform: 'translateX(-50%)',
+            zIndex: 20,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%',
+            pointerEvents: 'none'
+          }}>
+            <motion.div
+              initial={{ y: 0, opacity: 0.7 }}
+              animate={{ y: 20, opacity: 1 }}
+              transition={{ repeat: Infinity, repeatType: 'reverse', duration: 1 }}
+              style={{ fontSize: '3rem', color: '#008bf8', filter: 'drop-shadow(0 2px 6px #008bf8aa)' }}
+            >
+              <i className="fas fa-chevron-down" />
+            </motion.div>
+            <span style={{ fontSize: '1rem', color: '#888', marginTop: '0.2rem' }}>Desliza hacia abajo</span>
+          </div>
         </div>
       </section>
 
@@ -432,6 +455,11 @@ const Home = () => {
             description="Revisa y gestiona los certificados que has obtenido al completar exitosamente los módulos y evaluaciones. Documenta tus logros y especializaciones en ciberseguridad."
             navigateLink="/certificates"
           />
+          <Card
+            title="Recursos de Ciberseguridad"
+            description="Accede a recursos, noticias, consejos y cursos gratuitos recomendados para fortalecer tu seguridad digital."
+            navigateLink="/resources"
+          />
         </div>
       </motion.div>
 
@@ -454,4 +482,4 @@ const Home = () => {
   );
 };
 
-export default Home; 
+export default Home;

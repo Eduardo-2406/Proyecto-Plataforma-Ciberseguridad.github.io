@@ -5,6 +5,7 @@ import { ref, push, onValue, update, remove } from 'firebase/database';
 import PostList from './PostList';
 import CreatePost from './CreatePost';
 import AnimatedText from '../animations/AnimatedText';
+import LoadingSpinner from '../common/LoadingSpinner';
 import '../../styles/Forum.css';
 
 const Forum = () => {
@@ -91,9 +92,7 @@ const Forum = () => {
 
   if (loading) {
     return (
-      <div className="forum-container">
-        <div className="loading">Cargando foro...</div>
-      </div>
+      <div className="forum-container" />
     );
   }
 
@@ -149,4 +148,4 @@ const Forum = () => {
   );
 };
 
-export default Forum; 
+export default Forum;

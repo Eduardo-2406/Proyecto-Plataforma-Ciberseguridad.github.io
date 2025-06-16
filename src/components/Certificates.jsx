@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
 import AnimatedText from './animations/AnimatedText';
 import '../styles/Certificates.css';
+import LoadingSpinner from './common/LoadingSpinner';
 
 const Certificates = () => {
   const [certificates, setCertificates] = useState([]);
@@ -156,9 +157,7 @@ const Certificates = () => {
 
   if (loading) {
     return (
-      <div className="certificates-container">
-        <div className="loading">Cargando certificados...</div>
-      </div>
+      <div className="certificates-container" />
     );
   }
 
@@ -171,7 +170,7 @@ const Certificates = () => {
   }
 
   return (
-    <div className="certificates-container">
+    <div className="certificates-container" style={{maxWidth: '1000px', width: '100%', margin: '0 auto', padding: '2rem 1rem', boxSizing: 'border-box'}}>
       <AnimatedText 
         text="Mis Certificados" 
         className="animated-title"
@@ -197,6 +196,14 @@ const Certificates = () => {
       ) : (
         <motion.div
           className="certificates-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+            gap: '2.5rem',
+            width: '100%',
+            alignItems: 'stretch',
+            justifyItems: 'center',
+          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -205,6 +212,16 @@ const Certificates = () => {
             <motion.div
               key={certificate.id}
               className="certificate-card"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                width: '100%',
+                minWidth: 0,
+                boxSizing: 'border-box',
+              }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -264,4 +281,4 @@ const Certificates = () => {
   );
 };
 
-export default Certificates; 
+export default Certificates;

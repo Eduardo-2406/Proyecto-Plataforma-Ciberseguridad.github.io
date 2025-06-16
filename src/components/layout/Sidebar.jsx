@@ -4,7 +4,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import HamburgerIcon from '../common/HamburgerIcon';
-import { gsap } from 'gsap';
 import '../../styles/Sidebar.css';
 
 const Sidebar = ({ onToggle }) => {
@@ -63,6 +62,12 @@ const Sidebar = ({ onToggle }) => {
       label: 'Crear Usuario',
       public: false,
       adminOnly: true
+    },
+    {
+      path: '/resources',
+      icon: 'fas fa-lightbulb',
+      label: 'Recursos',
+      public: true
     }
   ];
 
@@ -70,22 +75,7 @@ const Sidebar = ({ onToggle }) => {
   const activeItemIndex = visibleMenuItems.findIndex(item => item.path === location.pathname);
 
   const handleNavigation = (path) => {
-    const content = document.querySelector('.page-content');
-    if (content) {
-      gsap.to(content, {
-        opacity: 0,
-        duration: 0.2,
-        onComplete: () => {
-          navigate(path);
-          gsap.to(content, {
-            opacity: 1,
-            duration: 0.2
-          });
-        }
-      });
-    } else {
-      navigate(path);
-    }
+    navigate(path);
   };
 
   const handleLogout = async () => {
@@ -111,9 +101,48 @@ const Sidebar = ({ onToggle }) => {
             onClick={() => handleNavigation(item.path)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              height: 56,
+              width: '100%',
+              padding: 0,
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              position: 'relative',
+              zIndex: 2
+            }}
           >
-            <i className={item.icon} />
-            {isOpen && <span className="label">{item.label}</span>}
+            <span style={{
+              width: 32,
+              minWidth: 32,
+              maxWidth: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%'
+            }}>
+              <i className={item.icon} style={{ fontSize: '1.3rem', color: '#fff' }} />
+            </span>
+            <span
+              className="label"
+              style={{
+                opacity: isOpen ? 1 : 0,
+                width: isOpen ? 'auto' : 0,
+                marginLeft: isOpen ? 12 : 0,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                color: '#fff',
+                fontWeight: 500,
+                fontSize: '1rem',
+                transition: 'opacity 0.2s, width 0.3s, margin 0.3s',
+                pointerEvents: isOpen ? 'auto' : 'none'
+              }}
+            >
+              {item.label}
+            </span>
           </motion.button>
         ))}
       </nav>
@@ -254,4 +283,4 @@ const StyledSidebar = styled.aside`
   }
 `;
 
-export default Sidebar; 
+export default Sidebar;

@@ -1,17 +1,41 @@
 .progress-container {
   width: 100%;
   min-height: 100vh;
-  padding: 2rem;
+  padding: 2rem 0.5rem;
   background: #f8fafc;
   text-align: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
 }
 
 .progress-content {
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100vw;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  overflow: visible;
+  height: auto;
+  box-sizing: border-box;
+  align-items: stretch;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (min-width: 1200px) {
+  .progress-content {
+    max-width: 1400px;
+  }
+  .progress-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .progress-charts {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .progress-header {
@@ -48,8 +72,9 @@
 
 .progress-stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5rem;
+  width: 100%;
 }
 
 .stat-card {
@@ -141,11 +166,11 @@
 }
 
 .progress-charts {
-  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.5rem;
   margin-bottom: 2rem;
+  width: 100%;
 }
 
 .chart-container {
@@ -153,6 +178,11 @@
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 .chart-container h2 {
@@ -316,33 +346,37 @@
 
 @media (max-width: 1200px) {
   .progress-content {
+    max-width: 100vw;
     padding: 1rem;
   }
-  
   .progress-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+  .progress-charts {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .progress-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .progress-charts {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  .progress-container {
-    padding: 1rem;
+  .progress-content {
+    padding: 0.5rem;
   }
-
   .progress-stats-grid {
     grid-template-columns: 1fr;
   }
-
   .progress-charts {
     grid-template-columns: 1fr;
-  }
-
-  .achievements-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .chart-container {
-    min-height: 400px;
   }
 }
 

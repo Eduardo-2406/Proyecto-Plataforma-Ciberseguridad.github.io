@@ -1,0 +1,8 @@
+.page-content {
+  min-height: 100vh;
+  background: #f8f9fa;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}

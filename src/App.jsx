@@ -10,6 +10,7 @@ import MainLayout from './components/layout/MainLayout';
 import Progress from './components/Progress';
 import styled from 'styled-components';
 import './styles/ErrorBoundary.css';
+import './styles/PageContent.css';
 import Quiz from './components/modules/Quiz';
 import ModuleRouter from './components/modules/ModuleRouter';
 
@@ -30,6 +31,7 @@ const Forum = lazy(() => import('./components/forum/Forum'));
 const Profile = lazy(() => import('./components/Profile'));
 const Certificates = lazy(() => import('./components/Certificates'));
 const CreateUser = lazy(() => import('./pages/admin/CreateUser'));
+const Resources = lazy(() => import('./pages/Resources'));
 
 const pageTransition = {
   initial: { opacity: 0, scale: 0.98 },
@@ -199,6 +201,11 @@ const AppContent = () => {
                   <Quiz />
                 </motion.div>
               </PrivateRoute>
+            } />
+            <Route path="/resources" element={
+              <motion.div className="page-content" {...pageTransition}>
+                <Resources />
+              </motion.div>
             } />
           </Route>
         </Routes>

@@ -76,36 +76,7 @@ const Progress = () => {
   ];
 
   if (loading) {
-    return (
-      <motion.div 
-        className="loading-container"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        <motion.div 
-          className="loading-spinner"
-          animate={{ 
-            rotate: 360,
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ 
-            duration: 2,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        >
-          <FaChartLine />
-        </motion.div>
-        <motion.p
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          Cargando progreso...
-        </motion.p>
-      </motion.div>
-    );
+    return null;
   }
 
   if (error) return (
@@ -139,181 +110,185 @@ const Progress = () => {
   }));
 
   return (
-    <motion.div 
-      className="progress-container"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ 
-        duration: 0.5,
-        ease: "easeOut"
-      }}
-    >
-      <div className="progress-content">
-        <AnimatedText 
-          text="Mi Progreso" 
-          className="animated-title"
-          type="h1" 
-        />
+    <div className="progress-container">
+      {!loading && (
         <motion.div 
-          className="progress-header"
+          className="progress-content"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ 
+            duration: 0.5,
+            ease: "easeOut"
+          }}
         >
-          <div className="progress-stats-grid">
+          <div className="progress-content">
+            <AnimatedText 
+              text="Mi Progreso" 
+              className="animated-title"
+              type="h1" 
+            />
             <motion.div 
-              className="stat-card"
+              className="progress-header"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.2 }}
             >
-              <div className="stat-icon-container">
-                <FaChartLine className="stat-icon" />
-              </div>
-              <h3>Puntos Totales</h3>
-              <p>{userData.points || 0}</p>
-            </motion.div>
-
-            <motion.div 
-              className="stat-card level-card"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <div className="level-info">
-                <span className="level-icon" style={{ color: userLevel.color }}>
-                  {userLevel.icon}
-                </span>
-                <span className="level-name">{userLevel.name}</span>
-              </div>
-              <div className="progress-bar">
+              <div className="progress-stats-grid">
                 <motion.div 
-                  className="progress-fill"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progressToNextLevel}%` }}
-                  transition={{ duration: 1, ease: "easeOut" }}
-                />
+                  className="stat-card"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <div className="stat-icon-container">
+                    <FaChartLine className="stat-icon" />
+                  </div>
+                  <h3>Puntos Totales</h3>
+                  <p>{userData.points || 0}</p>
+                </motion.div>
+
+                <motion.div 
+                  className="stat-card level-card"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <div className="level-info">
+                    <span className="level-icon" style={{ color: userLevel.color }}>
+                      {userLevel.icon}
+                    </span>
+                    <span className="level-name">{userLevel.name}</span>
+                  </div>
+                  <div className="progress-bar">
+                    <motion.div 
+                      className="progress-fill"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progressToNextLevel}%` }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                    />
+                  </div>
+                  <p className="progress-text">
+                    {Math.round(progressToNextLevel)}% al siguiente nivel
+                  </p>
+                </motion.div>
+
+                <motion.div 
+                  className="stat-card"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <div className="stat-icon-container">
+                    <FaTrophy className="stat-icon" />
+                  </div>
+                  <h3>Evaluaciones Completadas</h3>
+                  <p>{evaluationResults.filter(r => r.completed).length}</p>
+                </motion.div>
               </div>
-              <p className="progress-text">
-                {Math.round(progressToNextLevel)}% al siguiente nivel
-              </p>
             </motion.div>
 
             <motion.div 
-              className="stat-card"
+              className="progress-charts"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.6 }}
             >
-              <div className="stat-icon-container">
-                <FaTrophy className="stat-icon" />
+              <div className="chart-container">
+                <h2>Progreso de Evaluaciones</h2>
+                <ResponsiveContainer width="100%" height={400}>
+                  <PieChart>
+                    <Pie
+                      data={evaluationData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={150}
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {evaluationData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
-              <h3>Evaluaciones Completadas</h3>
-              <p>{evaluationResults.filter(r => r.completed).length}</p>
+
+              <div className="chart-container">
+                <h2>Progreso Mensual</h2>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={progressData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar 
+                      dataKey="puntos" 
+                      fill="#8884d8"
+                      name="Puntos"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="achievements-section"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+            >
+              <h2>Logros</h2>
+              <div className="achievements-grid">
+                {stats?.achievements?.map((achievement, index) => (
+                  <motion.div 
+                    key={index}
+                    className="achievement-card"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 + index * 0.1 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div className="achievement-icon">
+                      <FaAward />
+                    </div>
+                    <h3>{achievement.title}</h3>
+                    <p>{achievement.description}</p>
+                    <span className="achievement-points">+{achievement.points} puntos</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="ranking-section"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
+            >
+              <h2>Tu Posición en el Ranking</h2>
+              <div className="ranking-card">
+                {topUsers.findIndex(user => user.id === currentUser?.uid) !== -1 ? (
+                  <div className="user-rank-info">
+                    <span className="rank-position">
+                      #{topUsers.findIndex(user => user.id === currentUser?.uid) + 1}
+                    </span>
+                    <span className="user-points">{userData.points} puntos</span>
+                  </div>
+                ) : (
+                  <p>Completa más evaluaciones para aparecer en el ranking</p>
+                )}
+              </div>
             </motion.div>
           </div>
         </motion.div>
-
-        <motion.div 
-          className="progress-charts"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          <div className="chart-container">
-            <h2>Progreso de Evaluaciones</h2>
-            <ResponsiveContainer width="100%" height={400}>
-              <PieChart>
-                <Pie
-                  data={evaluationData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={150}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                >
-                  {evaluationData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="chart-container">
-            <h2>Progreso Mensual</h2>
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={progressData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar 
-                  dataKey="puntos" 
-                  fill="#8884d8"
-                  name="Puntos"
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </motion.div>
-
-        <motion.div 
-          className="achievements-section"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-        >
-          <h2>Logros</h2>
-          <div className="achievements-grid">
-            {stats?.achievements?.map((achievement, index) => (
-              <motion.div 
-                key={index}
-                className="achievement-card"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 + index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <div className="achievement-icon">
-                  <FaAward />
-                </div>
-                <h3>{achievement.title}</h3>
-                <p>{achievement.description}</p>
-                <span className="achievement-points">+{achievement.points} puntos</span>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        <motion.div 
-          className="ranking-section"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-        >
-          <h2>Tu Posición en el Ranking</h2>
-          <div className="ranking-card">
-            {topUsers.findIndex(user => user.id === currentUser?.uid) !== -1 ? (
-              <div className="user-rank-info">
-                <span className="rank-position">
-                  #{topUsers.findIndex(user => user.id === currentUser?.uid) + 1}
-                </span>
-                <span className="user-points">{userData.points} puntos</span>
-              </div>
-            ) : (
-              <p>Completa más evaluaciones para aparecer en el ranking</p>
-            )}
-          </div>
-        </motion.div>
-      </div>
-    </motion.div>
+      )}
+    </div>
   );
 };
 

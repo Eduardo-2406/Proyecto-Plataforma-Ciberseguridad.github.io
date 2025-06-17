@@ -40,6 +40,12 @@ const StyledWrapper = styled.div`
                 stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  @media (max-width: 1023px) {
+    .line {
+      stroke: #333;
+    }
+  }
+
   .line-top-bottom {
     stroke-dasharray: 12 63;
   }
@@ -54,4 +60,4 @@ const StyledWrapper = styled.div`
   }
 `;
 
-export default HamburgerIcon; 
+export default HamburgerIcon;

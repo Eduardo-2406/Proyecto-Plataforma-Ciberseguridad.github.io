@@ -36,3 +36,67 @@
     padding: 1rem;
   }
 }
+
+/* Sidebar visible solo en desktop/laptop (≥1024px) */
+@media (min-width: 1024px) {
+  .sidebar {
+    display: flex !important;
+    width: 250px !important;
+    position: sticky !important;
+    left: 0 !important;
+    visibility: visible !important;
+  }
+}
+
+/* Sidebar oculto en tablet y móvil (≤1023px) */
+@media (max-width: 1023px) {
+  .sidebar {
+    display: none !important;
+    width: 0 !important;
+    position: absolute !important;
+    visibility: hidden !important;
+  }
+  .main-content, .layout-content {
+    width: 100% !important;
+    margin-left: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+/* Navbar: mostrar menú hamburguesa en tablet y móvil (≤1023px) */
+@media (max-width: 1023px) {
+  .navbar-hamburger {
+    display: flex !important;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 1rem;
+  }
+}
+
+/* Navbar: ocultar menú hamburguesa en desktop/laptop (≥1024px) */
+@media (min-width: 1024px) {
+  .navbar-hamburger {
+    display: none !important;
+  }
+}
+
+/* Asegura que el título de la navbar se oculte en móvil (≤600px) */
+@media (max-width: 600px) {
+  .navbar-title {
+    display: none !important;
+  }
+}
+
+/* Refuerza el color oscuro del icono hamburguesa en móvil/tablet */
+@media (max-width: 1023px) {
+  .hamburger .line {
+    stroke: #333 !important;
+  }
+}
+
+/* Ajustes para tablets y móviles (≤1023px) */
+@media (max-width: 1023px) {
+  .main-layout, .layout-container {
+    flex-direction: column !important;
+  }
+}

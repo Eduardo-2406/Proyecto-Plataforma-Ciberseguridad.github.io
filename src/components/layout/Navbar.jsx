@@ -11,6 +11,7 @@ import {
   FaUserCircle, FaUserCheck
 } from 'react-icons/fa';
 import logo from '../../assets/images/Logo.png';
+import HamburgerIcon from '../common/HamburgerIcon';
 
 const AVATAR_OPTIONS = [
   { id: 'astronaut', icon: FaUserAstronaut, name: 'Astronauta' },
@@ -25,7 +26,7 @@ const AVATAR_OPTIONS = [
   { id: 'check', icon: FaUserCheck, name: 'Verificado' }
 ];
 
-const Navbar = ({ onOpenLoginModal }) => {
+const Navbar = ({ onOpenLoginModal, onToggleSidebar, isSidebarOpen }) => {
   const { currentUser, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -79,6 +80,13 @@ const Navbar = ({ onOpenLoginModal }) => {
     setIsMenuOpen(false);
   };
 
+  const handleHamburgerClick = () => {
+    if (window.innerWidth <= 1023 && onToggleSidebar) {
+      onToggleSidebar();
+    }
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   const getAvatarIcon = (avatarId) => {
     const avatar = AVATAR_OPTIONS.find(opt => opt.id === avatarId);
     return avatar ? avatar.icon : FaUserCircle;
@@ -89,17 +97,11 @@ const Navbar = ({ onOpenLoginModal }) => {
       <div className="navbar-brand">
         <Link to="/">
           <img src={logo} alt="Logo" className="navbar-logo" />
-          <span>Plataforma de Ciberseguridad</span>
+          <span className="navbar-title">Plataforma de Ciberseguridad</span>
         </Link>
       </div>
-
       <div className="navbar-right">
-        <button className="hamburger" onClick={toggleMenu}>
-          <span className={`hamburger-line ${isMenuOpen ? 'open' : ''}`}></span>
-          <span className={`hamburger-line ${isMenuOpen ? 'open' : ''}`}></span>
-          <span className={`hamburger-line ${isMenuOpen ? 'open' : ''}`}></span>
-        </button>
-
+        {/* Intercambiado: primero el perfil, luego el menú hamburguesa */}
         {currentUser ? (
           <Link to="/profile" className="profile-link">
             <div className="avatar-container">
@@ -109,33 +111,16 @@ const Navbar = ({ onOpenLoginModal }) => {
           </Link>
         ) : (
           <button onClick={onOpenLoginModal} className="login-link">
-            <i className="fas fa-sign-in-alt" />
+            <i className="fas fa-user" />
             <span>Iniciar sesión</span>
           </button>
         )}
+        <div className="navbar-hamburger">
+          <HamburgerIcon isOpen={isSidebarOpen} onClick={onToggleSidebar} />
+        </div>
       </div>
 
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div 
-            className="mobile-menu"
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ duration: 0.3 }}
-          >
-            <nav>
-              <Link to="/modules" onClick={toggleMenu}>Módulos</Link>
-              <Link to="/evaluations" onClick={toggleMenu}>Evaluaciones</Link>
-              <Link to="/forum" onClick={toggleMenu}>Foro</Link>
-              <Link to="/progress" onClick={toggleMenu}>Progreso</Link>
-              {currentUser && (
-                <button onClick={handleLogout}>Cerrar Sesión</button>
-              )}
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Elimina el menú móvil propio, solo sidebar drawer */}
     </StyledNavbar>
   );
 };
@@ -185,68 +170,23 @@ const StyledNavbar = styled.nav`
     gap: 1.5rem;
   }
 
-  .hamburger {
+  .navbar-hamburger {
     display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 2rem;
-    height: 1.5rem;
-    background: none;
-    border: none;
     cursor: pointer;
-    padding: 0;
     z-index: 1001;
+  }
 
-    .hamburger-line {
-      width: 100%;
-      height: 2px;
-      background-color: #333;
-      transition: all 0.3s ease;
-
-      &.open:nth-child(1) {
-        transform: translateY(8px) rotate(45deg);
-      }
-
-      &.open:nth-child(2) {
-        opacity: 0;
-      }
-
-      &.open:nth-child(3) {
-        transform: translateY(-8px) rotate(-45deg);
-      }
+  /* Mostrar hamburguesa solo en tablet/móvil */
+  @media (max-width: 1023px) {
+    .navbar-hamburger {
+      display: block !important;
     }
   }
 
-  .mobile-menu {
-    display: none;
-    position: fixed;
-    top: 4rem;
-    right: 0;
-    bottom: 0;
-    width: 250px;
-    background: white;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
-
-    nav {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-
-      a, button {
-        color: #333;
-        text-decoration: none;
-        padding: 0.5rem;
-        border: none;
-        background: none;
-        text-align: left;
-        font-size: 1rem;
-        cursor: pointer;
-
-        &:hover {
-          color: #2563eb;
-        }
-      }
+  /* Ocultar hamburguesa en desktop/laptop */
+  @media (min-width: 1024px) {
+    .navbar-hamburger {
+      display: none !important;
     }
   }
 
@@ -303,11 +243,7 @@ const StyledNavbar = styled.nav`
       font-size: 1rem;
     }
 
-    .hamburger {
-      display: flex;
-    }
-
-    .mobile-menu {
+    .navbar-hamburger {
       display: block;
     }
 
@@ -330,6 +266,12 @@ const StyledNavbar = styled.nav`
       height: 1rem !important;
     }
   }
+
+  @media (max-width: 600px) {
+    .navbar-title {
+      display: none !important;
+    }
+  }
 `;
  
-export default Navbar; 
+export default Navbar;

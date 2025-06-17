@@ -9,10 +9,12 @@ const LoginModal = ({ isOpen, onClose }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [attempted, setAttempted] = useState(false);
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setAttempted(true);
     try {
       setError('');
       setLoading(true);
@@ -24,6 +26,14 @@ const LoginModal = ({ isOpen, onClose }) => {
       setLoading(false);
     }
   };
+
+  // Limpiar error y estado de intento al abrir/cerrar modal
+  React.useEffect(() => {
+    if (isOpen) {
+      setError('');
+      setAttempted(false);
+    }
+  }, [isOpen]);
 
   return (
     <AnimatePresence>
@@ -48,7 +58,6 @@ const LoginModal = ({ isOpen, onClose }) => {
             <div className="modal-container">
               <div className="login-section">
                 <h2>Login</h2>
-                {error && <div className="error-message">{error}</div>}
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
                     <input
@@ -72,6 +81,11 @@ const LoginModal = ({ isOpen, onClose }) => {
                     />
                     <label htmlFor="password">Contraseña</label>
                   </div>
+                  {attempted && error && (
+                    <label className="login-error-label" aria-live="polite" style={{color:'#c53030',fontWeight:500,marginBottom:'0.7rem',fontSize:'1.05rem',display:'block',textAlign:'center'}}>
+                      Correo o contraseña incorrectos.
+                    </label>
+                  )}
                   <button 
                     type="submit" 
                     className="login-button"
@@ -97,4 +111,4 @@ const LoginModal = ({ isOpen, onClose }) => {
   );
 };
 
-export default LoginModal; 
+export default LoginModal;

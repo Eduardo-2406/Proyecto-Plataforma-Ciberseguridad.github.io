@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { database } from '../config/firebase';
 import { ref, onValue } from 'firebase/database';
 import { useAuth } from '../contexts/AuthContext';
@@ -6,15 +6,24 @@ import { useProgress } from '../contexts/ProgressContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedText from './animations/AnimatedText';
 import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, BarChart, Bar, Legend
-} from 'recharts';
-import { 
   FaTrophy, FaMedal, FaBook, FaChartLine, 
   FaUserGraduate, FaShieldAlt, FaCrown,
   FaStar, FaAward, FaCheckCircle
 } from 'react-icons/fa';
 import '../styles/Progress.css';
+import ProgressSkeleton from './common/ProgressSkeleton';
+
+const PieChart = lazy(() => import('recharts').then(mod => ({ default: mod.PieChart })));
+const Pie = lazy(() => import('recharts').then(mod => ({ default: mod.Pie })));
+const Cell = lazy(() => import('recharts').then(mod => ({ default: mod.Cell })));
+const Tooltip = lazy(() => import('recharts').then(mod => ({ default: mod.Tooltip })));
+const Legend = lazy(() => import('recharts').then(mod => ({ default: mod.Legend })));
+const ResponsiveContainer = lazy(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer })));
+const BarChart = lazy(() => import('recharts').then(mod => ({ default: mod.BarChart })));
+const Bar = lazy(() => import('recharts').then(mod => ({ default: mod.Bar })));
+const CartesianGrid = lazy(() => import('recharts').then(mod => ({ default: mod.CartesianGrid })));
+const XAxis = lazy(() => import('recharts').then(mod => ({ default: mod.XAxis })));
+const YAxis = lazy(() => import('recharts').then(mod => ({ default: mod.YAxis })));
 
 const Progress = () => {
   const [userData, setUserData] = useState(null);
@@ -60,10 +69,10 @@ const Progress = () => {
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
-  const moduleData = Object.entries(moduleProgress).map(([id, progress]) => ({
+  const moduleData = Object.entries(moduleProgress || {}).map(([id, progress]) => ({
     name: `Módulo ${parseInt(id) + 1}`,
     value: progress?.score || 0,
-    status: progress?.completed ? 'Completado' : progress?.started ? 'En Progreso' : 'No Iniciado'
+    status: progress?.completed ? 'Completado' : progress?.started ? 'En Progreso' : 'No Iniciado',
   }));
 
   const progressData = [
@@ -76,7 +85,7 @@ const Progress = () => {
   ];
 
   if (loading) {
-    return null;
+    return <ProgressSkeleton />;
   }
 
   if (error) return (
@@ -195,44 +204,48 @@ const Progress = () => {
             >
               <div className="chart-container">
                 <h2>Progreso de Evaluaciones</h2>
-                <ResponsiveContainer width="100%" height={400}>
-                  <PieChart>
-                    <Pie
-                      data={evaluationData}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={150}
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {evaluationData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
+                <Suspense fallback={<div className="chart-skeleton" style={{height:400,background:'#e5e7eb',borderRadius:16}} />}> 
+                  <ResponsiveContainer width="100%" height={400}>
+                    <PieChart>
+                      <Pie
+                        data={evaluationData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={150}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {evaluationData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </Suspense>
               </div>
 
               <div className="chart-container">
                 <h2>Progreso Mensual</h2>
-                <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={progressData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar 
-                      dataKey="puntos" 
-                      fill="#8884d8"
-                      name="Puntos"
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
+                <Suspense fallback={<div className="chart-skeleton" style={{height:400,background:'#e5e7eb',borderRadius:16}} />}> 
+                  <ResponsiveContainer width="100%" height={400}>
+                    <BarChart data={progressData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar 
+                        dataKey="puntos" 
+                        fill="#8884d8"
+                        name="Puntos"
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </Suspense>
               </div>
             </motion.div>
 

@@ -58,14 +58,20 @@ const StyledResourcesContainer = styled.div`
 	}
 `;
 
-const Card = ({ title, description, url }) => {
+const resourceImages = {
+	Recurso: '/images/recursos/gestores.avif',
+	Noticias: '/images/recursos/noticias.avif',
+	Curso: '/images/recursos/cursos.avif',
+	Consejos: '/images/recursos/gestores.avif', // Puedes cambiar si tienes otra imagen
+};
+
+const Card = ({ title, description, url, type }) => {
 	const handleButtonClick = () => {
 		window.open(url, '_blank', 'noopener noreferrer');
 	};
 	return (
 		<StyledWrapper>
 			<div className="card">
-				{/* Espacio para imagen */}
 				<div
 					className="card-image"
 					style={{
@@ -76,10 +82,19 @@ const Card = ({ title, description, url }) => {
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
+						overflow: 'hidden',
 					}}
 				>
-					{/* Aquí puedes agregar la imagen en el futuro */}
-					<span style={{ color: '#b0b0b0' }}>Imagen</span>
+					<img
+						src={resourceImages[type]}
+						alt={type}
+						style={{
+							width: '100%',
+							height: '100%',
+							objectFit: 'contain',
+							borderRadius: '12px',
+						}}
+					/>
 				</div>
 				<div className="card-details">
 					<p className="text-title">{title}</p>
@@ -180,7 +195,7 @@ const Resources = () => (
 			<AnimatedText text="Recursos de Ciberseguridad" className="animated-title" type="h1" />
 			<div className="features-grid">
 				{resources.map((resource, idx) => (
-					<Card key={idx} title={resource.title} description={resource.description} url={resource.url} />
+					<Card key={idx} {...resource} />
 				))}
 			</div>
 		</div>

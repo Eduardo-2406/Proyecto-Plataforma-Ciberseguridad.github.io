@@ -35,4 +35,29 @@
 .sidebar-item i {
   width: 20px;
   text-align: center;
-} 
+}
+
+.label {
+  transition: opacity 0.2s ease, width 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-closed .label {
+  opacity: 0;
+  width: 0;
+}
+
+.nav-item:focus,
+.sidebar-item:focus,
+.logout-button:focus,
+button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px white;
+}

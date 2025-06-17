@@ -1,0 +1,38 @@
+/* responsive.css - utilidades y breakpoints globales */
+:root {
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 1024px;
+  --breakpoint-lg: 1280px;
+}
+
+/* Helpers para ocultar/mostrar elementos */
+.hide-mobile { display: none !important; }
+@media (min-width: 769px) { .hide-mobile { display: block !important; } }
+
+.hide-desktop { display: block !important; }
+@media (min-width: 769px) { .hide-desktop { display: none !important; } }
+
+/* Ejemplo de grid responsivo */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .responsive-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* Ejemplo de padding responsivo */
+.responsive-padding {
+  padding: 2rem;
+}
+@media (max-width: 768px) {
+  .responsive-padding {
+    padding: 1rem;
+  }
+}

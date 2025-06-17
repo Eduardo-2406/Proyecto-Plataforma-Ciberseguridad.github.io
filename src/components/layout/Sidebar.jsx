@@ -87,78 +87,167 @@ const Sidebar = ({ onToggle }) => {
   };
 
   return (
-    <StyledSidebar $isOpen={isOpen}>
-      <div className="sidebar-header">
-        <HamburgerIcon isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
-        {isOpen && <h2>Menú</h2>}
-      </div>
-      
+    <StyledSidebar className={isOpen ? '' : 'sidebar-closed'} $isOpen={isOpen}>
+      {/* HEADER igual que menú central, ícono siempre a la izquierda, label animada */}
+      <button
+        className="sidebar-item"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          height: 56,
+          width: '100%',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          justifyContent: 'flex-start',
+          boxSizing: 'border-box',
+          transition: 'none',
+          padding: '0.75rem 1.5rem',
+        }}
+        type="button"
+      >
+        <span style={{
+          width: 20,
+          minWidth: 20,
+          maxWidth: 20,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: 56,
+          flexShrink: 0,
+        }}>
+          <HamburgerIcon isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
+        </span>
+        <span className="label" style={{
+          marginLeft: 14,
+          fontWeight: 500,
+          fontSize: '1rem',
+          color: '#fff',
+          display: 'flex',
+          alignItems: 'center',
+          height: 56,
+        }}>Menú</span>
+      </button>
+
       <nav className="sidebar-nav">
-        {visibleMenuItems.map((item) => (
-          <motion.button
-            key={item.path}
-            className={`nav-item ${location.pathname === item.path ? 'active' : ''}`}
-            onClick={() => handleNavigation(item.path)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              height: 56,
-              width: '100%',
-              padding: 0,
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              position: 'relative',
-              zIndex: 2
-            }}
-          >
-            <span style={{
-              width: 32,
-              minWidth: 32,
-              maxWidth: 32,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%'
-            }}>
-              <i className={item.icon} style={{ fontSize: '1.3rem', color: '#fff' }} />
-            </span>
-            <span
-              className="label"
+        {visibleMenuItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <motion.button
+              key={item.path}
+              className={`nav-item${isActive ? ' active' : ''}`}
+              onClick={() => handleNavigation(item.path)}
+              layout="position"
               style={{
-                opacity: isOpen ? 1 : 0,
-                width: isOpen ? 'auto' : 0,
-                marginLeft: isOpen ? 12 : 0,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                color: '#fff',
-                fontWeight: 500,
-                fontSize: '1rem',
-                transition: 'opacity 0.2s, width 0.3s, margin 0.3s',
-                pointerEvents: isOpen ? 'auto' : 'none'
+                display: 'flex',
+                alignItems: 'center',
+                height: 56,
+                width: '100%',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                position: 'relative',
+                justifyContent: 'flex-start',
+                boxSizing: 'border-box',
+                padding: 0,
               }}
+              initial={false}
+              animate={isActive ? { backgroundColor: 'rgba(255,255,255,0.15)' } : { backgroundColor: 'transparent' }}
+              transition={{ type: 'spring', stiffness: 400, damping: 40 }}
             >
-              {item.label}
-            </span>
-          </motion.button>
-        ))}
+              {isActive && (
+                <motion.div
+                  layoutId="activeIndicator"
+                  className="active-indicator"
+                  style={{
+                    position: 'absolute',
+                    left: isOpen ? 0 : '-4px',
+                    top: 8,
+                    bottom: 8,
+                    width: 4,
+                    borderRadius: '4px',
+                    backgroundColor: '#fff',
+                  }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                />
+              )}
+              <span style={{
+                width: 40,
+                minWidth: 40,
+                maxWidth: 40,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 56,
+                flexShrink: 0,
+              }}>
+                <i className={item.icon} style={{ fontSize: '1.3rem', color: '#fff', margin: 0 }} />
+              </span>
+              <span
+                className="label"
+                style={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  color: '#fff',
+                  fontWeight: 500,
+                  fontSize: '1rem',
+                  display: isOpen ? 'flex' : 'none',
+                  alignItems: 'center',
+                  height: 56,
+                  transition: 'opacity 0.2s, width 0.2s',
+                }}
+              >
+                {item.label}
+              </span>
+            </motion.button>
+          );
+        })}
       </nav>
 
       {currentUser && (
-        <div className="sidebar-footer">
-          <motion.button
-            className="logout-button"
-            onClick={handleLogout}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <i className="fas fa-sign-out-alt" />
-            {isOpen && <span className="label">Cerrar Sesión</span>}
-          </motion.button>
-        </div>
+        <button
+          className="sidebar-item logout-button"
+          onClick={handleLogout}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            height: 56,
+            width: '100%',
+            background: 'none',
+            border: 'none',
+            color: '#4a5568',
+            cursor: 'pointer',
+            textAlign: 'left',
+            justifyContent: 'flex-start',
+            boxSizing: 'border-box',
+            transition: 'none',
+            padding: '0.75rem 1.5rem',
+          }}
+          type="button"
+        >
+          <span style={{
+            width: 20,
+            minWidth: 20,
+            maxWidth: 20,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: 56,
+            flexShrink: 0,
+          }}>
+            <i className="fas fa-sign-out-alt" style={{ fontSize: '1.3rem', color: '#fff', margin: 0 }} />
+          </span>
+          <span className="label" style={{
+            marginLeft: 14,
+            fontWeight: 500,
+            fontSize: '1rem',
+            color: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            height: 56,
+          }}>Cerrar Sesión</span>
+        </button>
       )}
     </StyledSidebar>
   );
@@ -177,13 +266,27 @@ const StyledSidebar = styled.aside`
   left: 0;
   z-index: 100;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-x: hidden;
+  overflow: hidden;
+
+  /* Cuando el sidebar está colapsado */
+  &.collapsed {
+    .sidebar-item,
+    .logout-button,
+    .nav-item {
+      justify-content: center !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    .label {
+      display: none !important;
+    }
+  }
 
   .sidebar-header {
-    padding: 1rem;
+    padding: 0;
     display: flex;
     align-items: center;
-    justify-content: ${props => props.$isOpen ? 'flex-start' : 'center'};
     gap: 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
@@ -202,8 +305,7 @@ const StyledSidebar = styled.aside`
     flex-direction: column;
     padding: 1rem;
     gap: 0.5rem;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
     position: relative;
 
     .nav-item {
@@ -235,6 +337,9 @@ const StyledSidebar = styled.aside`
         font-size: 1.2rem;
         width: 1.5rem;
         text-align: center;
+        transition: none !important;
+        transform: none !important;
+        margin-left: 0 !important;
       }
 
       .label {
@@ -246,8 +351,10 @@ const StyledSidebar = styled.aside`
   }
 
   .sidebar-footer {
-    padding: 1rem;
+    padding: 0;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
 
     .logout-button {
       background: none;

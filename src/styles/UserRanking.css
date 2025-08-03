@@ -139,9 +139,36 @@
   color: white;
 }
 
-@media (max-width: 768px) {
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Desktop/Laptop (1024px y arriba) */
+@media (min-width: 1024px) {
   .user-ranking {
-    padding: 1rem;
+    padding: 2rem;
+  }
+
+  .ranking-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .ranking-filters {
+    gap: 0.8rem;
+  }
+
+  .filter-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+  }
+
+  .ranking-item {
+    padding: 1.2rem;
+  }
+}
+
+/* Tablets (481px - 1023px) */
+@media (min-width: 481px) and (max-width: 1023px) {
+  .user-ranking {
+    padding: 1.5rem;
   }
 
   .ranking-header {
@@ -150,7 +177,139 @@
     text-align: center;
   }
 
+  .ranking-header h2 {
+    font-size: 1.6rem;
+  }
+
   .ranking-filters {
     justify-content: center;
+    gap: 0.6rem;
+  }
+
+  .filter-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .ranking-item {
+    padding: 1rem;
+  }
+}
+
+/* Móviles grandes (321px - 480px) */
+@media (min-width: 321px) and (max-width: 480px) {
+  .user-ranking {
+    padding: 1.2rem;
+  }
+
+  .ranking-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .ranking-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .ranking-filters {
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 16px;
+    flex: none;
+    min-width: auto;
+  }
+
+  .ranking-item {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .user-info {
+    gap: 0.4rem;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .level-icon {
+    font-size: 1rem;
+  }
+
+  .current-user-rank {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+}
+
+/* Móviles pequeños (hasta 320px) */
+@media (max-width: 320px) {
+  .user-ranking {
+    padding: 1rem;
+  }
+
+  .ranking-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .filter-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    border-radius: 14px;
+    flex: none;
+    min-width: auto;
+  }
+
+  .ranking-item {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.4rem;
+  }
+
+  .user-info {
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .level-icon {
+    font-size: 0.9rem;
+  }
+
+  .view-full-ranking {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 16px;
+  }
+}
+
+/* Orientación horizontal en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .user-ranking {
+    padding: 1rem;
+  }
+
+  .ranking-header {
+    margin-bottom: 1rem;
+  }
+
+  .ranking-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .current-user-rank {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
   }
 } 

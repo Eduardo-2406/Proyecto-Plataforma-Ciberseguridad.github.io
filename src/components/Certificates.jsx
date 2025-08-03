@@ -11,6 +11,7 @@ const Certificates = () => {
   const [certificates, setCertificates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const { currentUser } = useAuth();
 
   useEffect(() => {
@@ -36,6 +37,25 @@ const Certificates = () => {
 
     return () => unsubscribe();
   }, [currentUser]);
+
+  // Efecto para manejar el scroll y mostrar/ocultar el botón
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setShowScrollTop(scrollTop > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Función para hacer scroll hacia arriba
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   const handleDownload = async (certificate) => {
     try {
@@ -170,7 +190,7 @@ const Certificates = () => {
   }
 
   return (
-    <div className="certificates-container" style={{maxWidth: '1000px', width: '100%', margin: '0 auto', padding: '2rem 1rem', boxSizing: 'border-box'}}>
+    <div className="certificates-container">
       <AnimatedText 
         text="Mis Certificados" 
         className="animated-title"
@@ -196,14 +216,6 @@ const Certificates = () => {
       ) : (
         <motion.div
           className="certificates-grid"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-            gap: '2.5rem',
-            width: '100%',
-            alignItems: 'stretch',
-            justifyItems: 'center',
-          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -212,16 +224,6 @@ const Certificates = () => {
             <motion.div
               key={certificate.id}
               className="certificate-card"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                width: '100%',
-                minWidth: 0,
-                boxSizing: 'border-box',
-              }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -277,6 +279,15 @@ const Certificates = () => {
           ))}
         </motion.div>
       )}
+      
+      {/* Botón de scroll hacia arriba */}
+      <button
+        className={`scroll-to-top ${showScrollTop ? 'visible' : ''}`}
+        onClick={scrollToTop}
+        aria-label="Volver al inicio"
+      >
+        <i className="fas fa-chevron-up"></i>
+      </button>
     </div>
   );
 };

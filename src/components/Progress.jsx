@@ -8,7 +8,7 @@ import AnimatedText from './animations/AnimatedText';
 import { 
   FaTrophy, FaMedal, FaBook, FaChartLine, 
   FaUserGraduate, FaShieldAlt, FaCrown,
-  FaStar, FaAward, FaCheckCircle
+  FaStar, FaAward, FaCheckCircle, FaArrowUp
 } from 'react-icons/fa';
 import '../styles/Progress.css';
 import ProgressSkeleton from './common/ProgressSkeleton';
@@ -29,6 +29,7 @@ const Progress = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const { currentUser } = useAuth();
   const { stats, moduleProgress, topUsers } = useProgress();
 
@@ -52,6 +53,20 @@ const Progress = () => {
 
     return () => unsubscribe();
   }, [currentUser]);
+
+  // Scroll to top functionality
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.pageYOffset > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const calculateLevel = (points) => {
     if (points >= 5000) return { name: 'Protector', icon: <FaCrown />, color: '#F59E0B' };
@@ -204,7 +219,7 @@ const Progress = () => {
             >
               <div className="chart-container">
                 <h2>Progreso de Evaluaciones</h2>
-                <Suspense fallback={<div className="chart-skeleton" style={{height:400,background:'#e5e7eb',borderRadius:16}} />}> 
+                <Suspense fallback={<div className="chart-skeleton" />}> 
                   <ResponsiveContainer width="100%" height={400}>
                     <PieChart>
                       <Pie
@@ -229,7 +244,7 @@ const Progress = () => {
 
               <div className="chart-container">
                 <h2>Progreso Mensual</h2>
-                <Suspense fallback={<div className="chart-skeleton" style={{height:400,background:'#e5e7eb',borderRadius:16}} />}> 
+                <Suspense fallback={<div className="chart-skeleton" />}> 
                   <ResponsiveContainer width="100%" height={400}>
                     <BarChart data={progressData}>
                       <CartesianGrid strokeDasharray="3 3" />
@@ -301,6 +316,23 @@ const Progress = () => {
           </div>
         </motion.div>
       )}
+      
+      {/* Scroll to top button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            className="scroll-to-top"
+            onClick={scrollToTop}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <FaArrowUp />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

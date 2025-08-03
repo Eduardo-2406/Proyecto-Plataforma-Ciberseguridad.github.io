@@ -13,6 +13,7 @@ const Forum = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [category, setCategory] = useState('todos');
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const { currentUser } = useAuth();
 
   useEffect(() => {
@@ -45,6 +46,25 @@ const Forum = () => {
 
     return () => unsubscribe();
   }, [category]);
+
+  // Efecto para manejar el scroll y mostrar/ocultar el botón
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setShowScrollTop(scrollTop > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Función para hacer scroll hacia arriba
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   const handleCreatePost = async (postData) => {
     if (!currentUser) return;
@@ -144,6 +164,15 @@ const Forum = () => {
         onDelete={handleDelete}
         currentUser={currentUser}
       />
+      
+      {/* Botón de scroll hacia arriba */}
+      <button
+        className={`scroll-to-top ${showScrollTop ? 'visible' : ''}`}
+        onClick={scrollToTop}
+        aria-label="Volver al inicio"
+      >
+        <i className="fas fa-chevron-up"></i>
+      </button>
     </div>
   );
 };

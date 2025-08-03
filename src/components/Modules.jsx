@@ -24,6 +24,7 @@ const Modules = () => {
   const navigate = useNavigate();
   const [imgLoaded, setImgLoaded] = useState({});
   const [timeoutReached, setTimeoutReached] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     const loadModules = async () => {
@@ -127,6 +128,25 @@ const Modules = () => {
     }
   }, [loading, allImagesLoaded]);
 
+  // Efecto para manejar el scroll y mostrar/ocultar el botón
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setShowScrollTop(scrollTop > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Función para hacer scroll hacia arriba
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <div className="modules-container">
       {loading ? (
@@ -148,14 +168,7 @@ const Modules = () => {
             type="h2"
           />
 
-          <div className="modules-grid" style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(3, 1fr)', 
-            gridTemplateRows: 'repeat(2, 1fr)',
-            gap: '2rem',
-            maxWidth: '1200px',
-            margin: '0 auto'
-          }}>
+          <div className="modules-grid">
             {modules.map((module) => {
               const status = getModuleStatus(module.id);
               return (
@@ -258,6 +271,15 @@ const Modules = () => {
           )}
         </>
       )}
+      
+      {/* Botón de scroll hacia arriba */}
+      <button
+        className={`scroll-to-top ${showScrollTop ? 'visible' : ''}`}
+        onClick={scrollToTop}
+        aria-label="Volver al inicio"
+      >
+        <i className="fas fa-chevron-up"></i>
+      </button>
     </div>
   );
 };

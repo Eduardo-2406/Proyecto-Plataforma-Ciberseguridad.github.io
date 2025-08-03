@@ -135,7 +135,76 @@
   margin: 0.5rem 0;
 }
 
-@media (max-width: 768px) {
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Desktop/Laptop (1024px y arriba) */
+@media (min-width: 1024px) {
+  .weekly-challenge {
+    padding: 2.5rem;
+  }
+
+  .challenge-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .challenge-points {
+    padding: 0.4rem 1rem;
+    font-size: 1rem;
+  }
+
+  .challenge-deadline {
+    font-size: 1rem;
+  }
+
+  .challenge-content h3 {
+    font-size: 1.3rem;
+  }
+
+  .submit-button {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+/* Tablets (481px - 1023px) */
+@media (min-width: 481px) and (max-width: 1023px) {
+  .weekly-challenge {
+    padding: 2rem;
+  }
+
+  .challenge-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .challenge-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .challenge-meta {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .challenge-points {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .challenge-deadline {
+    font-size: 0.9rem;
+  }
+
+  .submit-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Móviles grandes (321px - 480px) */
+@media (min-width: 321px) and (max-width: 480px) {
   .weekly-challenge {
     padding: 1.5rem;
   }
@@ -146,7 +215,131 @@
     text-align: center;
   }
 
+  .challenge-header h2 {
+    font-size: 1.4rem;
+    line-height: 1.2;
+  }
+
   .challenge-meta {
     flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .challenge-points {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 16px;
+  }
+
+  .challenge-deadline {
+    font-size: 0.85rem;
+  }
+
+  .challenge-content h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .challenge-content p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .challenge-submission textarea {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+    min-height: 100px;
+  }
+
+  .submit-button {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+
+  .submission-success {
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+}
+
+/* Móviles pequeños (hasta 320px) */
+@media (max-width: 320px) {
+  .weekly-challenge {
+    padding: 1rem;
+  }
+
+  .weekly-challenge.loading {
+    padding: 2rem;
+  }
+
+  .challenge-header h2 {
+    font-size: 1.2rem;
+    line-height: 1.1;
+  }
+
+  .challenge-points {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8rem;
+    border-radius: 14px;
+  }
+
+  .challenge-deadline {
+    font-size: 0.8rem;
+  }
+
+  .challenge-content h3 {
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .challenge-content p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .challenge-submission textarea {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+    min-height: 80px;
+  }
+
+  .submit-button {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    width: 100%;
+  }
+
+  .submission-success {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .submission-success p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Orientación horizontal en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .weekly-challenge {
+    padding: 1rem;
+  }
+
+  .challenge-header {
+    margin-bottom: 1rem;
+  }
+
+  .challenge-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .challenge-submission textarea {
+    min-height: 60px;
+  }
+
+  .submit-button {
+    padding: 0.6rem 1rem;
   }
 } 

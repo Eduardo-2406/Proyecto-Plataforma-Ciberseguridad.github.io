@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProgress } from '../../contexts/ProgressContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaArrowUp } from 'react-icons/fa';
 import ModuleProgress from './ModuleProgress';
 import WeeklyChallenge from './WeeklyChallenge';
 import UserRanking from './UserRanking';
@@ -10,6 +12,21 @@ import '../../styles/Dashboard.css';
 const Dashboard = () => {
   const { userStats } = useProgress();
   const { currentUser } = useAuth();
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Scroll to top functionality
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.pageYOffset > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const getUserLevel = (points) => {
     if (points < 1000) return { name: 'Novato', icon: '🌱' };
@@ -55,6 +72,23 @@ const Dashboard = () => {
           <NextSteps />
         </div>
       </div>
+
+      {/* Scroll to top button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            className="scroll-to-top"
+            onClick={scrollToTop}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <FaArrowUp />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

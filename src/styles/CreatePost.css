@@ -1,37 +1,47 @@
 .create-post {
   background: white;
-  border-radius: 12px;
-  padding: 2rem;
-  margin-bottom: 2rem;
+  border-radius: clamp(8px, 2vw, 12px);
+  padding: clamp(1.2rem, 4vw, 2rem);
+  margin-bottom: clamp(1.5rem, 4vw, 2rem);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .create-post h2 {
   color: #2c3e50;
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  font-size: clamp(1.3rem, 3.5vw, 1.5rem);
+  line-height: 1.2;
+  font-weight: 600;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
 }
 
 .form-group label {
   display: block;
   color: #4a5568;
-  margin-bottom: 0.5rem;
+  margin-bottom: clamp(0.4rem, 1vw, 0.5rem);
   font-weight: 500;
+  font-size: clamp(0.9rem, 2.2vw, 1rem);
+  line-height: 1.3;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 0.75rem;
+  padding: clamp(0.6rem, 2vw, 0.75rem);
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
+  border-radius: clamp(6px, 1.5vw, 8px);
+  font-size: clamp(0.9rem, 2.2vw, 1rem);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+  background: white;
+  line-height: 1.4;
 }
 
 .form-group input:focus,
@@ -44,38 +54,115 @@
 
 .form-group textarea {
   resize: vertical;
-  min-height: 120px;
+  min-height: clamp(100px, 15vw, 120px);
+  max-height: 300px; /* Límite máximo para evitar textarea demasiado grande */
 }
 
 .submit-button {
   background: #27ae60;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: clamp(0.6rem, 2vw, 0.75rem) clamp(1.2rem, 3vw, 1.5rem);
+  border-radius: clamp(6px, 1.5vw, 8px);
+  font-size: clamp(0.9rem, 2.2vw, 1rem);
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  min-height: clamp(40px, 8vw, 44px);
+  box-sizing: border-box;
 }
 
-.submit-button:hover {
-  background: #219a52;
+/* Aplicamos hover solo en dispositivos que lo soportan */
+@media (hover: hover) and (pointer: fine) {
+  .submit-button:hover {
+    background: #219a52;
+    transform: translateY(-1px);
+  }
 }
 
 .submit-button:disabled {
   background: #cbd5e0;
   cursor: not-allowed;
+  opacity: 0.7;
+  transform: none; /* Sin efecto hover cuando está deshabilitado */
 }
 
-@media (max-width: 768px) {
-  .create-post {
-    padding: 1.5rem;
-  }
+.submit-button:active {
+  transform: translateY(0); /* Efecto de presión */
+}
 
+/* ==================== MEDIA QUERIES COMPLEMENTARIAS ==================== */
+
+/* Móviles pequeños - Optimizaciones específicas */
+@media (max-width: 480px) {
+  .create-post {
+    padding: clamp(1rem, 3vw, 1.2rem);
+    margin-bottom: clamp(1.2rem, 3vw, 1.5rem);
+  }
+  
+  .create-post h2 {
+    font-size: clamp(1.2rem, 4vw, 1.3rem);
+    margin-bottom: clamp(0.8rem, 2.5vw, 1rem);
+  }
+  
+  .form-group {
+    margin-bottom: clamp(0.8rem, 2.5vw, 1rem);
+  }
+  
   .form-group input,
   .form-group select,
   .form-group textarea {
     font-size: 16px; /* Previene zoom en iOS */
+    padding: clamp(0.8rem, 2.5vw, 1rem);
+  }
+  
+  .form-group textarea {
+    min-height: clamp(120px, 18vw, 140px);
+  }
+  
+  .submit-button {
+    width: 100%;
+    padding: clamp(0.8rem, 2.5vw, 1rem);
+    font-size: 16px; /* Previene zoom en iOS */
+  }
+}
+
+/* Tablets - Ajustes específicos */
+@media (min-width: 481px) and (max-width: 768px) {
+  .create-post {
+    padding: clamp(1.5rem, 3vw, 1.8rem);
+  }
+  
+  .submit-button {
+    min-width: 150px; /* Ancho mínimo en tablets */
+  }
+}
+
+/* Desktop mediano - Optimizaciones */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .create-post {
+    max-width: 700px; /* Límite en pantallas medianas */
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Desktop grande - Límites y optimizaciones */
+@media (min-width: 1025px) {
+  .create-post {
+    max-width: 800px; /* Límite máximo para buena legibilidad */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 2rem;
+  }
+  
+  .form-group textarea {
+    min-height: 140px;
+  }
+  
+  .submit-button {
+    display: inline-block;
+    width: auto;
+    min-width: 160px;
   }
 } 

@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedText from '../components/animations/AnimatedText';
-import styled from 'styled-components';
 import { gsap } from 'gsap';
+import { FaArrowUp } from 'react-icons/fa';
 import heroImage from '../assets/images/hero-image.jpg';
 import '../styles/Home.css';
 
@@ -27,92 +27,41 @@ const Card = ({ title, description, navigateLink }) => {
   };
 
   return (
-    <StyledWrapper>
-      <div className="card">
-        <div className="card-details">
-          <p className="text-title">{title}</p>
-          <p className="text-body">{description}</p>
-        </div>
-        <button className="card-button" onClick={handleButtonClick}>Ver más</button>
+    <motion.div 
+      className="home-card"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ y: -5 }}
+    >
+      <div className="home-card-details">
+        <p className="home-text-title">{title}</p>
+        <p className="home-text-body">{description}</p>
       </div>
-    </StyledWrapper>
+      <button className="home-card-button" onClick={handleButtonClick}>Ver más</button>
+    </motion.div>
   );
 };
 
-const StyledWrapper = styled.div`
-  .card {
-   width: 300px; /* Increased fixed width for larger cards */
-   height: 350px; /* Increased fixed height for uniform size */
-   border-radius: 20px;
-   background: #f5f5f5;
-   position: relative;
-   padding: 1.8rem;
-   border: 2px solid #c3c6ce;
-   transition: 0.5s ease-out;
-   overflow: hidden; /* Hide overflow */
-   display: flex; /* Use flexbox for internal layout */
-   flex-direction: column;
-   justify-content: space-between;
-   padding-bottom: 4rem; /* Add padding at the bottom for the button */
-  }
-
-  .card-details {
-   color: black;
-   gap: .5em;
-   display: flex; /* Use flexbox for details */
-   flex-direction: column;
-   flex-grow: 1;
-   margin-bottom: 1rem; /* Space before button */
-   overflow: hidden; /* Hide overflow to prevent text pushing button down */
-  }
-
-  .card-button {
-   transform: translate(-50%, 125%); /* Keep original transform for initial state */
-   width: 80%; /* Increase button width */
-   border-radius: 1rem;
-   border: none;
-   background-color: #008bf8;
-   color: #fff;
-   font-size: 1rem;
-   padding: .75rem 1rem;
-   position: absolute;
-   left: 50%;
-   bottom: 0; /* Start at the very bottom */
-   opacity: 0;
-   transition: 0.3s ease-out;
-   cursor: pointer;
-   z-index: 10;
-  }
-
-  .text-body {
-   color: #555; /* Darker gray text color */
-   flex-grow: 1;
-   overflow: hidden;
-   text-overflow: ellipsis;
-  }
-
-  /*Text*/
-  .text-title {
-   font-size: 1.5em;
-   font-weight: bold;
-   margin-bottom: 0.5em;
-  }
-
-  /*Hover*/
-  .card:hover {
-   border-color: #008bf8;
-   box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
-  }
-
-  /* Adjust hover effect on button to be fully visible */
-  .card:hover .card-button {
-   transform: translate(-50%, -10%); /* Adjust transform to be fully visible */
-   opacity: 1;
-  }
-`;
-
 const Home = () => {
   const { currentUser } = useAuth();
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.pageYOffset > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   return (
     <div className="home-container" style={{ backgroundColor: 'white' }}>
@@ -225,6 +174,23 @@ const Home = () => {
           Accede a contenido especializado, obtén certificaciones reconocidas y forma parte de una comunidad comprometida con la seguridad digital.
         </p>
       </section>
+
+      {/* Scroll to top button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            className={`home-scroll-to-top ${showScrollTop ? 'visible' : ''}`}
+            onClick={scrollToTop}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <FaArrowUp />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

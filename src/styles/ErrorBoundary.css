@@ -3,43 +3,162 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 400px;
-  padding: 2rem;
+  min-height: clamp(300px, 50vh, 400px); /* Altura adaptativa */
+  padding: clamp(1.5rem, 4vw, 2rem);
   text-align: center;
   background: white;
-  border-radius: 1rem;
+  border-radius: clamp(8px, 2vw, 16px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin: 2rem auto;
-  max-width: 600px;
+  margin: clamp(1rem, 4vw, 2rem) auto;
+  max-width: min(600px, 90vw); /* Responsive máximo */
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(229, 62, 62, 0.1); /* Borde sutil de error */
 }
 
 .error-boundary h2 {
   color: #e53e3e;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+  font-size: clamp(1.3rem, 3.5vw, 1.5rem);
+  margin-bottom: clamp(0.8rem, 2vw, 1rem);
+  line-height: 1.2;
+  font-weight: 600;
 }
 
 .error-boundary p {
   color: #4a5568;
-  margin-bottom: 2rem;
+  font-size: clamp(0.9rem, 2.2vw, 1rem);
+  margin-bottom: clamp(1.5rem, 4vw, 2rem);
+  line-height: 1.5;
+  max-width: 500px; /* Limitar ancho del texto para mejor legibilidad */
 }
 
 .retry-button {
   background: #3182ce;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-size: 1rem;
+  padding: clamp(0.6rem, 2vw, 0.75rem) clamp(1.2rem, 3vw, 1.5rem);
+  border-radius: clamp(6px, 1.5vw, 8px);
+  font-size: clamp(0.9rem, 2.2vw, 1rem);
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-height: clamp(40px, 8vw, 44px);
+  min-width: clamp(120px, 25vw, 150px);
+  box-sizing: border-box;
 }
 
-.retry-button:hover {
-  background: #2c5282;
-  transform: translateY(-2px);
+/* Aplicamos hover solo en dispositivos que lo soportan */
+@media (hover: hover) and (pointer: fine) {
+  .retry-button:hover {
+    background: #2c5282;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
 }
 
 .retry-button:active {
   transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.retry-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.3);
+}
+
+/* ==================== MEDIA QUERIES COMPLEMENTARIAS ==================== */
+
+/* Móviles pequeños - Optimizaciones específicas */
+@media (max-width: 480px) {
+  .error-boundary {
+    margin: clamp(0.5rem, 2vw, 1rem) clamp(0.5rem, 2vw, 1rem);
+    padding: clamp(1.2rem, 3vw, 1.5rem);
+    min-height: clamp(250px, 40vh, 300px);
+  }
+  
+  .error-boundary h2 {
+    font-size: clamp(1.2rem, 4vw, 1.3rem);
+    margin-bottom: clamp(0.6rem, 2vw, 0.8rem);
+  }
+  
+  .error-boundary p {
+    font-size: clamp(0.85rem, 2.5vw, 0.9rem);
+    margin-bottom: clamp(1.2rem, 3vw, 1.5rem);
+    padding: 0 0.5rem;
+  }
+  
+  .retry-button {
+    width: 100%;
+    max-width: 280px;
+    padding: clamp(0.8rem, 2.5vw, 1rem);
+    font-size: 16px; /* Previene zoom en iOS */
+  }
+}
+
+/* Tablets - Ajustes específicos */
+@media (min-width: 481px) and (max-width: 768px) {
+  .error-boundary {
+    max-width: min(500px, 85vw);
+    padding: clamp(1.5rem, 3vw, 1.8rem);
+  }
+  
+  .retry-button {
+    min-width: clamp(140px, 20vw, 160px);
+  }
+}
+
+/* Desktop mediano - Optimizaciones */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .error-boundary {
+    max-width: 550px;
+    padding: 1.8rem;
+  }
+}
+
+/* Desktop grande - Límites y centrado */
+@media (min-width: 1025px) {
+  .error-boundary {
+    max-width: 600px;
+    padding: 2rem;
+    min-height: 400px;
+  }
+  
+  .error-boundary h2 {
+    font-size: 1.5rem;
+  }
+  
+  .error-boundary p {
+    font-size: 1rem;
+  }
+  
+  .retry-button {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    min-width: 150px;
+    width: auto;
+  }
+}
+
+/* Estados de error específicos - Mejoras visuales */
+.error-boundary::before {
+  content: "⚠️";
+  font-size: clamp(2rem, 6vw, 3rem);
+  margin-bottom: clamp(0.5rem, 2vw, 1rem);
+  opacity: 0.8;
+}
+
+/* Animación sutil para la entrada */
+.error-boundary {
+  animation: fadeInError 0.5s ease-out;
+}
+
+@keyframes fadeInError {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 } 

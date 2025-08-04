@@ -63,72 +63,192 @@ const Certificates = () => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       
-      // Configurar el tamaño del canvas (tamaño estándar de certificado)
-      canvas.width = 1400; // Ancho para un certificado apaisado más grande
-      canvas.height = 1000;
+      // Configurar el tamaño responsivo del canvas
+      const isSmallScreen = window.innerWidth < 768;
+      canvas.width = isSmallScreen ? 1200 : 1600; // Responsivo
+      canvas.height = isSmallScreen ? 850 : 1150;
       
-      // Fondo del certificado (un degradado suave con colores de la paleta)
+      // Crear un fondo moderno con degradado diagonal
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, '#e0f7fa'); // Un celeste muy claro
-      gradient.addColorStop(0.5, '#e0f2f7'); // Azul claro
-      gradient.addColorStop(1, '#cce9f1'); // Azul aún más claro
+      gradient.addColorStop(0, '#ffffff'); // Blanco puro
+      gradient.addColorStop(0.3, '#f8fbff'); // Azul muy sutil
+      gradient.addColorStop(0.7, '#e8f4fd'); // Azul claro elegante
+      gradient.addColorStop(1, '#dbeafe'); // Azul suave al final
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Borde decorativo (diseño más elaborado)
-      ctx.strokeStyle = '#0077cc'; // Azul vibrante
-      ctx.lineWidth = 25; // Borde más notorio
-      ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
-
-      ctx.strokeStyle = '#005599'; // Azul más oscuro para un segundo borde
-      ctx.lineWidth = 5;
+      // Elementos decorativos modernos - Círculos sutiles en las esquinas
+      ctx.fillStyle = 'rgba(59, 130, 246, 0.03)'; // Azul muy transparente
+      ctx.beginPath();
+      ctx.arc(0, 0, 150, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.arc(canvas.width, 0, 120, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.arc(0, canvas.height, 100, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.arc(canvas.width, canvas.height, 130, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Borde principal moderno con esquinas redondeadas simuladas
+      ctx.strokeStyle = '#3b82f6'; // Azul moderno
+      ctx.lineWidth = 8;
       ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
       
-      // Fuente principal para títulos (considerar fuentes personalizadas si están disponibles)
-      const titleFontFamily = '' // Aquí podrías especificar una fuente personalizada si la tienes cargada
+      // Borde interior elegante
+      ctx.strokeStyle = '#1e40af'; // Azul más intenso
+      ctx.lineWidth = 3;
+      ctx.strokeRect(55, 55, canvas.width - 110, canvas.height - 110);
+      
+      // Línea decorativa superior
+      ctx.strokeStyle = '#6366f1'; // Índigo elegante
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(canvas.width * 0.25, 120);
+      ctx.lineTo(canvas.width * 0.75, 120);
+      ctx.stroke();
 
-      // Título principal
-      ctx.fillStyle = '#003366'; // Azul muy oscuro
-      ctx.font = `bold 70px 'Arial, sans-serif'`; // Tamaño y peso
+      // Configurar texto centrado
       ctx.textAlign = 'center';
-      ctx.fillText('CERTIFICADO DE RECONOCIMIENTO', canvas.width / 2, 180);
+      ctx.textBaseline = 'middle';
       
-      // Texto de otorgamiento
-      ctx.fillStyle = '#1a202c';
-      ctx.font = `40px 'Arial, sans-serif'`;
-      ctx.fillText('Este certificado se otorga a', canvas.width / 2, 280);
-
-      // Nombre del destinatario (resaltado y estilizado)
-      ctx.fillStyle = '#001f3f'; // Casi negro, un azul muy oscuro
-      ctx.font = `bold 65px 'Georgia, serif'`; // Fuente con serifa para distinción
-      ctx.fillText(certificate.recipientName.toUpperCase(), canvas.width / 2, 380);
-
-      // Texto intermedio
-      ctx.fillStyle = '#1a202c';
-      ctx.font = `35px 'Arial, sans-serif'`;
-      ctx.fillText('por la exitosa completación de la evaluación', canvas.width / 2, 460);
-
-      // Título de la evaluación (resaltado)
-      ctx.fillStyle = '#001f3f';
-      ctx.font = `bold 45px 'Arial, sans-serif'`;
-      ctx.fillText(certificate.evaluationTitle, canvas.width / 2, 530);
-
-      // Detalles adicionales (organizados)
-      ctx.fillStyle = '#4a5568';
-      ctx.font = `30px 'Arial, sans-serif'`;
+      // Título principal moderno
+      ctx.fillStyle = '#1e3a8a'; // Azul naval profundo
+      ctx.font = `bold ${isSmallScreen ? '55px' : '75px'} Arial, sans-serif`;
+      ctx.fillText('CERTIFICADO DE EXCELENCIA', canvas.width / 2, isSmallScreen ? 160 : 180);
       
-      // Calcular posiciones para los detalles centrados
-      const detailYStart = 650;
-      const detailLineHeight = 40;
+      // Subtítulo elegante
+      ctx.fillStyle = '#374151'; // Gris elegante
+      ctx.font = `${isSmallScreen ? '28px' : '35px'} Arial, sans-serif`;
+      ctx.fillText('EN CIBERSEGURIDAD', canvas.width / 2, isSmallScreen ? 200 : 230);
+      
+      // Texto de otorgamiento con estilo
+      ctx.fillStyle = '#4b5563';
+      ctx.font = `${isSmallScreen ? '32px' : '42px'} Arial, sans-serif`;
+      ctx.fillText('Se otorga con orgullo a', canvas.width / 2, isSmallScreen ? 280 : 320);
 
-      ctx.fillText(`Puntuación obtenida: ${certificate.score}%`, canvas.width / 2, detailYStart);
-      ctx.fillText(`Emitido por: ${certificate.issuer}`, canvas.width / 2, detailYStart + detailLineHeight);
-      ctx.fillText(`Fecha de emisión: ${new Date(certificate.issueDate).toLocaleDateString()}`, canvas.width / 2, detailYStart + detailLineHeight * 2);
+      // Nombre del destinatario con letras CURSIVAS y estilo elegante
+      ctx.fillStyle = '#1e40af'; // Azul profundo para el nombre
+      ctx.font = `italic bold ${isSmallScreen ? '58px' : '78px'} cursive`;
+      ctx.fillText(certificate.recipientName, canvas.width / 2, isSmallScreen ? 350 : 400);
+      
+      // Línea decorativa bajo el nombre
+      ctx.strokeStyle = '#6366f1';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      const nameWidth = ctx.measureText(certificate.recipientName).width;
+      ctx.moveTo((canvas.width - nameWidth) / 2 - 50, isSmallScreen ? 375 : 430);
+      ctx.lineTo((canvas.width + nameWidth) / 2 + 50, isSmallScreen ? 375 : 430);
+      ctx.stroke();
 
-      // Código de verificación (más pequeño y discreto en la parte inferior)
-      ctx.fillStyle = '#718096';
-      ctx.font = `22px 'Arial, sans-serif'`;
-      ctx.fillText(`Código de verificación: ${certificate.verificationCode}`, canvas.width / 2, canvas.height - 40);
+      // Texto intermedio elegante
+      ctx.fillStyle = '#374151';
+      ctx.font = `${isSmallScreen ? '28px' : '36px'} Arial, sans-serif`;
+      ctx.fillText('por demostrar competencia excepcional en', canvas.width / 2, isSmallScreen ? 420 : 480);
+
+      // Título de la evaluación destacado
+      ctx.fillStyle = '#1e40af';
+      ctx.font = `bold ${isSmallScreen ? '36px' : '48px'} Arial, sans-serif`;
+      const maxWidth = canvas.width * 0.8;
+      const words = certificate.evaluationTitle.split(' ');
+      let line = '';
+      const lines = [];
+      
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
+        if (testWidth > maxWidth && n > 0) {
+          lines.push(line);
+          line = words[n] + ' ';
+        } else {
+          line = testLine;
+        }
+      }
+      lines.push(line);
+      
+      const startY = isSmallScreen ? 470 : 540;
+      lines.forEach((line, index) => {
+        ctx.fillText(line.trim(), canvas.width / 2, startY + (index * (isSmallScreen ? 35 : 45)));
+      });
+
+      // Sección de detalles con diseño moderno
+      const detailsStartY = isSmallScreen ? 580 : 680;
+      ctx.fillStyle = '#6b7280';
+      ctx.font = `${isSmallScreen ? '24px' : '30px'} Arial, sans-serif`;
+      
+      // Crear cajas de detalles con fondo sutil
+      const detailBoxWidth = canvas.width * 0.7;
+      const detailBoxHeight = isSmallScreen ? 80 : 100;
+      const detailBoxX = (canvas.width - detailBoxWidth) / 2;
+      
+      // Fondo para la sección de detalles
+      ctx.fillStyle = 'rgba(249, 250, 251, 0.8)';
+      ctx.fillRect(detailBoxX, detailsStartY - 20, detailBoxWidth, detailBoxHeight);
+      
+      // Detalles del certificado
+      ctx.fillStyle = '#374151';
+      ctx.font = `${isSmallScreen ? '22px' : '28px'} Arial, sans-serif`;
+      
+      const detailLines = [
+        `Puntuación obtenida: ${certificate.score}%`,
+        `Emitido por: ${certificate.issuer}`,
+        `Fecha de emisión: ${new Date(certificate.issueDate).toLocaleDateString('es-ES', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })}`
+      ];
+      
+      detailLines.forEach((detail, index) => {
+        ctx.fillText(detail, canvas.width / 2, detailsStartY + 10 + (index * (isSmallScreen ? 25 : 30)));
+      });
+
+      // Código de verificación con estilo moderno
+      ctx.fillStyle = '#9ca3af';
+      ctx.font = `${isSmallScreen ? '18px' : '22px'} monospace`;
+      ctx.fillText(`Código de verificación: ${certificate.verificationCode}`, canvas.width / 2, canvas.height - (isSmallScreen ? 30 : 50));
+
+      // Elementos decorativos finales - Estrellas o iconos
+      ctx.fillStyle = '#fbbf24'; // Dorado para las estrellas
+      ctx.font = `${isSmallScreen ? '20px' : '24px'} serif`;
+      
+      // Estrella izquierda
+      ctx.fillText('★', canvas.width * 0.15, isSmallScreen ? 350 : 400);
+      // Estrella derecha
+      ctx.fillText('★', canvas.width * 0.85, isSmallScreen ? 350 : 400);
+      
+      // Sello/Badge de calidad en la esquina
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.1)';
+      ctx.beginPath();
+      ctx.arc(canvas.width - 100, 100, 40, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      ctx.fillStyle = '#10b981';
+      ctx.font = `bold ${isSmallScreen ? '12px' : '14px'} Arial, sans-serif`;
+      ctx.fillText('CERTIFICADO', canvas.width - 100, 95);
+      ctx.fillText('OFICIAL', canvas.width - 100, 110);
+
+      // Líneas decorativas modernas en los laterales
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.3)';
+      ctx.lineWidth = 2;
+      
+      // Línea izquierda
+      ctx.beginPath();
+      ctx.moveTo(80, canvas.height * 0.3);
+      ctx.lineTo(80, canvas.height * 0.7);
+      ctx.stroke();
+      
+      // Línea derecha
+      ctx.beginPath();
+      ctx.moveTo(canvas.width - 80, canvas.height * 0.3);
+      ctx.lineTo(canvas.width - 80, canvas.height * 0.7);
+      ctx.stroke();
 
       // Firma o logo (opcional)
       // const logo = new Image();

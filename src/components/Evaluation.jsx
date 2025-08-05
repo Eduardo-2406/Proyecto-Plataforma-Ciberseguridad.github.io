@@ -529,8 +529,8 @@ const Evaluation = () => {
               onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
               disabled={currentQuestion === 0}
             >
-              <i className="fas fa-arrow-left" />
-              Anterior
+              <i className="fas fa-arrow-left nav-icon" />
+              <span className="nav-text">Anterior</span>
             </button>
             <button
               className="nav-button"
@@ -544,13 +544,13 @@ const Evaluation = () => {
             >
               {currentQuestion === evaluation.questions.length - 1 ? (
                 <>
-                  Finalizar
-                  <i className="fas fa-check" />
+                  <span className="nav-text">Finalizar</span>
+                  <i className="fas fa-check nav-icon" />
                 </>
               ) : (
                 <>
-                  Siguiente
-                  <i className="fas fa-arrow-right" />
+                  <span className="nav-text">Siguiente</span>
+                  <i className="fas fa-arrow-right nav-icon" />
                 </>
               )}
             </button>

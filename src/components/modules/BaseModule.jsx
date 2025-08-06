@@ -5,6 +5,7 @@ import useStore from '../../store/useStore';
 import { useFirebaseQuery } from '../../hooks/useFirebaseQuery';
 import { auth, database } from '../../config/firebase';
 import { ref, set } from 'firebase/database';
+import '../../styles/BaseModule.css';
 
 const MAX_ATTEMPTS = 2; // Máximo de intentos permitidos para el quiz
 
@@ -180,41 +181,41 @@ const BaseModule = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="base-module-container">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-lg shadow-lg p-8"
+        className="base-module-card"
       >
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold text-gray-800">{title}</h1>
-          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-            moduleStatus === 'Completado' ? 'bg-green-100 text-green-800' :
-            moduleStatus === 'En Proceso' ? 'bg-yellow-100 text-yellow-800' :
-            'bg-gray-100 text-gray-800'
+        <div className="module-header">
+          <h1 className="module-title">{title}</h1>
+          <span className={`module-status-badge ${
+            moduleStatus === 'Completado' ? 'completed' :
+            moduleStatus === 'En Proceso' ? 'in-progress' :
+            'not-started'
           }`}>
             {moduleStatus}
           </span>
         </div>
-        <p className="text-gray-600 mb-8">{description}</p>
+        <p className="module-description">{description}</p>
 
         {/* Secciones del módulo */}
-        <div className="space-y-8">
+        <div className="module-sections">
           {sections.map((section, index) => (
             <motion.section
               key={section.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2 }}
-              className="bg-gray-50 rounded-lg p-6"
+              className="module-section"
             >
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              <h2 className="section-title">
                 {section.title}
               </h2>
-              <p className="text-gray-600 mb-4">{section.content}</p>
+              <p className="section-content">{section.content}</p>
               
               {section.points && (
-                <ul className="list-disc list-inside mb-4 text-gray-600">
+                <ul className="section-points">
                   {section.points.map((point, i) => (
                     <li key={i}>{point}</li>
                   ))}
@@ -222,11 +223,11 @@ const BaseModule = ({
               )}
 
               {section.image && (
-                <div className="relative w-full h-64 mb-4">
+                <div className="section-image-container">
                   <img
                     src={section.image}
                     alt={section.title}
-                    className="w-full h-full object-cover rounded-lg"
+                    className="section-image"
                   />
                 </div>
               )}
@@ -236,7 +237,7 @@ const BaseModule = ({
                   href={section.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                  className="section-link"
                 >
                   Leer más
                 </a>
@@ -247,69 +248,79 @@ const BaseModule = ({
 
         {/* Videos del módulo */}
         {videos && videos.length > 0 && (
-          <div className="mt-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          <div className="videos-section">
+            <h2 className="videos-title">
               Videos Educativos
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="videos-grid">
               {videos.map((video, index) => (
-                <div key={index} className="aspect-video relative">
-                  <iframe
-                    src={video.url}
-                    title={video.title}
-                    className="w-full h-full rounded-lg"
-                    allowFullScreen
-                    onLoad={() => handleVideoProgress(index)}
-                  />
-                  {videoProgress[index] && (
-                    <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-sm">
-                      ✓ Visto
-                    </div>
-                  )}
+                <div key={index} className="video-card">
+                  <div className="video-container">
+                    <iframe
+                      src={video.url}
+                      title={video.title}
+                      className="video-iframe"
+                      allowFullScreen
+                      onLoad={() => handleVideoProgress(index)}
+                    />
+                    {videoProgress[index] && (
+                      <div className="video-completed-badge">
+                        Visto
+                      </div>
+                    )}
+                  </div>
+                  <div className="video-info">
+                    <h3 className="video-title">{video.title}</h3>
+                    <div className="video-duration">Educativo</div>
+                  </div>
                 </div>
               ))}
             </div>
-            <div className="mt-2 text-sm text-gray-600">
+            <div className="videos-progress">
               Videos vistos: {Object.values(videoProgressData || {}).filter(video => video.watched).length} de {videos.length}
+              <div className="progress-bar">
+                <div 
+                  className="progress-fill" 
+                  style={{
+                    width: `${(Object.values(videoProgressData || {}).filter(video => video.watched).length / videos.length) * 100}%`
+                  }}
+                ></div>
+              </div>
             </div>
           </div>
         )}
 
         {/* Sección del Quiz */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Quiz del Módulo</h2>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Estado del Quiz:</span>
-              <span className="font-medium">
+        <div className="quiz-section">
+          <h2 className="quiz-title">Quiz del Módulo</h2>
+          <div className="quiz-info">
+            <div className="quiz-stat">
+              <span className="quiz-stat-label">Estado del Quiz:</span>
+              <span className="quiz-stat-value">
                 Intentos realizados: {quizAttempts} de 2
               </span>
             </div>
             
             {bestScore !== null && (
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Tu mejor puntuación:</span>
-                <span className="font-medium">
+              <div className="quiz-stat">
+                <span className="quiz-stat-label">Tu mejor puntuación:</span>
+                <span className="quiz-stat-value">
                   {typeof bestScore === 'number' ? bestScore.toFixed(1) : '0.0'}%
                 </span>
               </div>
             )}
 
             {bestScore !== null && bestScore >= 80 && (
-              <div className="bg-green-100 text-green-800 p-4 rounded-lg">
-                <p className="font-medium">Has ganado 30 puntos por este quiz.</p>
+              <div className="quiz-success">
+                <p className="quiz-success-text">Has ganado 30 puntos por este quiz.</p>
               </div>
             )}
 
-            <div className="flex justify-end space-x-4">
+            <div className="quiz-actions">
               <button
                 onClick={onRetryQuiz}
                 disabled={quizAttempts >= 2 || quizCompleted}
-                className={`px-6 py-2 rounded-lg ${
-                  quizAttempts >= 2 || quizCompleted
-                    ? 'bg-gray-300 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                }`}
+                className={quizAttempts >= 2 || quizCompleted ? 'quiz-btn-disabled' : 'quiz-btn-primary'}
               >
                 {quizAttempts === 0 ? 'Comenzar Quiz' : 'Reintentar Quiz'}
               </button>
@@ -318,15 +329,11 @@ const BaseModule = ({
         </div>
 
         {/* Botón Completar Módulo */}
-        <div className="mt-8 flex justify-center">
+        <div className="module-complete-section">
           <button
             onClick={handleModuleComplete}
             disabled={!canCompleteModule || isModuleCompleted}
-            className={`px-6 py-3 rounded-lg text-white font-medium ${
-              canCompleteModule && !isModuleCompleted
-                ? 'bg-green-600 hover:bg-green-700'
-                : 'bg-gray-400 cursor-not-allowed'
-            }`}
+            className={canCompleteModule && !isModuleCompleted ? 'complete-btn-active' : 'complete-btn-disabled'}
           >
             {isModuleCompleted ? 'Módulo Completado' : 'Completar Módulo'}
           </button>

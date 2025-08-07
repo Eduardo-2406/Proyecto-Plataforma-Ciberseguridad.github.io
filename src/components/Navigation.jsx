@@ -1,25 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { auth } from '../config/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/Navigation.css';
 
 const Navigation = () => {
-  const [user, setUser] = useState(null);
+  const { currentUser, logout } = useAuth();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const location = useLocation();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
   const handleLogout = async () => {
     try {
-      await auth.signOut();
+      await logout();
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
@@ -49,6 +40,7 @@ const Navigation = () => {
         </button>
 
         <div className={`nav-links ${showMobileMenu ? 'show' : ''}`}>
+          {/* Home/Inicio - Siempre visible */}
           <Link 
             to="/" 
             className={isActive('/') ? 'active' : ''}
@@ -56,30 +48,38 @@ const Navigation = () => {
             <i className="fas fa-home" />
             Inicio
           </Link>
-          <Link 
-            to="/modules" 
-            className={isActive('/modules') ? 'active' : ''}
-          >
-            <i className="fas fa-book" />
-            Módulos
-          </Link>
-          <Link 
-            to="/progress" 
-            className={isActive('/progress') ? 'active' : ''}
-          >
-            <i className="fas fa-chart-line" />
-            Progreso
-          </Link>
-          <Link 
-            to="/certificates" 
-            className={isActive('/certificates') ? 'active' : ''}
-          >
-            <i className="fas fa-certificate" />
-            Certificados
-          </Link>
-
-          {user ? (
+          
+          {/* Enlaces que requieren autenticación - Solo visibles si hay usuario */}
+          {currentUser && (
             <>
+              <Link 
+                to="/modules" 
+                className={isActive('/modules') ? 'active' : ''}
+              >
+                <i className="fas fa-book" />
+                Módulos
+              </Link>
+              <Link 
+                to="/evaluations" 
+                className={isActive('/evaluations') ? 'active' : ''}
+              >
+                <i className="fas fa-clipboard-check" />
+                Evaluaciones
+              </Link>
+              <Link 
+                to="/progress" 
+                className={isActive('/progress') ? 'active' : ''}
+              >
+                <i className="fas fa-chart-line" />
+                Progreso
+              </Link>
+              <Link 
+                to="/certificates" 
+                className={isActive('/certificates') ? 'active' : ''}
+              >
+                <i className="fas fa-certificate" />
+                Certificados
+              </Link>
               <Link 
                 to="/profile" 
                 className={isActive('/profile') ? 'active' : ''}
@@ -95,14 +95,21 @@ const Navigation = () => {
                 Cerrar Sesión
               </button>
             </>
-          ) : (
-            <Link 
-              to="/login" 
-              className={isActive('/login') ? 'active' : ''}
+          )}
+
+          {/* Botón de Login - Solo visible si NO hay usuario */}
+          {!currentUser && (
+            <button 
+              onClick={() => {
+                // Aquí deberías abrir el LoginModal en lugar de navegar
+                // Necesitamos conectar esto con el MainLayout
+                window.dispatchEvent(new CustomEvent('openLoginModal'));
+              }}
+              className="nav-login-button"
             >
               <i className="fas fa-sign-in-alt" />
               Iniciar Sesión
-            </Link>
+            </button>
           )}
         </div>
       </div>

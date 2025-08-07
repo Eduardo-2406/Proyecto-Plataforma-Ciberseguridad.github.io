@@ -10,8 +10,19 @@ import '../styles/Home.css';
 
 const Card = ({ title, description, navigateLink }) => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
   const handleButtonClick = () => {
+    // Si no hay usuario y es una ruta protegida, abrir LoginModal
+    const protectedRoutes = ['/modules', '/evaluations', '/progress', '/certificates', '/forum', '/resources'];
+    
+    if (!currentUser && protectedRoutes.includes(navigateLink)) {
+      // Abrir LoginModal usando evento personalizado
+      window.dispatchEvent(new CustomEvent('openLoginModal'));
+      return;
+    }
+
+    // Si hay usuario o es una ruta pública, navegar normalmente
     const content = document.querySelector('.home-container');
     if (content) {
       gsap.to(content, {

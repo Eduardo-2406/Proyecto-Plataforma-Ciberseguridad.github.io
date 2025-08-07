@@ -81,3 +81,13 @@ body {
     padding: clamp(0.5rem, 2vw, 1rem);
   }
 }
+
+/* Page Content Wrapper - Estilos para transiciones de páginas */
+.page-content {
+  min-height: 100vh;
+  background: #3589dc;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}

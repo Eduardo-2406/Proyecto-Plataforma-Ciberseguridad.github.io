@@ -10,7 +10,6 @@ import MainLayout from './components/layout/MainLayout';
 import Progress from './components/Progress';
 import styled from 'styled-components';
 import './styles/ErrorBoundary.css';
-import './styles/PageContent.css';
 import Quiz from './components/modules/Quiz';
 import ModuleRouter from './components/modules/ModuleRouter';
 

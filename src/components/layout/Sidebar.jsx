@@ -30,19 +30,19 @@ const Sidebar = ({ onToggle, isDrawerOpen, onCloseDrawer, setSidebarDrawerOpen }
       path: '/modules',
       icon: 'fas fa-book',
       label: 'Módulos',
-      public: true
+      public: false  // Solo visible con autenticación
     },
     {
       path: '/evaluations',
       icon: 'fas fa-tasks',
       label: 'Evaluaciones',
-      public: true
+      public: false  // Solo visible con autenticación
     },
     {
       path: '/forum',
       icon: 'fas fa-comments',
       label: 'Foro',
-      public: true
+      public: false  // Solo visible con autenticación
     },
     {
       path: '/certificates',
@@ -67,7 +67,7 @@ const Sidebar = ({ onToggle, isDrawerOpen, onCloseDrawer, setSidebarDrawerOpen }
       path: '/resources',
       icon: 'fas fa-lightbulb',
       label: 'Recursos',
-      public: true
+      public: false   // Solo visible con autenticación
     }
   ];
 

@@ -24,6 +24,19 @@ const MainLayout = () => {
     setIsSidebarDrawerOpen((prev) => !prev);
   };
 
+  // Escuchar evento personalizado para abrir LoginModal
+  React.useEffect(() => {
+    const handleOpenModal = () => {
+      setIsLoginModalOpen(true);
+    };
+
+    window.addEventListener('openLoginModal', handleOpenModal);
+    
+    return () => {
+      window.removeEventListener('openLoginModal', handleOpenModal);
+    };
+  }, []);
+
   return (
     <div className="main-layout">
       <Navbar onOpenLoginModal={handleOpenLoginModal} onToggleSidebar={handleToggleSidebar} isSidebarOpen={isSidebarDrawerOpen} />

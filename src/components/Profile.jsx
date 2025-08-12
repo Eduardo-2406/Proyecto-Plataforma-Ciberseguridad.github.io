@@ -9,7 +9,7 @@ import {
   FaUser, FaComments, FaCommentDots, FaHeart,
   FaUserAstronaut, FaUserNinja, FaUserSecret, FaUserTie,
   FaUserGraduate, FaUserShield, FaUserCog, FaUserAlt,
-  FaUserCircle, FaUserCheck
+  FaUserCircle, FaUserCheck, FaArrowUp
 } from 'react-icons/fa';
 import '../styles/Profile.css';
 
@@ -44,6 +44,7 @@ const Profile = () => {
     likes: 0,
     badges: []
   });
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
@@ -67,6 +68,12 @@ const Profile = () => {
       });
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.pageYOffset > 300);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -117,6 +124,8 @@ const Profile = () => {
     const avatar = AVATAR_OPTIONS.find(opt => opt.id === avatarId);
     return avatar ? avatar.icon : FaUserCircle;
   };
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (!currentUser) {
     return (
@@ -243,8 +252,13 @@ const Profile = () => {
           </div>
         )}
       </div>
+      {showScrollTop && (
+        <button className="profile-scroll-to-top" onClick={scrollToTop} aria-label="Volver arriba">
+          <FaArrowUp />
+        </button>
+      )}
     </div>
   );
 };
 
-export default Profile; 
+export default Profile;

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Post from './Post';
-import '../../styles/PostList.css';
 
 const PostList = ({ posts, onLike, onDelete, currentUser }) => {
   const [expandedPost, setExpandedPost] = useState(null);
@@ -35,4 +34,4 @@ const PostList = ({ posts, onLike, onDelete, currentUser }) => {
   );
 };
 
-export default PostList; 
+export default PostList;

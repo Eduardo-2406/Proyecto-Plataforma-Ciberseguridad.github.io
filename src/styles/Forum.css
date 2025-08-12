@@ -87,11 +87,21 @@
   background: #1d4ed8;
 }
 
-.posts-list {
+.post-list { /* contenedor de lista de posts */
   display: flex;
   flex-direction: column;
   gap: clamp(1rem, 3vw, 1.5rem);
 }
+
+/* Elimino selector antiguo .posts-list (ya no se usa) en media queries reemplazándolo */
+@media (max-width: 768px) {
+  .post-list { /* antes .posts-list en breakpoints */
+    gap: 1rem;
+  }
+}
+
+/* Reemplazos en otros breakpoints si existían .posts-list */
+/* Si había más ocurrencias de .posts-list ya quedan sobreescritas por esta definición global + media query. */
 
 .post-card {
   background: white;
@@ -514,7 +524,7 @@
     font-size: 0.95rem;
   }
   
-  .posts-list {
+  .post-list {
     gap: 1.2rem;
   }
   
@@ -658,7 +668,7 @@
     font-size: 0.9rem;
   }
   
-  .posts-list {
+  .post-list {
     gap: 1rem;
   }
   
@@ -786,7 +796,7 @@
     font-size: 0.85rem;
   }
   
-  .posts-list {
+  .post-list {
     gap: 0.8rem;
   }
   

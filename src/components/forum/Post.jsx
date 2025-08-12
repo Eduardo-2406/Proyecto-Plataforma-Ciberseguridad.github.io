@@ -1,23 +1,52 @@
 import React, { useState } from 'react';
 import { rtdb } from '../../config/firebase';
 import { ref, push } from 'firebase/database';
+import { 
+  FaUserAstronaut, FaUserNinja, FaUserSecret, FaUserTie,
+  FaUserGraduate, FaUserShield, FaUserCog, FaUserAlt,
+  FaUserCircle, FaUserCheck
+} from 'react-icons/fa';
 import '../../styles/Post.css';
+
+const AVATAR_OPTIONS = [
+  { id: 'astronaut', icon: FaUserAstronaut, name: 'Astronauta' },
+  { id: 'ninja', icon: FaUserNinja, name: 'Ninja' },
+  { id: 'secret', icon: FaUserSecret, name: 'Agente Secreto' },
+  { id: 'tie', icon: FaUserTie, name: 'Ejecutivo' },
+  { id: 'graduate', icon: FaUserGraduate, name: 'Graduado' },
+  { id: 'shield', icon: FaUserShield, name: 'Guardián' },
+  { id: 'cog', icon: FaUserCog, name: 'Ingeniero' },
+  { id: 'alt', icon: FaUserAlt, name: 'Alternativo' },
+  { id: 'circle', icon: FaUserCircle, name: 'Círculo' },
+  { id: 'check', icon: FaUserCheck, name: 'Verificado' }
+];
 
 const Post = ({ post, onLike, onDelete, isExpanded, onExpand, currentUser }) => {
   const [newComment, setNewComment] = useState('');
   const [showComments, setShowComments] = useState(false);
+
+  const getAvatarIcon = (avatarId) => {
+    const avatarOption = AVATAR_OPTIONS.find(option => option.id === avatarId);
+    return avatarOption ? avatarOption.icon : FaUserCircle;
+  };
 
   const handleComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim() || !currentUser) return;
 
     try {
+      // Obtener datos actualizados del usuario incluyendo avatar
+      const { get } = await import('firebase/database');
+      const userRef = ref(rtdb, `users/${currentUser.uid}`);
+      const userSnapshot = await get(userRef);
+      const userData = userSnapshot.val();
+
       const commentsRef = ref(rtdb, `forum/posts/${post.id}/comments`);
       await push(commentsRef, {
         text: newComment.trim(),
         authorId: currentUser.uid,
-        authorName: currentUser.displayName || 'Usuario',
-        authorPhoto: currentUser.photoURL || null,
+        authorName: userData?.displayName || currentUser.displayName || 'Usuario',
+        authorPhoto: userData?.avatarId || 'circle',
         timestamp: new Date().toISOString()
       });
       setNewComment('');
@@ -56,11 +85,11 @@ const Post = ({ post, onLike, onDelete, isExpanded, onExpand, currentUser }) => 
     <div className={`post ${isExpanded ? 'expanded' : ''}`}>
       <div className="post-header">
         <div className="post-author">
-          <img 
-            src={post.authorPhoto || '/default-avatar.png'} 
-            alt={post.authorName}
-            className="author-avatar"
-          />
+          <div className="author-avatar">
+            {React.createElement(getAvatarIcon(post.authorPhoto || 'circle'), {
+              className: 'avatar-icon'
+            })}
+          </div>
           <div className="author-info">
             <span className="author-name">{post.authorName}</span>
             <span className="post-date">{formatDate(post.timestamp)}</span>
@@ -78,7 +107,9 @@ const Post = ({ post, onLike, onDelete, isExpanded, onExpand, currentUser }) => 
 
       <div className="post-actions">
         <button 
-          className="action-button like-button"
+          className={`action-button like-button ${
+            currentUser && post.userLikes && post.userLikes[currentUser.uid] ? 'liked' : ''
+          }`}
           onClick={onLike}
           disabled={!currentUser}
         >
@@ -129,11 +160,11 @@ const Post = ({ post, onLike, onDelete, isExpanded, onExpand, currentUser }) => 
               .map(([id, comment]) => (
                 <div key={id} className="comment">
                   <div className="comment-header">
-                    <img 
-                      src={comment.authorPhoto || '/default-avatar.png'} 
-                      alt={comment.authorName}
-                      className="comment-avatar"
-                    />
+                    <div className="comment-avatar">
+                      {React.createElement(getAvatarIcon(comment.authorPhoto || 'circle'), {
+                        className: 'avatar-icon'
+                      })}
+                    </div>
                     <div className="comment-info">
                       <span className="comment-author">{comment.authorName}</span>
                       <span className="comment-date">

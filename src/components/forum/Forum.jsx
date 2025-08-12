@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { rtdb } from '../../config/firebase';
-import { ref, push, onValue, update, remove } from 'firebase/database';
+import { ref, push, onValue, update, remove, get } from 'firebase/database';
 import PostList from './PostList';
 import CreatePost from './CreatePost';
 import AnimatedText from '../animations/AnimatedText';
@@ -70,12 +70,17 @@ const Forum = () => {
     if (!currentUser) return;
 
     try {
+      // Obtener datos actualizados del usuario incluyendo avatar
+      const userRef = ref(rtdb, `users/${currentUser.uid}`);
+      const userSnapshot = await get(userRef);
+      const userData = userSnapshot.val();
+      
       const postRef = ref(rtdb, 'forum/posts');
       await push(postRef, {
         ...postData,
         authorId: currentUser.uid,
-        authorName: currentUser.displayName || 'Usuario',
-        authorPhoto: currentUser.photoURL || null,
+        authorName: userData?.displayName || currentUser.displayName || 'Usuario',
+        authorPhoto: userData?.avatarId || 'circle',
         timestamp: new Date().toISOString(),
         likes: 0,
         comments: []
@@ -91,9 +96,27 @@ const Forum = () => {
     try {
       const postRef = ref(rtdb, `forum/posts/${postId}`);
       const post = posts.find(p => p.id === postId);
-      await update(postRef, {
-        likes: (post.likes || 0) + 1
-      });
+      const userLikes = post.userLikes || {};
+      const hasLiked = userLikes[currentUser.uid];
+
+      if (hasLiked) {
+        // Quitar like
+        const updatedUserLikes = { ...userLikes };
+        delete updatedUserLikes[currentUser.uid];
+        await update(postRef, {
+          likes: Math.max(0, (post.likes || 0) - 1),
+          userLikes: updatedUserLikes
+        });
+      } else {
+        // Agregar like
+        await update(postRef, {
+          likes: (post.likes || 0) + 1,
+          userLikes: {
+            ...userLikes,
+            [currentUser.uid]: true
+          }
+        });
+      }
     } catch (error) {
       setError('Error al dar like');
     }

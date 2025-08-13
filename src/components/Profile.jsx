@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { database } from '../config/firebase';
 import { ref, update, onValue } from 'firebase/database';
-import { updateProfile } from 'firebase/auth';
 import UserProgress from './gamification/UserProgress';
 import Achievements from './gamification/Achievements';
 import { 
   FaUser, FaComments, FaCommentDots, FaHeart,
   FaUserAstronaut, FaUserNinja, FaUserSecret, FaUserTie,
   FaUserGraduate, FaUserShield, FaUserCog, FaUserAlt,
-  FaUserCircle, FaUserCheck, FaArrowUp
+  FaUserCircle, FaUserCheck, FaArrowUp, FaEdit
 } from 'react-icons/fa';
 import '../styles/Profile.css';
+import EditProfileModal from './profile/EditProfileModal';
 
 const AVATAR_OPTIONS = [
   { id: 'astronaut', icon: FaUserAstronaut, name: 'Astronauta' },
@@ -28,23 +28,18 @@ const AVATAR_OPTIONS = [
 
 const Profile = () => {
   const { currentUser } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [showAvatarSelector, setShowAvatarSelector] = useState(false);
   const [userData, setUserData] = useState({
     displayName: '',
     email: '',
-    avatarId: 'circle', // Avatar por defecto
+    avatarId: 'circle',
     bio: ''
   });
-  const [stats, setStats] = useState({
-    posts: 0,
-    comments: 0,
-    likes: 0,
-    badges: []
-  });
+  const [stats, setStats] = useState({ posts: 0, comments: 0, likes: 0, badges: [] });
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [profileSavedMsg, setProfileSavedMsg] = useState('');
+  const [toastClosing, setToastClosing] = useState(false);
+  const toastTimers = useRef([]);
 
   useEffect(() => {
     if (currentUser) {
@@ -52,19 +47,15 @@ const Profile = () => {
       onValue(userRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          setUserData(prev => ({
-            ...prev,
-            ...data
-          }));
+          setUserData(prev => ({ ...prev, ...data, email: data.email || currentUser.email }));
+        } else {
+          setUserData(prev => ({ ...prev, email: currentUser.email }));
         }
       });
-
       const statsRef = ref(database, `users/${currentUser.uid}/stats`);
       onValue(statsRef, (snapshot) => {
         const data = snapshot.val();
-        if (data) {
-          setStats(data);
-        }
+        if (data) setStats(data);
       });
     }
   }, [currentUser]);
@@ -74,51 +65,6 @@ const Profile = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleAvatarSelect = (avatarId) => {
-    setUserData(prev => ({
-      ...prev,
-      avatarId
-    }));
-    setShowAvatarSelector(false);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      // Actualizar el perfil en Firebase Auth
-      await updateProfile(currentUser, {
-        displayName: userData.displayName
-      });
-
-      // Actualizar en Realtime Database
-      const userRef = ref(database, `users/${currentUser.uid}`);
-      await update(userRef, {
-        displayName: userData.displayName,
-        bio: userData.bio,
-        avatarId: userData.avatarId
-      });
-
-      setSuccess('Perfil actualizado exitosamente');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      setError('Error al actualizar el perfil');
-    }
-
-    setLoading(false);
-  };
 
   const getAvatarIcon = (avatarId) => {
     const avatar = AVATAR_OPTIONS.find(opt => opt.id === avatarId);
@@ -130,28 +76,41 @@ const Profile = () => {
   if (!currentUser) {
     return (
       <div className="profile-container">
-        <div className="error-message">
-          Debes iniciar sesión para ver tu perfil
-        </div>
+        <div className="error-message">Debes iniciar sesión para ver tu perfil</div>
       </div>
     );
   }
 
   const CurrentAvatar = getAvatarIcon(userData.avatarId);
 
+  const handleSaved = (data) => {
+    setUserData(prev => ({ ...prev, ...data }));
+    // Limpiar timers previos
+    toastTimers.current.forEach(t => clearTimeout(t));
+    toastTimers.current = [];
+    setToastClosing(false);
+    setProfileSavedMsg('Perfil actualizado exitosamente');
+    // Programar cierre animado
+    toastTimers.current.push(setTimeout(() => setToastClosing(true), 3200)); // start exit
+    toastTimers.current.push(setTimeout(() => { setProfileSavedMsg(''); setToastClosing(false); }, 3600));
+  };
+
+  useEffect(() => () => { toastTimers.current.forEach(t => clearTimeout(t)); }, []);
+
   return (
     <div className="profile-container">
+      {/* Toast éxito */}
+      {profileSavedMsg && (
+        <div className={`profile-toast ${toastClosing ? 'closing' : ''}`} role="status" aria-live="polite">{profileSavedMsg}</div>
+      )}
       <div className="profile-sidebar">
         <div className="profile-header">
           <div className="profile-avatar-container">
-            <div 
-              className="profile-avatar" 
-              onClick={() => setShowAvatarSelector(true)}
-            >
+            <div className="profile-avatar" onClick={() => setEditOpen(true)}>
               <CurrentAvatar className="avatar-icon" />
               <div className="avatar-overlay">
                 <FaUser />
-                <span>Cambiar avatar</span>
+                <span>Editar perfil</span>
               </div>
             </div>
           </div>
@@ -159,48 +118,18 @@ const Profile = () => {
             <h1>{userData.displayName || 'Usuario'}</h1>
             <p className="profile-email">{userData.email}</p>
           </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="profile-form">
-          {error && <div className="error-message">{error}</div>}
-          {success && <div className="success-message">{success}</div>}
-
-          <div className="form-group">
-            <label htmlFor="displayName">Nombre</label>
-            <input
-              type="text"
-              id="displayName"
-              name="displayName"
-              value={userData.displayName}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="bio">Biografía</label>
-            <textarea
-              id="bio"
-              name="bio"
-              value={userData.bio}
-              onChange={handleInputChange}
-              rows="4"
-              placeholder="Cuéntanos un poco sobre ti..."
-            />
-          </div>
-
-          <button type="submit" className="save-button" disabled={loading}>
-            {loading ? 'Guardando...' : 'Guardar cambios'}
+          <button className="edit-profile-trigger" onClick={() => setEditOpen(true)} aria-label="Editar perfil">
+            <FaEdit />
+            <span>Editar</span>
           </button>
-        </form>
-
+        </div>
         <div className="profile-stats">
           <div className="stat-card">
             <FaComments className="stat-icon" />
             <span className="stat-value">{stats.posts}</span>
             <span className="stat-label">Posts</span>
           </div>
-          <div className="stat-card">
+            <div className="stat-card">
             <FaCommentDots className="stat-icon" />
             <span className="stat-value">{stats.comments}</span>
             <span className="stat-label">Comentarios</span>
@@ -211,33 +140,13 @@ const Profile = () => {
             <span className="stat-label">Likes</span>
           </div>
         </div>
-
       </div>
 
       <div className="profile-main-content">
-        {showAvatarSelector && (
-          <div className="avatar-selector">
-            <h3>Selecciona tu avatar</h3>
-            <div className="avatar-grid">
-              {AVATAR_OPTIONS.map(({ id, icon: Icon, name }) => (
-                <div
-                  key={id}
-                  className={`avatar-option ${userData.avatarId === id ? 'selected' : ''}`}
-                  onClick={() => handleAvatarSelect(id)}
-                >
-                  <Icon className="avatar-icon" />
-                  <span>{name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         <div className="profile-content">
           <UserProgress />
           <Achievements />
         </div>
-
         {stats.badges.length > 0 && (
           <div className="badges-section">
             <h2>Insignias</h2>
@@ -252,11 +161,19 @@ const Profile = () => {
           </div>
         )}
       </div>
+
       {showScrollTop && (
         <button className="profile-scroll-to-top" onClick={scrollToTop} aria-label="Volver arriba">
           <FaArrowUp />
         </button>
       )}
+
+      <EditProfileModal
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        initialData={userData}
+        onSaved={handleSaved}
+      />
     </div>
   );
 };

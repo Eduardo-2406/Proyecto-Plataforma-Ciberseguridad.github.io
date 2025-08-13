@@ -54,32 +54,30 @@ const UserProgress = () => {
         </div>
       </div>
 
-      <div className="module-progress">
-        <h3>Progreso por Módulo</h3>
-        <div className="modules-grid">
-          {Object.entries(moduleProgress).map(([moduleId, progress]) => (
-            <div key={moduleId} className="module-card">
-              <h4>Módulo {parseInt(moduleId) + 1}</h4>
-              <div className="module-status">
-                {progress?.completed ? (
-                  <span className="status completed">Completado</span>
-                ) : progress?.started ? (
-                  <span className="status in-progress">En Progreso</span>
-                ) : (
-                  <span className="status not-started">No Iniciado</span>
-                )}
-              </div>
-              {progress?.score && (
-                <div className="module-score">
-                  Puntuación: {progress.score}%
-                </div>
+      <h2 className="modules-title">Progreso por Módulo</h2>
+      <div className="modules-grid">
+        {Object.entries(moduleProgress).map(([moduleId, progress]) => (
+          <div key={moduleId} className="module-card">
+            <h4>Módulo {parseInt(moduleId) + 1}</h4>
+            <div className="module-status">
+              {progress?.completed ? (
+                <span className="status completed">Completado</span>
+              ) : progress?.started ? (
+                <span className="status in-progress">En Progreso</span>
+              ) : (
+                <span className="status not-started">No Iniciado</span>
               )}
             </div>
-          ))}
-        </div>
+            {progress?.score && (
+              <div className="module-score">
+                Puntuación: {progress.score}%
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
 };
 
-export default UserProgress; 
+export default UserProgress;

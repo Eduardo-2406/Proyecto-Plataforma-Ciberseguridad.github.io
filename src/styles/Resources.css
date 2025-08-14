@@ -174,17 +174,19 @@
   }
 }
 
-/* Solo en dispositivos que realmente soportan hover (no táctiles) */
-@media (hover: hover) and (pointer: fine) {
-  .card-button {
-    transform: translate(-50%, 125%);
-    opacity: 0;
-  }
-  
-  .resource-card:hover .card-button {
-    transform: translate(-50%, -10%);
-    opacity: 1;
-  }
+/* Botones SIEMPRE VISIBLES Y FIJOS en todos los dispositivos */
+.card-button {
+  opacity: 1 !important;
+  transform: translate(-50%, -10%) !important;
+  transition: background-color 0.3s ease !important;
+  background-color: var(--primary-color) !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.card-button:hover,
+.card-button:active {
+  background-color: var(--secondary-color) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
 }
 
 .resource-type-badge {

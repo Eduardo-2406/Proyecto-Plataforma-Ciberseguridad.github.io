@@ -92,8 +92,21 @@ const Sidebar = ({ onToggle, isDrawerOpen, onCloseDrawer, setSidebarDrawerOpen }
     }
   };
 
-  // Detectar si es móvil/tablet
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 1023;
+  // Detectar si es móvil/tablet y reaccionar a cambios de tamaño
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth <= 1023 : false));
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 1023);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // Al pasar a desktop, asegurar que el drawer esté cerrado y el icono sincronizado
+  useEffect(() => {
+    if (!isMobile) {
+      if (typeof setSidebarDrawerOpen === 'function') setSidebarDrawerOpen(false);
+      if (typeof onCloseDrawer === 'function') onCloseDrawer();
+    }
+  }, [isMobile, setSidebarDrawerOpen, onCloseDrawer]);
 
   // Drawer: solo en móvil/tablet
   if (isMobile) {
@@ -245,7 +258,7 @@ const Sidebar = ({ onToggle, isDrawerOpen, onCloseDrawer, setSidebarDrawerOpen }
   }
 
   return (
-    <StyledSidebar className={isOpen ? '' : 'sidebar-closed'} $isOpen={isOpen}>
+    <StyledSidebar className={`sidebar ${isOpen ? '' : 'sidebar-closed'}`} $isOpen={isOpen}>
       {/* HEADER igual que menú central, ícono siempre a la izquierda, label animada */}
       <button
         className="sidebar-item"

@@ -100,7 +100,7 @@ const Home = () => {
             </div>
           </div>
           {/* Flecha animada al final de la sección de bienvenida */}
-          <div style={{
+          <div className="welcome-arrow" style={{
             position: 'absolute',
             left: '50%',
             bottom: '2rem',

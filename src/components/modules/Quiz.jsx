@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
 import useStore from '../../store/useStore';
 import { useFirebaseQuery } from '../../hooks/useFirebaseQuery';
+import { useProgress } from '../../contexts/ProgressContext';
 import { auth, database } from '../../config/firebase';
-import { ref, set } from 'firebase/database';
+import { ref, set, get } from 'firebase/database';
 import confetti from 'canvas-confetti';
 import { modulesData } from '../../data/modules';
 
@@ -35,26 +36,57 @@ const Quiz = () => {
   const [timeLeft, setTimeLeft] = useState(30); // 30 segundos por pregunta
   const [isCorrect, setIsCorrect] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [currentAttempts, setCurrentAttempts] = useState(0);
+  const [startTime, setStartTime] = useState(Date.now());
   const { addPoints, completeQuiz } = useStore();
+  const { recordQuizResult } = useProgress();
 
   // Obtener las preguntas del módulo
   const module = modulesData[moduleId];
   const questions = module?.quiz?.questions || [];
 
-  // Obtener intentos previos
+  // Obtener intentos previos - obtener todos los intentos
   const { data: quizAttempts } = useFirebaseQuery(`quizAttempts/${auth.currentUser?.uid}/${moduleId}`, {
-    limitTo: 2,
     orderByField: 'timestamp',
     orderDirection: 'desc'
   });
 
-  // Verificar intentos al cargar
+  // Verificar y contar intentos únicos
+  // Inicializar tiempo de inicio
   useEffect(() => {
-    if (quizAttempts && quizAttempts.length >= MAX_ATTEMPTS) {
-      alert('Has alcanzado el máximo de intentos permitidos para este quiz.');
-      navigate(`/module/${moduleId}`);
-    }
-  }, [quizAttempts, moduleId, navigate]);
+    setStartTime(Date.now());
+  }, []);
+
+  // Verificar intentos anteriores
+  useEffect(() => {
+    const getAttemptCount = async () => {
+      if (auth.currentUser) {
+        try {
+          const attemptsRef = ref(database, `quizAttempts/${auth.currentUser.uid}/${moduleId}`);
+          const snapshot = await get(attemptsRef);
+          
+          if (snapshot.exists()) {
+            const attempts = Object.values(snapshot.val());
+            // Filtrar solo los intentos completos (que tienen score)
+            const completeAttempts = attempts.filter(attempt => attempt.score !== undefined);
+            setCurrentAttempts(completeAttempts.length);
+            
+            if (completeAttempts.length >= MAX_ATTEMPTS) {
+              alert('Has alcanzado el máximo de intentos permitidos para este quiz.');
+              navigate(`/module/${moduleId}`);
+            }
+          } else {
+            setCurrentAttempts(0);
+          }
+        } catch (error) {
+          console.error('Error al obtener intentos:', error);
+          setCurrentAttempts(0);
+        }
+      }
+    };
+
+    getAttemptCount();
+  }, [moduleId, navigate]);
 
   // Si no hay preguntas, redirigir al módulo
   useEffect(() => {
@@ -63,6 +95,11 @@ const Quiz = () => {
       navigate(`/module/${moduleId}`);
     }
   }, [module, questions, moduleId, navigate]);
+
+  // Scroll al inicio cuando cambia la pregunta
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentQuestion]);
 
   // Si no hay preguntas, mostrar mensaje de carga
   if (!module || !questions.length) {
@@ -159,40 +196,55 @@ const Quiz = () => {
     } else {
       setIsSaving(true);
       const finalScore = (score / (questions.length * 10)) * 100;
+      const timeSpent = Date.now() - startTime;
       
       try {
         if (auth.currentUser) {
-          // Asegurarnos de que currentAttempts sea un array y tenga una longitud válida
-          const currentAttempts = Array.isArray(quizAttempts) ? quizAttempts : [];
-          const attemptNumber = Math.max(1, currentAttempts.length + 1);
+          // Incrementar el contador de intentos localmente
+          const newAttemptCount = currentAttempts + 1;
+          setCurrentAttempts(newAttemptCount);
           
-          const attemptRef = ref(database, `quizAttempts/${auth.currentUser.uid}/${moduleId}/${Date.now()}`);
-          await set(attemptRef, {
-            score: finalScore,
-            points: Math.round((finalScore / 100) * 30),
-            timestamp: Date.now(),
-            attemptNumber: attemptNumber
-          });
-
-          // Guardar la mejor puntuación
-          const bestScoreRef = ref(database, `bestQuizScores/${auth.currentUser.uid}/${moduleId}`);
-          await set(bestScoreRef, {
-            score: finalScore,
-            timestamp: Date.now()
-          });
-
-          // Actualizar el estado del módulo si se aprobó
-          if (finalScore >= 80) {
-            const userProgressRef = ref(database, `users/${auth.currentUser.uid}/progress/${moduleId}`);
-            await set(userProgressRef, {
-              quizCompleted: true,
-              quizScore: finalScore,
-              lastUpdated: Date.now()
+          // Usar la nueva función del ProgressContext
+          const result = await recordQuizResult(moduleId, finalScore, newAttemptCount);
+          
+          if (result.success) {
+            if (result.improved) {
+              addPoints(result.points);
+              console.log(`Quiz mejorado! Puntos ganados: ${result.points}`);
+            }
+            
+            if (finalScore >= 80) {
+              completeQuiz(moduleId);
+            }
+          } else {
+            // Fallback al método anterior si hay error
+            const attemptRef = ref(database, `quizAttempts/${auth.currentUser.uid}/${moduleId}/${Date.now()}`);
+            await set(attemptRef, {
+              score: finalScore,
+              points: Math.round((finalScore / 100) * 30),
+              timestamp: Date.now(),
+              attemptNumber: newAttemptCount,
+              timeSpent
             });
 
-            const points = Math.round((finalScore / 100) * 30);
-            addPoints(points);
-            completeQuiz(moduleId);
+            const bestScoreRef = ref(database, `bestQuizScores/${auth.currentUser.uid}/${moduleId}`);
+            await set(bestScoreRef, {
+              score: finalScore,
+              timestamp: Date.now()
+            });
+
+            if (finalScore >= 80) {
+              const userProgressRef = ref(database, `users/${auth.currentUser.uid}/progress/${moduleId}`);
+              await set(userProgressRef, {
+                quizCompleted: true,
+                quizScore: finalScore,
+                lastUpdated: Date.now()
+              });
+
+              const points = Math.round((finalScore / 100) * 30);
+              addPoints(points);
+              completeQuiz(moduleId);
+            }
           }
         }
       } catch (error) {
@@ -388,7 +440,7 @@ const Quiz = () => {
           </div>
           <div className="flex items-center space-x-4">
             <div className="text-sm text-gray-600">
-              Intentos: {quizAttempts?.length || 0} de {MAX_ATTEMPTS}
+              Intentos: {currentAttempts} de {MAX_ATTEMPTS}
             </div>
             <motion.div
               className="text-sm font-medium"
@@ -479,6 +531,7 @@ const Quiz = () => {
                 >
                   <h3 className="font-bold mb-2">¡Felicidades!</h3>
                   <p>Has aprobado el quiz con un {((score / (questions.length * 10)) * 100).toFixed(1)}%</p>
+                  <p className="mt-2">Has ganado {Math.round((((score / (questions.length * 10)) * 100) / 100) * 30)} puntos por completar el quiz con éxito.</p>
                 </motion.div>
               ) : (
                 <motion.div
@@ -489,31 +542,48 @@ const Quiz = () => {
                   <h3 className="font-bold mb-2">No has alcanzado el mínimo requerido</h3>
                   <p>Tu puntuación: {((score / (questions.length * 10)) * 100).toFixed(1)}%</p>
                   <p className="mt-2">Necesitas al menos un 80% para aprobar.</p>
+                  {(MAX_ATTEMPTS - currentAttempts) > 0 && (
+                    <p className="mt-2">Intentos restantes: {MAX_ATTEMPTS - currentAttempts}</p>
+                  )}
                 </motion.div>
               )}
 
               <div className="flex space-x-4 justify-center">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    setCurrentQuestion(0);
-                    setSelectedAnswer(null);
-                    setScore(0);
-                    setShowResults(false);
-                    setTimeLeft(30);
-                  }}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Intentar de nuevo
-                </motion.button>
+                {(MAX_ATTEMPTS - currentAttempts) > 0 && score < questions.length * 8 && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      // Verificar si quedan intentos antes de permitir reiniciar
+                      if (currentAttempts >= MAX_ATTEMPTS) {
+                        alert('Has alcanzado el máximo de intentos permitidos para este quiz.');
+                        navigate(`/module/${moduleId}`);
+                        return;
+                      }
+
+                      setCurrentQuestion(0);
+                      setSelectedAnswer(null);
+                      setScore(0);
+                      setShowResults(false);
+                      setShowFeedback(false);
+                      setTimeLeft(30);
+                      setIsCorrect(null);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? 'Guardando...' : 'Intentar de nuevo'}
+                  </motion.button>
+                )}
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate(`/module/${moduleId}`)}
                   className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+                  disabled={isSaving}
                 >
-                  Volver al Módulo
+                  {isSaving ? 'Guardando...' : 'Volver al Módulo'}
                 </motion.button>
               </div>
             </motion.div>

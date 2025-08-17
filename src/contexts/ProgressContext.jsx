@@ -7,7 +7,10 @@ import {
   getEvaluationResults,
   unlockAchievement,
   getTopUsers,
-  getUserStats
+  getUserStats,
+  saveVideoProgress,
+  saveQuizResult,
+  syncUserData
 } from '../services/firestore';
 
 const ProgressContext = createContext();
@@ -40,7 +43,11 @@ export function ProgressProvider({ children }) {
   const loadUserData = async () => {
     try {
       setLoading(true);
-      // Cargar progreso de módulos
+      
+      // Sincronizar datos al cargar
+      await syncUserData(currentUser.uid);
+      
+      // Cargar progreso de módulos con datos completos
       const progress = {};
       for (let i = 0; i < 6; i++) {
         try {
@@ -61,7 +68,7 @@ export function ProgressProvider({ children }) {
         setEvaluationResults([]);
       }
 
-      // Cargar estadísticas
+      // Cargar estadísticas completas
       try {
         const userStats = await getUserStats(currentUser.uid);
         setStats(userStats);
@@ -72,7 +79,7 @@ export function ProgressProvider({ children }) {
 
       // Cargar ranking
       try {
-        const top = await getTopUsers(10); // Especificamos explícitamente el límite
+        const top = await getTopUsers(10);
         setTopUsers(top);
       } catch (rankingError) {
         console.error('Error al cargar ranking:', rankingError);
@@ -159,6 +166,58 @@ export function ProgressProvider({ children }) {
     }
   };
 
+  // Función para registrar video visto
+  const recordVideoProgress = async (moduleId, videoId) => {
+    if (!currentUser) return;
+
+    try {
+      const result = await saveVideoProgress(currentUser.uid, moduleId, videoId);
+      
+      // Recargar datos si se obtuvieron puntos
+      if (result.points > 0) {
+        await loadUserData();
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Error recording video progress:', error);
+      throw error;
+    }
+  };
+
+  // Función para registrar resultado de quiz
+  const recordQuizResult = async (moduleId, score, attemptNumber) => {
+    if (!currentUser) return;
+
+    try {
+      const result = await saveQuizResult(currentUser.uid, moduleId, score, attemptNumber);
+      
+      // Recargar datos si hubo mejora
+      if (result.improved) {
+        await loadUserData();
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Error recording quiz result:', error);
+      throw error;
+    }
+  };
+
+  // Función para sincronizar datos
+  const syncData = async () => {
+    if (!currentUser) return;
+
+    try {
+      const result = await syncUserData(currentUser.uid);
+      await loadUserData(); // Recargar después de sincronizar
+      return result;
+    } catch (error) {
+      console.error('Error syncing data:', error);
+      throw error;
+    }
+  };
+
   const value = {
     moduleProgress,
     evaluationResults,
@@ -166,7 +225,11 @@ export function ProgressProvider({ children }) {
     topUsers,
     loading,
     updateProgress,
-    saveEvaluation
+    saveEvaluation,
+    recordVideoProgress,
+    recordQuizResult,
+    syncData,
+    loadUserData
   };
 
   return (

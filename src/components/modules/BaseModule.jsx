@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import useStore from '../../store/useStore';
 import { useFirebaseQuery } from '../../hooks/useFirebaseQuery';
+import { useProgress } from '../../contexts/ProgressContext';
 import { auth, database } from '../../config/firebase';
 import { ref, set } from 'firebase/database';
 import '../../styles/BaseModule.css';
@@ -26,6 +27,7 @@ const BaseModule = ({
 }) => {
   const navigate = useNavigate();
   const { completeModule, addPoints } = useStore();
+  const { recordVideoProgress, recordQuizResult } = useProgress();
   const [quizScore, setQuizScore] = useState(null);
   const [videoProgress, setVideoProgress] = useState({});
   const [isModuleCompleted, setIsModuleCompleted] = useState(false);
@@ -88,23 +90,41 @@ const BaseModule = ({
 
   const handleVideoProgress = async (videoId) => {
     if (!videoProgress[videoId]) {
-      const newProgress = { ...videoProgress, [videoId]: true };
-      setVideoProgress(newProgress);
-      
-      // Sumar puntos por ver video
-      addPoints(10); // 10 puntos por video
+      try {
+        // Usar la nueva función del ProgressContext
+        const result = await recordVideoProgress(moduleId, videoId);
+        
+        if (result.success) {
+          const newProgress = { ...videoProgress, [videoId]: true };
+          setVideoProgress(newProgress);
+          
+          // Solo agregar puntos localmente si no se obtuvieron de la función
+          if (result.alreadyWatched) {
+            console.log('Video ya visto anteriormente');
+          } else {
+            addPoints(result.points);
+          }
+        }
+      } catch (error) {
+        console.error('Error al registrar progreso de video:', error);
+        // Fallback al método anterior si hay error
+        const newProgress = { ...videoProgress, [videoId]: true };
+        setVideoProgress(newProgress);
+        addPoints(10);
+        
+        // Guardar en Firebase como respaldo
+        if (auth.currentUser) {
+          const progressRef = ref(database, `videoProgress/${auth.currentUser.uid}/${moduleId}/${videoId}`);
+          await set(progressRef, {
+            id: videoId,
+            watched: true,
+            timestamp: Date.now()
+          });
+        }
+      }
 
-      // Guardar progreso en Firebase
+      // Actualizar el estado del módulo a "En Proceso"
       if (auth.currentUser) {
-        // Actualizar progreso del video
-        const progressRef = ref(database, `videoProgress/${auth.currentUser.uid}/${moduleId}/${videoId}`);
-        await set(progressRef, {
-          id: videoId,
-          watched: true,
-          timestamp: Date.now()
-        });
-
-        // Actualizar el estado del módulo a "En Proceso"
         const userProgressRef = ref(database, `users/${auth.currentUser.uid}/progress/${moduleId}`);
         await set(userProgressRef, {
           status: 'in-progress',

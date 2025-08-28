@@ -32,10 +32,10 @@ const resources = [
 ];
 
 const resourceImages = {
-	Recurso: '/images/recursos/gestores.avif',
-	Noticias: '/images/recursos/noticias.avif',
-	Curso: '/images/recursos/cursos.avif',
-	Consejos: '/images/recursos/gestores.avif',
+	Recurso: 'https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/recursos/gestores.avif?format=webp&w=600',
+	Noticias: 'https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/recursos/noticias.avif?format=webp&w=600',
+	Curso: 'https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/recursos/cursos.avif?format=webp&w=600',
+	Consejos: 'https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/recursos/gestores.avif?format=webp&w=600',
 };
 
 const Card = ({ title, description, url, type }) => {

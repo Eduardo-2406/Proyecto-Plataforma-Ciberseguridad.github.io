@@ -10,8 +10,8 @@ import LoadingSpinner from './common/LoadingSpinner';
 import '../styles/Evaluations.css';
 
 const evaluationImages = {
-  'eval1': 'evaluations/evaluacion1.avif',
-  'eval2': 'evaluations/evaluacion2.avif',
+  'eval1': 'https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/evaluations/evaluacion1.avif?format=webp&w=600',
+  'eval2': 'https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/evaluations/evaluacion2.avif?format=webp&w=600',
 };
 
 const Evaluations = () => {
@@ -121,11 +121,13 @@ const Evaluations = () => {
                     <div className="evaluation-image-wrapper" style={{ position: 'relative' }}>
                       {!imgLoaded[evaluation.id] && <div className="evaluation-skeleton" />}
                       <img
-                        src={`/images/${evaluationImages[evaluation.id]}`}
+                        src={evaluationImages[evaluation.id]}
                         alt={evaluation.title}
                         className={`evaluation-image${imgLoaded[evaluation.id] ? ' loaded' : ''}`}
                         onLoad={() => setImgLoaded(prev => ({ ...prev, [evaluation.id]: true }))}
                         loading="lazy"
+                        width="600"
+                        height="400"
                       />
                     </div>
                   </div>

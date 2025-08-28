@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
-import logo from '../../assets/images/Logo.png';
+// Usar Statically CDN para el logo
+const logo = 'https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/src/assets/images/Logo.png?format=webp&w=200';
 import '../../styles/LoginModal.css';
 
 const LoginModal = ({ isOpen, onClose }) => {

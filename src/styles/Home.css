@@ -256,7 +256,7 @@
     background: #fff;
   }
   .welcome-section {
-    background: url('/src/assets/images/hero-image.jpg') center center/cover no-repeat !important;
+    background: url('https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/src/assets/images/hero-image.jpg?format=webp&w=1920') center center/cover no-repeat !important;
     min-height: calc(100vh - 64px) !important;
     height: calc(100vh - 64px) !important;
     display: flex !important;
@@ -371,7 +371,7 @@
     background: #fff;
   }
   .welcome-section {
-    background: url('/src/assets/images/hero-image.jpg') center center/cover no-repeat !important;
+    background: url('https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/src/assets/images/hero-image.jpg?format=webp&w=1920') center center/cover no-repeat !important;
     min-height: calc(100vh - 64px) !important;
     height: calc(100vh - 64px) !important;
     display: flex !important;
@@ -538,7 +538,7 @@
   }
 
   .welcome-section {
-    background: url('/src/assets/images/hero-image.jpg') center center/cover no-repeat;
+    background: url('https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/src/assets/images/hero-image.jpg?format=webp&w=1920') center center/cover no-repeat;
     min-height: auto;
     height: auto;
     display: flex !important;

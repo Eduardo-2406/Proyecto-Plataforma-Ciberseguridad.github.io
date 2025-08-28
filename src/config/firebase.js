@@ -24,11 +24,17 @@ export const database = getDatabase(app);
 export const rtdb = database; // Alias para mantener compatibilidad
 export const storage = getStorage(app);
 
-// Initialize Analytics only if supported and not blocked
+// Initialize Analytics only in production and if supported
 let analytics = null;
-isSupported().then(yes => yes && (analytics = getAnalytics(app))).catch(() => {
-  console.log('Analytics no está disponible o está bloqueado');
-});
+if (import.meta.env.PROD) {
+  isSupported().then(yes => {
+    if (yes) {
+      analytics = getAnalytics(app);
+    }
+  }).catch(() => {
+    // Analytics no disponible
+  });
+}
 export { analytics };
 
 export default app; 

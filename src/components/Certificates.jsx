@@ -252,7 +252,7 @@ const Certificates = () => {
 
       // Firma o logo (opcional)
       // const logo = new Image();
-      // logo.src = '/images/logo.png'; // Asegúrate de tener un logo
+      // logo.src = 'https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/Logo.png?format=webp&w=200'; // Logo optimizado con Statically
       // logo.onload = () => { // Dibujar logo una vez cargado
       //   ctx.drawImage(logo, 100, canvas.height - 150, 100, 100); // Ajustar posición y tamaño
       //   // Convertir canvas a imagen y descargar (mover esto dentro del onload si usas logo)

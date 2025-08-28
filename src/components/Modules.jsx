@@ -42,7 +42,6 @@ const Modules = () => {
           const progressRef = ref(database, `users/${currentUser.uid}/progress`);
           onValue(progressRef, (snapshot) => {
             const data = snapshot.val();
-            console.log('Modules.jsx - Datos de progreso de Firebase recibidos:', data);
             if (data) {
               setUserProgress(data);
             }
@@ -58,30 +57,24 @@ const Modules = () => {
   }, [currentUser]);
 
   const getModuleStatus = (moduleId) => {
-    console.log(`Modules.jsx - Calculando estado para el módulo ${moduleId}. Progreso para este módulo:`, userProgress[moduleId]);
     if (!currentUser) {
-      console.log(`Modules.jsx - Módulo ${moduleId}: Usuario no autenticado, estado: not-started`);
       return 'not-started';
     }
     const progress = userProgress[moduleId];
     if (!progress) {
-      console.log(`Modules.jsx - Módulo ${moduleId}: No hay datos de progreso, estado: not-started`);
       return 'not-started';
     }
     
     // Verificar si el módulo está completado
     if (progress.completed || (progress.quizCompleted && progress.quizScore >= 80)) {
-      console.log(`Modules.jsx - Módulo ${moduleId}: Condición de completado cumplida, estado: completed`);
       return 'completed';
     }
     
     // Verificar si hay algún progreso (videos vistos o intentos de quiz)
     if (progress.status === 'in-progress' || progress.quizAttempts > 0) {
-      console.log(`Modules.jsx - Módulo ${moduleId}: Condición en progreso cumplida, estado: in-progress`);
       return 'in-progress';
     }
     
-    console.log(`Modules.jsx - Módulo ${moduleId}: Ninguna condición cumplida, estado: not-started`);
     return 'not-started';
   };
 
@@ -108,12 +101,12 @@ const Modules = () => {
   };
 
   const imageNames = {
-    "1": "introduccion.avif",
-    "2": "passwords.avif",
-    "3": "phishing.avif",
-    "4": "datos.avif",
-    "5": "incidentes.avif",
-    "6": "simulaciones.avif"
+    "1": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/introduccion.avif?format=webp&w=600",
+    "2": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/passwords.avif?format=webp&w=600",
+    "3": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/phishing.avif?format=webp&w=600",
+    "4": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/datos.avif?format=webp&w=600",
+    "5": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/incidentes.avif?format=webp&w=600",
+    "6": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/simulaciones.avif?format=webp&w=600"
   };
 
   // Helper para saber si todas las imágenes están cargadas
@@ -177,11 +170,13 @@ const Modules = () => {
                     <div className="module-image-wrapper">
                       {!imgLoaded[module.id] && <div className="module-skeleton" />}
                       <img
-                        src={`/images/modules/${imageNames[module.id]}`}
+                        src={imageNames[module.id]}
                         alt={module.title}
                         className={`module-image${imgLoaded[module.id] ? ' loaded' : ''}`}
                         onLoad={() => setImgLoaded(prev => ({ ...prev, [module.id]: true }))}
                         loading="lazy"
+                        width="600"
+                        height="400"
                       />
                     </div>
                     <div className="module-badge">

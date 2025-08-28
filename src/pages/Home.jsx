@@ -5,8 +5,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedText from '../components/animations/AnimatedText';
 import { gsap } from 'gsap';
 import { FaArrowUp } from 'react-icons/fa';
-import heroImage from '../assets/images/hero-image.jpg';
+// Usar Statically CDN para la imagen principal
+const heroImage = 'https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/src/assets/images/hero-image.jpg?format=webp&w=1920';
 import '../styles/Home.css';
+
+// Función para preload de imagen hero solo en Home
+const preloadHeroImage = () => {
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = 'image';
+  link.href = heroImage;
+  document.head.appendChild(link);
+};
 
 const Card = ({ title, description, navigateLink }) => {
   const navigate = useNavigate();
@@ -59,6 +69,9 @@ const Home = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
+    // Preload de imagen hero solo cuando se monta el componente Home
+    preloadHeroImage();
+    
     const handleScroll = () => {
       setShowScrollTop(window.pageYOffset > 300);
     };

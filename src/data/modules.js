@@ -2,7 +2,7 @@ export const modulesData = {
   "1": {
     "title": "Introducción a la Ciberseguridad",
     "description": "Conceptos fundamentales de ciberseguridad, amenazas comunes y medidas básicas de protección para MIPYMES financieras.",
-    "image": "/images/modules/introduccion.jpg",
+    "image": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/introduccion.avif?format=webp&w=800",
     "duration": 2,
     "level": "Novato",
     "lessons": 3,
@@ -48,7 +48,7 @@ export const modulesData = {
   "2": {
     "title": "Gestión de Contraseñas y MFA",
     "description": "Aprende las mejores prácticas para crear y gestionar contraseñas seguras, y la implementación de autenticación multifactor para proteger tus cuentas y sistemas.",
-    "image": "/images/modules/passwords.jpg",
+    "image": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/passwords.avif?format=webp&w=800",
     "duration": 3,
     "level": "Novato",
     "lessons": 4,
@@ -173,7 +173,7 @@ export const modulesData = {
   "3": {
     "title": "Phishing e Ingeniería Social",
     "description": "Identifica y previene ataques de phishing y técnicas de ingeniería social dirigidas a instituciones financieras.",
-    "image": "/images/modules/phishing.jpg",
+    "image": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/phishing.avif?format=webp&w=800",
     "duration": 2,
     "level": "Defensor",
     "lessons": 3,
@@ -259,7 +259,7 @@ export const modulesData = {
   "4": {
     "title": "Protección y Privacidad de Datos",
     "description": "Protección de información sensible y cumplimiento de normativas de privacidad en el sector financiero.",
-    "image": "/images/modules/datos.jpg",
+    "image": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/datos.avif?format=webp&w=800",
     "duration": 2,
     "level": "Defensor",
     "lessons": 3,
@@ -345,7 +345,7 @@ export const modulesData = {
   "5": {
     "title": "Respuesta a Incidentes",
     "description": "Protocolos y procedimientos para detectar, reportar y responder a incidentes de seguridad.",
-    "image": "/images/modules/incidentes.jpg",
+    "image": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/incidentes.avif?format=webp&w=800",
     "duration": 2,
     "level": "Protector",
     "lessons": 3,
@@ -431,7 +431,7 @@ export const modulesData = {
   "6": {
     "title": "Simulaciones de Ciberataques",
     "description": "Aprende a realizar simulaciones de ciberataques de manera segura y controlada para fortalecer la seguridad de tu organización.",
-    "image": "/images/modules/simulaciones.jpg",
+    "image": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/simulaciones.avif?format=webp&w=800",
     "duration": 3,
     "level": "Protector",
     "lessons": 4,

@@ -91,7 +91,6 @@ const Quiz = () => {
   // Si no hay preguntas, redirigir al módulo
   useEffect(() => {
     if (!module || !questions.length) {
-      console.log('Módulo no encontrado o sin preguntas:', { moduleId, module, questions });
       navigate(`/module/${moduleId}`);
     }
   }, [module, questions, moduleId, navigate]);
@@ -210,7 +209,6 @@ const Quiz = () => {
           if (result.success) {
             if (result.improved) {
               addPoints(result.points);
-              console.log(`Quiz mejorado! Puntos ganados: ${result.points}`);
             }
             
             if (finalScore >= 80) {

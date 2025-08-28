@@ -10,7 +10,8 @@ import {
   FaUserGraduate, FaUserShield, FaUserCog, FaUserAlt,
   FaUserCircle, FaUserCheck
 } from 'react-icons/fa';
-import logo from '../../assets/images/Logo.png';
+// Usar Statically CDN para el logo
+const logo = 'https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/src/assets/images/Logo.png?format=webp&w=200';
 import HamburgerIcon from '../common/HamburgerIcon';
 
 const AVATAR_OPTIONS = [

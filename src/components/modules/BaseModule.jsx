@@ -7,6 +7,7 @@ import { useProgress } from '../../contexts/ProgressContext';
 import { auth, database } from '../../config/firebase';
 import { ref, set } from 'firebase/database';
 import '../../styles/BaseModule.css';
+import OptimizedVideoFrame from '../common/OptimizedVideoFrame';
 
 const MAX_ATTEMPTS = 2; // Máximo de intentos permitidos para el quiz
 
@@ -99,9 +100,7 @@ const BaseModule = ({
           setVideoProgress(newProgress);
           
           // Solo agregar puntos localmente si no se obtuvieron de la función
-          if (result.alreadyWatched) {
-            console.log('Video ya visto anteriormente');
-          } else {
+          if (!result.alreadyWatched) {
             addPoints(result.points);
           }
         }
@@ -276,12 +275,11 @@ const BaseModule = ({
               {videos.map((video, index) => (
                 <div key={index} className="video-card">
                   <div className="video-container">
-                    <iframe
+                    <OptimizedVideoFrame
                       src={video.url}
                       title={video.title}
-                      className="video-iframe"
-                      allowFullScreen
                       onLoad={() => handleVideoProgress(index)}
+                      className="video-iframe"
                     />
                     {videoProgress[index] && (
                       <div className="video-completed-badge">

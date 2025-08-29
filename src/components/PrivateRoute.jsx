@@ -7,7 +7,19 @@ const PrivateRoute = ({ children, requireAdmin = false }) => {
   const location = useLocation();
 
   if (!currentUser) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    // Evitar side-effects durante render: usar un componente que dispare el evento en useEffect
+    const OpenLoginModal = () => {
+      React.useEffect(() => {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('openLoginModal'));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+
+      return <Navigate to="/" state={{ from: location }} replace />;
+    };
+
+    return <OpenLoginModal />;
   }
 
   if (requireAdmin && currentUser.role !== 'admin') {
@@ -17,4 +29,4 @@ const PrivateRoute = ({ children, requireAdmin = false }) => {
   return children;
 };
 
-export default PrivateRoute; 
+export default PrivateRoute;

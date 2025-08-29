@@ -152,7 +152,8 @@ const Module4 = () => {
         const attempts = snapshot.val();
         if (attempts) {
           const attemptsArray = Object.values(attempts);
-          setQuizAttempts(attemptsArray.length);
+          const completeAttempts = attemptsArray.filter(a => a && typeof a.score !== 'undefined');
+          setQuizAttempts(completeAttempts.length);
         } else {
           setQuizAttempts(0);
         }

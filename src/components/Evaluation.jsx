@@ -8,6 +8,7 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { database } from '../config/firebase';
 import { ref, set } from 'firebase/database';
 import '../styles/Evaluation.css';
+import LoadingSpinner from './common/LoadingSpinner';
 
 const Evaluation = () => {
   const { id } = useParams();
@@ -18,13 +19,16 @@ const Evaluation = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
   const [timeLeft, setTimeLeft] = useState(null);
+  const [timeUsedSeconds, setTimeUsedSeconds] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     if (!currentUser) {
-      navigate('/login');
+  // Abrir modal de login en lugar de navegar a /login
+  window.dispatchEvent(new CustomEvent('openLoginModal'));
       return;
     }
 
@@ -34,10 +38,8 @@ const Evaluation = () => {
         if (data) {
           setEvaluation(data);
           setTimeLeft(data.duration * 60);
-          setLoading(false);
         } else {
           setError('Evaluación no encontrada');
-          setLoading(false);
         }
 
         // Cargar progreso existente desde Firestore
@@ -48,6 +50,9 @@ const Evaluation = () => {
           if (progress.completed) {
             // Load completed results state
             setAnswers(progress.answers || {});
+            if (typeof progress.timeUsedSeconds === 'number') {
+              setTimeUsedSeconds(progress.timeUsedSeconds);
+            }
             setSubmitted(true);
           } else {
             // Load in-progress state
@@ -57,6 +62,9 @@ const Evaluation = () => {
         } else {
           // No progress found, start fresh
         }
+        // Sólo dejar de mostrar el loader después de que hayamos intentado
+        // cargar el progreso del usuario (evita un render intermedio de la UI
+        // de la evaluación antes de saber si ya fue completada).
         setLoading(false);
       } catch (error) {
         console.error('Error al cargar la evaluación:', error);
@@ -84,6 +92,21 @@ const Evaluation = () => {
 
     return () => clearInterval(timer);
   }, [timeLeft, submitted]);
+
+  // Mostrar/ocultar botón scroll-to-top en la vista de resultados
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setShowScrollTop(scrollTop > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleAnswer = (questionId, answer) => {
     setAnswers((prev) => ({
@@ -166,7 +189,10 @@ const Evaluation = () => {
     if (submitted) return;
 
     try {
-      const score = calculateScore();
+  const score = calculateScore();
+  // Calcular tiempo usado en segundos (duración total - tiempo restante)
+  const durationSeconds = (evaluation && evaluation.duration) ? evaluation.duration * 60 : 0;
+  const usedSeconds = (typeof timeLeft === 'number') ? Math.max(0, durationSeconds - timeLeft) : null;
       const correctAnswers = evaluation.questions.filter(
         (question) => {
           const userAnswer = answers[question.id];
@@ -210,10 +236,15 @@ const Evaluation = () => {
         completedAt: new Date().toISOString(),
         points: Math.round(score * 10),
         answers: answers
+        ,
+        // registrar tiempo usado si lo conocemos
+        timeUsedSeconds: usedSeconds
       };
 
       // Intentar guardar la evaluación
       await saveEvaluation(id, result);
+  // Guardar en estado local para mostrar en la vista de resultados inmediatamente
+  if (typeof usedSeconds === 'number') setTimeUsedSeconds(usedSeconds);
       
       // Si el usuario pasa la evaluación, generamos certificado
       if (score >= evaluation.passingScore) {
@@ -234,7 +265,7 @@ const Evaluation = () => {
   if (loading) {
     return (
       <div className="evaluation-container">
-        <div className="loading">Cargando evaluación...</div>
+        <LoadingSpinner />
       </div>
     );
   }
@@ -276,7 +307,7 @@ const Evaluation = () => {
                 </span>
               </div>
             </div>
-            <div className="score-details">
+          <div className="score-details">
               <div className="score-info">
                 <i className="fas fa-percentage" />
                 <div className="info-content">
@@ -289,7 +320,20 @@ const Evaluation = () => {
                 <div className="info-content">
                   <span className="info-label">Tiempo utilizado</span>
                   <span className="info-value">
-                    {Math.floor((evaluation.duration * 60 - timeLeft) / 60)} minutos
+                    {
+                      (() => {
+                        // Priorizar valor guardado, luego cálculo desde timeLeft
+                        const secs = (typeof timeUsedSeconds === 'number')
+                          ? timeUsedSeconds
+                          : (typeof timeLeft === 'number' ? Math.max(0, (evaluation.duration * 60) - timeLeft) : null);
+
+                        if (secs === null) return '-';
+                        const mins = Math.floor(secs / 60);
+                        const rem = secs % 60;
+                        if (mins > 0) return `${mins} minuto${mins > 1 ? 's' : ''} ${rem > 0 ? `${rem} seg` : ''}`;
+                        return `${rem} seg`;
+                      })()
+                    }
                   </span>
                 </div>
               </div>
@@ -444,6 +488,16 @@ const Evaluation = () => {
             </button>
           </div>
         </div>
+        {/* Botón scroll-to-top (vista de resultados) - sólo para eval1 y eval2 */}
+        {(id === 'eval1' || id === 'eval2') && (
+          <button
+            className={`scroll-to-top ${showScrollTop ? 'visible' : ''}`}
+            onClick={scrollToTop}
+            aria-label="Volver al inicio"
+          >
+            <i className="fas fa-chevron-up"></i>
+          </button>
+        )}
       </div>
     );
   }

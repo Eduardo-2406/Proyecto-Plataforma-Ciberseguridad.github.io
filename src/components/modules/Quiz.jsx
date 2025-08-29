@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
 import useStore from '../../store/useStore';
@@ -40,6 +40,15 @@ const Quiz = () => {
   const [startTime, setStartTime] = useState(Date.now());
   const { addPoints, completeQuiz } = useStore();
   const { recordQuizResult } = useProgress();
+  const actionLockRef = useRef(0);
+
+  const triggerNextOnce = () => {
+    const now = Date.now();
+    if (now - actionLockRef.current < 300) return; // ignore rapid duplicates
+    actionLockRef.current = now;
+    // call the handler; no await here to keep UI responsive
+    handleNextQuestion();
+  };
 
   // Obtener las preguntas del módulo
   const module = modulesData[moduleId];
@@ -60,7 +69,7 @@ const Quiz = () => {
   // Verificar intentos anteriores
   useEffect(() => {
     const getAttemptCount = async () => {
-      if (auth.currentUser) {
+  if (auth.currentUser) {
         try {
           const attemptsRef = ref(database, `quizAttempts/${auth.currentUser.uid}/${moduleId}`);
           const snapshot = await get(attemptsRef);
@@ -86,7 +95,7 @@ const Quiz = () => {
     };
 
     getAttemptCount();
-  }, [moduleId, navigate]);
+  }, [moduleId, navigate, auth.currentUser?.uid]);
 
   // Si no hay preguntas, redirigir al módulo
   useEffect(() => {
@@ -173,15 +182,27 @@ const Quiz = () => {
     setFeedback(generateFeedback(questions[currentQuestion], answer));
     setShowFeedback(true);
 
-    // Registrar intento en Firebase
-    if (auth.currentUser) {
-      const attemptRef = ref(database, `quizAttempts/${auth.currentUser.uid}/${moduleId}/${Date.now()}`);
-      await set(attemptRef, {
-        questionId: currentQuestion,
-        answer,
-        isCorrect: isAnswerCorrect,
-        timestamp: Date.now()
-      });
+    // Registrar intento en Firebase (defensivo)
+    try {
+      if (auth.currentUser?.uid) {
+        // Escribir respuestas por pregunta en un nodo separado `quizResponses` para evitar las validaciones
+        // que existen en `quizAttempts` (requieren 'score' y 'attemptNumber').
+        const ts = Date.now();
+        const path = `quizResponses/${auth.currentUser.uid}/${moduleId}/${ts}`;
+        console.debug('Attempting to write question response to RTDB path:', path);
+        const responseRef = ref(database, path);
+        await set(responseRef, {
+          questionId: currentQuestion,
+          answer,
+          isCorrect: isAnswerCorrect,
+          timestamp: ts
+        });
+        console.debug('Saved question response to RTDB path:', path);
+      } else {
+        console.warn('handleAnswerSelect: usuario no autenticado, no se guardó intento de respuesta', { moduleId, currentQuestion });
+      }
+    } catch (err) {
+      console.warn('Error guardando intento de respuesta en Realtime DB:', err);
     }
   };
 
@@ -199,49 +220,74 @@ const Quiz = () => {
       
       try {
         if (auth.currentUser) {
-          // Incrementar el contador de intentos localmente
-          const newAttemptCount = currentAttempts + 1;
-          setCurrentAttempts(newAttemptCount);
-          
+          // Calcular el número de intento a usar pero no actualizar estado local hasta confirmar el guardado
+          const attemptToUse = currentAttempts + 1;
+
           // Usar la nueva función del ProgressContext
-          const result = await recordQuizResult(moduleId, finalScore, newAttemptCount);
-          
-          if (result.success) {
+          let result = null;
+          try {
+            result = await recordQuizResult(moduleId, finalScore, attemptToUse);
+          } catch (err) {
+            // recordQuizResult puede lanzar; lo manejamos abajo con fallback
+            console.warn('recordQuizResult lanzó error, intentaremos fallback:', err);
+            result = null;
+          }
+
+          if (result && result.success) {
+            // Solo actualizar contador local si el guardado principal fue exitoso
+            setCurrentAttempts(prev => prev + 1);
             if (result.improved) {
               addPoints(result.points);
             }
-            
+
             if (finalScore >= 80) {
               completeQuiz(moduleId);
             }
           } else {
-            // Fallback al método anterior si hay error
-            const attemptRef = ref(database, `quizAttempts/${auth.currentUser.uid}/${moduleId}/${Date.now()}`);
-            await set(attemptRef, {
-              score: finalScore,
-              points: Math.round((finalScore / 100) * 30),
-              timestamp: Date.now(),
-              attemptNumber: newAttemptCount,
-              timeSpent
-            });
+            // Fallback al método anterior si hay error o recordQuizResult falló
+            try {
+              if (auth.currentUser?.uid) {
+                const ts = Date.now();
+                const attemptKey = String(attemptToUse);
+                const attemptPath = `quizAttempts/${auth.currentUser.uid}/${moduleId}/${attemptKey}`;
+                console.debug('Fallback: attempting to write quiz attempt to RTDB path:', attemptPath);
+                const attemptRef = ref(database, attemptPath);
+                await set(attemptRef, {
+                  score: finalScore,
+                  points: Math.round((finalScore / 100) * 30),
+                  timestamp: ts,
+                  attemptNumber: attemptToUse,
+                  timeSpent
+                });
 
-            const bestScoreRef = ref(database, `bestQuizScores/${auth.currentUser.uid}/${moduleId}`);
-            await set(bestScoreRef, {
-              score: finalScore,
-              timestamp: Date.now()
-            });
+                const bestScorePath = `bestQuizScores/${auth.currentUser.uid}/${moduleId}`;
+                console.debug('Fallback: attempting to write best score to RTDB path:', bestScorePath);
+                const bestScoreRef = ref(database, bestScorePath);
+                await set(bestScoreRef, {
+                  score: finalScore,
+                  timestamp: ts
+                });
 
-            if (finalScore >= 80) {
-              const userProgressRef = ref(database, `users/${auth.currentUser.uid}/progress/${moduleId}`);
-              await set(userProgressRef, {
-                quizCompleted: true,
-                quizScore: finalScore,
-                lastUpdated: Date.now()
-              });
+                if (finalScore >= 80) {
+                  const userProgressRef = ref(database, `users/${auth.currentUser.uid}/progress/${moduleId}`);
+                  await set(userProgressRef, {
+                    quizCompleted: true,
+                    quizScore: finalScore,
+                    lastUpdated: Date.now()
+                  });
 
-              const points = Math.round((finalScore / 100) * 30);
-              addPoints(points);
-              completeQuiz(moduleId);
+                  const points = Math.round((finalScore / 100) * 30);
+                  addPoints(points);
+                  completeQuiz(moduleId);
+                }
+
+                // Solo actualizar contador local si el guardado en RTDB fue exitoso
+                setCurrentAttempts(prev => prev + 1);
+              } else {
+                console.warn('Fallback guardar intento: usuario no autenticado, no se guardó intento', { moduleId, finalScore, attemptToUse });
+              }
+            } catch (err) {
+              console.warn('Error en fallback al guardar intento de quiz en Realtime DB:', err);
             }
           }
         }
@@ -491,8 +537,9 @@ const Quiz = () => {
                 <motion.button
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  onClick={handleNextQuestion}
-                  className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                  onClick={triggerNextOnce}
+                  onPointerDown={triggerNextOnce}
+                  className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none"
                 >
                   {currentQuestion < questions.length - 1 ? 'Siguiente Pregunta' : 'Ver Resultados'}
                 </motion.button>

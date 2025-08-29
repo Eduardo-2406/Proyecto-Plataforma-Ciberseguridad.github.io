@@ -17,6 +17,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  will-change: transform, opacity; /* Optimizar para animaciones */
 }
 
 /* === MODULE HEADER - ADAPTIVE === */
@@ -71,12 +72,28 @@
   margin-bottom: clamp(1.5rem, 4vw, 2rem);
 }
 
+/* Fix: force tighter spacing between header and description to avoid
+   a visible gap on initial navigation (layout shift / staggered animations).
+   This override is intentionally specific and conservative. */
+.module-header {
+  margin-bottom: clamp(0.5rem, 2vw, 0.75rem);
+}
+
+.module-title {
+  margin-bottom: 0.25rem; /* small separation from description */
+}
+
+.module-description {
+  margin-top: 0; /* ensure description sits directly under header */
+}
+
 /* === MODULE SECTIONS - RESPONSIVE LAYOUT === */
 .module-sections {
   display: flex;
   flex-direction: column;
   gap: clamp(1.5rem, 4vw, 2rem);
   margin-bottom: clamp(2rem, 5vw, 2.5rem);
+  min-height: 200px; /* Prevenir layout shift durante la carga */
 }
 
 .module-section {

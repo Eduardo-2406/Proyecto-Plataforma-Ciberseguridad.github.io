@@ -76,9 +76,17 @@ const Navbar = ({ onOpenLoginModal, onToggleSidebar, isSidebarOpen }) => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleLogout = () => {
-    logout();
-    setIsMenuOpen(false);
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setIsMenuOpen(false);
+      // Navegar a home tras logout
+      if (typeof window !== 'undefined' && window.location) {
+        window.location.hash = '#/';
+      }
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
   };
 
   const handleHamburgerClick = () => {

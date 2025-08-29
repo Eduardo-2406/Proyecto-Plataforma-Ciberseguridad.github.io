@@ -187,9 +187,13 @@ export function ProgressProvider({ children }) {
 
   // Función para registrar resultado de quiz
   const recordQuizResult = async (moduleId, score, attemptNumber) => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      console.warn('recordQuizResult: No currentUser available. Aborting saveQuizResult.', { moduleId, score, attemptNumber });
+      throw new Error('User not authenticated');
+    }
 
     try {
+      // Use the currentUser.uid but let saveQuizResult validate auth.currentUser as final source of truth
       const result = await saveQuizResult(currentUser.uid, moduleId, score, attemptNumber);
       
       // Recargar datos si hubo mejora

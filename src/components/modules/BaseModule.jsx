@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import useStore from '../../store/useStore';
@@ -33,6 +33,10 @@ const BaseModule = ({
   const [videoProgress, setVideoProgress] = useState({});
   const [isModuleCompleted, setIsModuleCompleted] = useState(false);
   const [moduleStatus, setModuleStatus] = useState('No Iniciado');
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [moduleSavedMsg, setModuleSavedMsg] = useState('');
+  const [toastClosing, setToastClosing] = useState(false);
+  const toastTimers = useRef([]);
 
   // Obtener intentos del quiz
   const { data: quizAttemptsData } = useFirebaseQuery(`quizAttempts/${auth.currentUser?.uid}/${moduleId}`, {
@@ -75,13 +79,96 @@ const BaseModule = ({
     }
   }, [moduleProgress, videoProgressData, quizAttemptsData]);
 
+  // Ensure page scrolls to top of the app's content area when entering a module
   useEffect(() => {
-    if (quizAttemptsData && quizAttemptsData.length > 0) {
-      const latestAttempt = quizAttemptsData[0];
-      const score = latestAttempt.score || 0;
-      setQuizScore(score);
+    // Robust scroll: try to reset the SPA content container, then ensure the main card is visible
+    const attemptScroll = (triesLeft = 5) => {
+      const content = document.querySelector('.layout-content');
+      const container = content || document.scrollingElement || document.documentElement || window;
+
+      // Detect navbar height dynamically: prefer an element fixed at top (common navbar)
+      let navbarOffset = 0;
+      try {
+        const fixedEls = Array.from(document.querySelectorAll('body *'));
+        const navbarEl = fixedEls.find(el => {
+          const cs = window.getComputedStyle(el);
+          if (!cs) return false;
+          return cs.position === 'fixed' && Math.round(el.getBoundingClientRect().top) === 0 && el.getBoundingClientRect().height > 0;
+        });
+        if (navbarEl) {
+          navbarOffset = navbarEl.getBoundingClientRect().height || 0;
+        } else {
+          // Fallback: read layout-container margin-top as approximate navbar height
+          const layoutContainer = document.querySelector('.layout-container');
+          if (layoutContainer) {
+            const cs = window.getComputedStyle(layoutContainer);
+            const mt = cs.marginTop || cs.getPropertyValue('margin-top');
+            const px = parseFloat(mt.replace('px',''));
+            if (!isNaN(px)) navbarOffset = px;
+          }
+        }
+      } catch (err) {
+        navbarOffset = 0;
+      }
+
+      try {
+        if (content && typeof content.scrollTo === 'function') {
+          content.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        } else if (container && typeof container.scrollTo === 'function') {
+          container.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        } else {
+          window.scrollTo(0, 0);
+        }
+
+        // Also ensure the main card is visible (compensate for fixed navbar)
+        const card = document.querySelector('.base-module-card');
+        if (card && typeof card.getBoundingClientRect === 'function') {
+          const rect = card.getBoundingClientRect();
+          const absoluteTop = (window.pageYOffset || document.documentElement.scrollTop) + rect.top;
+          const target = Math.max(0, absoluteTop - navbarOffset - 8); // small gap
+          window.scrollTo({ top: target, left: 0, behavior: 'auto' });
+        }
+      } catch (err) {
+        // if the DOM isn't ready, retry a few times
+        if (triesLeft > 0) {
+          window.requestAnimationFrame(() => attemptScroll(triesLeft - 1));
+        }
+      }
+    };
+
+    // Run after a tick to let the router render
+    setTimeout(() => attemptScroll(), 0);
+  }, [moduleId]);
+
+  useEffect(() => {
+    if (!quizAttemptsData) return;
+
+    // Support both array and object shapes coming from the RTDB helper
+    let latestAttempt = null;
+
+    try {
+      if (Array.isArray(quizAttemptsData)) {
+        // array may be ordered by timestamp desc via the query, pick first defined
+        latestAttempt = quizAttemptsData.find(a => a && typeof a.score !== 'undefined') || quizAttemptsData[0];
+      } else if (typeof quizAttemptsData === 'object') {
+        const vals = Object.values(quizAttemptsData).filter(Boolean);
+        if (vals.length) {
+          // prefer ordering by timestamp if present
+          vals.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+          latestAttempt = vals[0];
+        }
+      }
+    } catch (err) {
+      console.warn('Error parsing quizAttemptsData for latest attempt:', err, quizAttemptsData);
+      latestAttempt = null;
     }
+
+    const score = latestAttempt && typeof latestAttempt.score !== 'undefined' ? latestAttempt.score : 0;
+    setQuizScore(score);
   }, [quizAttemptsData]);
+
+  // Cleanup toast timers if component unmounts
+  useEffect(() => () => { toastTimers.current.forEach(t => clearTimeout(t)); }, []);
 
   useEffect(() => {
     if (bestQuizScore) {
@@ -89,7 +176,43 @@ const BaseModule = ({
     }
   }, [bestQuizScore]);
 
+  // Mostrar/ocultar botón scroll-to-top en módulo
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setShowScrollTop(scrollTop > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTopButton = () => {
+    // Intentar scrollear el contenedor SPA primero, y asegurar fallback a window
+    const content = document.querySelector('.layout-content');
+    try {
+      if (content && typeof content.scrollTo === 'function') {
+        content.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        // also set scrollTop as immediate fallback
+        content.scrollTop = 0;
+      }
+    } catch (e) {
+      try { content.scrollTop = 0; } catch(_) {}
+    }
+
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    } catch (e) {
+      window.scrollTo(0, 0);
+    }
+  };
+
   const handleVideoProgress = async (videoId) => {
+    // If module is already completed, don't record video progress that may overwrite completion status
+    if (moduleProgress?.completed) {
+      return;
+    }
+
     if (!videoProgress[videoId]) {
       try {
         // Usar la nueva función del ProgressContext
@@ -122,13 +245,25 @@ const BaseModule = ({
         }
       }
 
-      // Actualizar el estado del módulo a "En Proceso"
+      // Actualizar el estado del módulo a "En Proceso" sin sobrescribir 'completed'
       if (auth.currentUser) {
         const userProgressRef = ref(database, `users/${auth.currentUser.uid}/progress/${moduleId}`);
-        await set(userProgressRef, {
-          status: 'in-progress',
-          lastUpdated: Date.now()
-        });
+        try {
+          const snap = await get(userProgressRef);
+          const existing = snap.exists() ? snap.val() : {};
+          if (existing.completed) {
+            // preservar completed
+            await set(userProgressRef, { ...existing, lastUpdated: Date.now() });
+          } else {
+            await set(userProgressRef, { ...existing, status: 'in-progress', lastUpdated: Date.now() });
+          }
+        } catch (err) {
+          // Fallback simple
+          await set(userProgressRef, {
+            status: moduleProgress?.completed ? 'completed' : 'in-progress',
+            lastUpdated: Date.now()
+          });
+        }
       }
     }
   };
@@ -161,9 +296,18 @@ const BaseModule = ({
           });
         }
 
-        // Mostrar mensaje de éxito y redirigir
-        alert('¡Felicidades! Has completado este módulo exitosamente.');
-        navigate('/modules'); // Redirigir a la página de módulos
+  // Mostrar mensaje de éxito mediante toast (mismo estilo que Profile) y redirigir
+  // Limpiar timers previos
+  toastTimers.current.forEach(t => clearTimeout(t));
+  toastTimers.current = [];
+  setToastClosing(false);
+  setModuleSavedMsg('¡Felicidades! Has completado este módulo exitosamente.');
+  // Programar cierre animado
+  toastTimers.current.push(setTimeout(() => setToastClosing(true), 3200)); // start exit
+  toastTimers.current.push(setTimeout(() => { setModuleSavedMsg(''); setToastClosing(false); }, 3600));
+
+  // Redirigir a la página de módulos tras una pequeña pausa para que el usuario vea el toast
+  setTimeout(() => navigate('/modules'), 900);
       } else {
         let message = 'Para completar el módulo necesitas:';
         if (!allVideosWatched) {
@@ -172,7 +316,8 @@ const BaseModule = ({
         if (!quizCompleted) {
           message += '\n- Aprobar el quiz con al menos 80%';
         }
-        alert(message);
+  // Mensaje de validación (usar alert corto como fallback)
+  alert(message);
       }
     }
   };
@@ -201,9 +346,14 @@ const BaseModule = ({
 
   return (
     <div className="base-module-container">
+      {/* Toast éxito módulo */}
+      {moduleSavedMsg && (
+        <div className={`profile-toast ${toastClosing ? 'closing' : ''}`} role="status" aria-live="polite">{moduleSavedMsg}</div>
+      )}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0 }}
         className="base-module-card"
       >
         <div className="module-header">
@@ -223,9 +373,9 @@ const BaseModule = ({
           {sections.map((section, index) => (
             <motion.section
               key={section.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2 }}
+              transition={{ duration: 0 }}
               className="module-section"
             >
               <h2 className="section-title">
@@ -357,6 +507,14 @@ const BaseModule = ({
           </button>
         </div>
       </motion.div>
+      {/* Scroll to top button */}
+      <button
+        className={`scroll-to-top ${showScrollTop ? 'visible' : ''}`}
+        onClick={scrollToTopButton}
+        aria-label="Volver al inicio"
+      >
+        <i className="fas fa-chevron-up"></i>
+      </button>
     </div>
   );
 };

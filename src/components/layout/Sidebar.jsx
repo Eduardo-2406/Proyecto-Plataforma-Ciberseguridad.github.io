@@ -87,6 +87,8 @@ const Sidebar = ({ onToggle, isDrawerOpen, onCloseDrawer, setSidebarDrawerOpen }
       if (typeof onCloseDrawer === 'function') {
         onCloseDrawer();
       }
+  // Asegurar que siempre volvemos a Home tras cerrar sesión
+  try { navigate('/'); } catch (e) { /* noop */ }
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }

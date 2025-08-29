@@ -101,12 +101,12 @@ const Modules = () => {
   };
 
   const imageNames = {
-    "1": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/introduccion.avif?format=webp&w=600",
-    "2": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/passwords.avif?format=webp&w=600",
-    "3": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/phishing.avif?format=webp&w=600",
-    "4": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/datos.avif?format=webp&w=600",
-    "5": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/incidentes.avif?format=webp&w=600",
-    "6": "https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/modules/simulaciones.avif?format=webp&w=600"
+    "1": "/images/modules/introduccion.webp",
+    "2": "/images/modules/passwords.webp",
+    "3": "/images/modules/phishing.webp",
+    "4": "/images/modules/datos.webp",
+    "5": "/images/modules/incidentes.webp",
+    "6": "/images/modules/simulaciones.webp"
   };
 
   // Helper para saber si todas las imágenes están cargadas
@@ -173,7 +173,14 @@ const Modules = () => {
                         src={imageNames[module.id]}
                         alt={module.title}
                         className={`module-image${imgLoaded[module.id] ? ' loaded' : ''}`}
-                        onLoad={() => setImgLoaded(prev => ({ ...prev, [module.id]: true }))}
+                        onLoad={() => {
+                          setImgLoaded(prev => ({ ...prev, [module.id]: true }));
+                        }}
+                        onError={(e) => {
+                          console.error(`Failed to load image for module ${module.id}:`, imageNames[module.id]);
+                          // Ocultar skeleton aunque la imagen falle
+                          setImgLoaded(prev => ({ ...prev, [module.id]: true }));
+                        }}
                         loading="lazy"
                         width="600"
                         height="400"
@@ -223,7 +230,8 @@ const Modules = () => {
                       className="start-button"
                       onClick={() => {
                         if (!currentUser) {
-                          navigate('/login');
+                          // Abrir modal de login en lugar de navegar a /login
+                          window.dispatchEvent(new CustomEvent('openLoginModal'));
                         } else {
                           navigate(`/module/${module.id}`);
                         }
@@ -251,7 +259,7 @@ const Modules = () => {
               <div className="prompt-buttons">
                 <button
                   className="login-button"
-                  onClick={() => navigate('/login')}
+                  onClick={() => window.dispatchEvent(new CustomEvent('openLoginModal'))}
                 >
                   Iniciar sesión
                 </button>

@@ -10,8 +10,8 @@ import LoadingSpinner from './common/LoadingSpinner';
 import '../styles/Evaluations.css';
 
 const evaluationImages = {
-  'eval1': 'https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/evaluations/evaluacion1.avif?format=webp&w=600',
-  'eval2': 'https://cdn.statically.io/gh/Eduardo-2406/Proyecto-Plataforma-Ciberseguridad.github.io/main/public/images/evaluations/evaluacion2.avif?format=webp&w=600',
+  'eval1': '/images/evaluations/evaluacion1.webp',
+  'eval2': '/images/evaluations/evaluacion2.webp',
 };
 
 const Evaluations = () => {
@@ -45,6 +45,9 @@ const Evaluations = () => {
             evaluationProgressData[doc.id] = doc.data();
           });
           setUserEvaluationProgress(evaluationProgressData);
+        } else {
+          // No hay usuario autenticado: no hay progreso que cargar
+          setUserEvaluationProgress({});
         }
         setLoading(false);
       } catch (error) {
@@ -124,7 +127,14 @@ const Evaluations = () => {
                         src={evaluationImages[evaluation.id]}
                         alt={evaluation.title}
                         className={`evaluation-image${imgLoaded[evaluation.id] ? ' loaded' : ''}`}
-                        onLoad={() => setImgLoaded(prev => ({ ...prev, [evaluation.id]: true }))}
+                        onLoad={() => {
+                          setImgLoaded(prev => ({ ...prev, [evaluation.id]: true }));
+                        }}
+                        onError={(e) => {
+                          console.error(`Failed to load image for evaluation ${evaluation.id}:`, evaluationImages[evaluation.id]);
+                          // Ocultar skeleton aunque la imagen falle
+                          setImgLoaded(prev => ({ ...prev, [evaluation.id]: true }));
+                        }}
                         loading="lazy"
                         width="600"
                         height="400"
@@ -168,7 +178,13 @@ const Evaluations = () => {
                       )}
                       <button 
                         className="start-evaluation-button"
-                        onClick={() => handleEvaluationClick(evaluation.id)}
+                        onClick={() => {
+                          if (!currentUser) {
+                            window.dispatchEvent(new CustomEvent('openLoginModal'));
+                          } else {
+                            handleEvaluationClick(evaluation.id);
+                          }
+                        }}
                       >
                         {status.status === 'completed' ? (
                           <>
@@ -203,7 +219,7 @@ const Evaluations = () => {
               <div className="prompt-buttons">
                 <button
                   className="login-button"
-                  onClick={() => navigate('/login')}
+                  onClick={() => window.dispatchEvent(new CustomEvent('openLoginModal'))}
                 >
                   Iniciar sesión
                 </button>

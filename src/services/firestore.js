@@ -11,7 +11,7 @@ import {
   limit,
   writeBatch
 } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { db, auth } from '../config/firebase';
 import { ref, set, get, update } from 'firebase/database';
 import { database } from '../config/firebase';
 
@@ -533,11 +533,27 @@ export const saveVideoProgress = async (userId, moduleId, videoId) => {
 // Función para registrar resultado de quiz
 export const saveQuizResult = async (userId, moduleId, score, attemptNumber = 1) => {
   try {
+    // Ensure we use the authenticated user's UID at write time to comply with Realtime DB rules
+    const currentUid = auth?.currentUser?.uid;
+    if (!currentUid) {
+      console.error('saveQuizResult: No authenticated user available. Aborting save.', { userId, moduleId, score, attemptNumber });
+      throw new Error('User not authenticated');
+    }
+
+    if (currentUid !== userId) {
+      console.warn('saveQuizResult: userId parameter does not match auth.currentUser.uid. Using authenticated uid to write.', { paramUserId: userId, authUid: currentUid });
+    }
+
+    const targetUid = currentUid;
+
     const quizPoints = Math.round((score / 100) * 30); // Máximo 30 puntos por quiz
     const timestamp = Date.now();
-    
-    // Guardar intento en Realtime Database
-    const attemptRef = ref(database, `quizAttempts/${userId}/${moduleId}/${timestamp}`);
+
+    // Use attemptNumber as key when provided so repeated writes for the same attempt overwrite
+    const attemptKey = attemptNumber ? String(attemptNumber) : String(timestamp);
+
+    // Guardar intento en Realtime Database usando el uid autenticado
+    const attemptRef = ref(database, `quizAttempts/${targetUid}/${moduleId}/${attemptKey}`);
     await set(attemptRef, {
       score,
       points: quizPoints,
@@ -546,7 +562,7 @@ export const saveQuizResult = async (userId, moduleId, score, attemptNumber = 1)
     });
 
     // Verificar si es la mejor puntuación
-    const bestScoreRef = ref(database, `bestQuizScores/${userId}/${moduleId}`);
+    const bestScoreRef = ref(database, `bestQuizScores/${targetUid}/${moduleId}`);
     const bestScoreSnapshot = await get(bestScoreRef);
     const currentBestScore = bestScoreSnapshot.exists() ? bestScoreSnapshot.val().score : 0;
     
@@ -564,7 +580,7 @@ export const saveQuizResult = async (userId, moduleId, score, attemptNumber = 1)
       pointsAdded = quizPoints - previousPoints;
       
       // Actualizar puntos del usuario
-      const userRef = ref(database, `users/${userId}`);
+      const userRef = ref(database, `users/${targetUid}`);
       const userSnapshot = await get(userRef);
       const userData = userSnapshot.exists() ? userSnapshot.val() : {};
       const newPoints = (userData.points || 0) + pointsAdded;
@@ -575,7 +591,7 @@ export const saveQuizResult = async (userId, moduleId, score, attemptNumber = 1)
       });
 
       // También actualizar en Firestore
-      const firestoreUserRef = doc(db, 'users', userId);
+      const firestoreUserRef = doc(db, 'users', targetUid);
       const firestoreUserSnap = await getDoc(firestoreUserRef);
       
       if (firestoreUserSnap.exists()) {

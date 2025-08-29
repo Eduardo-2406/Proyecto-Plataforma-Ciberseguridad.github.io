@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import '../styles/Navigation.css';
 
@@ -7,10 +7,12 @@ const Navigation = () => {
   const { currentUser, logout } = useAuth();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       await logout();
+  navigate('/');
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }

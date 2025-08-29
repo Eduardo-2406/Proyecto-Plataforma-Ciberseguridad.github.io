@@ -75,8 +75,10 @@
 
 .module-header {
   position: relative;
-  height: clamp(200px, 25vw, 260px);
-  overflow: hidden;
+  /* Use min-height instead of fixed height to avoid forcing an initial large gap
+     when header content hasn't rendered yet (e.g. images or badges). */
+  min-height: clamp(140px, 18vw, 220px);
+  overflow: visible; /* allow content to flow naturally and push description if needed */
 }
 
 .module-image-wrapper {
@@ -109,7 +111,7 @@
 
 .module-image {
   width: 100%;
-  height: 100%;
+  min-height: 120px; /* keep a reasonable visual placeholder while loading */
   object-fit: cover;
   display: block;
   background: #f0f9ff;
@@ -344,7 +346,9 @@
   }
   
   .module-header {
-    height: clamp(220px, 22vw, 240px);
+    /* Debug: unset fixed height for debugging. Keep minimal rules to avoid empty-block lint errors. */
+    min-height: 0;
+    overflow: visible;
   }
   
   .modules-container .animated-title h1 {
@@ -377,7 +381,9 @@
   }
   
   .module-header {
-    height: 260px;
+    /* Debug: unset fixed height for desktop breakpoint. */
+    min-height: 0;
+    overflow: visible;
   }
   
   .module-details {
@@ -415,7 +421,9 @@
   }
   
   .module-header {
-    height: 200px;
+    /* Debug: unset fixed height for tablet breakpoint. */
+    min-height: 0;
+    overflow: visible;
   }
   
   .module-content {
@@ -479,7 +487,9 @@
   }
   
   .module-header {
-    height: 180px;
+    /* Debug: unset fixed height for small mobile breakpoint. */
+    min-height: 0;
+    overflow: visible;
   }
 
   .module-details {
@@ -537,7 +547,9 @@
   }
   
   .module-header {
-    height: 160px;
+    /* Debug: unset fixed height for smallest mobile breakpoint. */
+    min-height: 0;
+    overflow: visible;
   }
   
   .module-badge {
@@ -817,6 +829,15 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(20px);
+}
+
+/* Remove default focus outline for mouse clicks; keep keyboard focus visible via :focus-visible if supported */
+.scroll-to-top:focus {
+  outline: none;
+}
+.scroll-to-top:focus-visible {
+  outline: 2px solid rgba(37,99,235,0.9);
+  outline-offset: 2px;
 }
 
 .scroll-to-top.visible {

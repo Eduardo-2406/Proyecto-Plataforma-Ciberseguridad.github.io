@@ -36,6 +36,7 @@ const BaseModule = ({
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [moduleSavedMsg, setModuleSavedMsg] = useState('');
   const [toastClosing, setToastClosing] = useState(false);
+  const [startTime, setStartTime] = useState(null);
   const toastTimers = useRef([]);
 
   // Obtener intentos del quiz
@@ -70,12 +71,15 @@ const BaseModule = ({
     if (moduleProgress?.completed) {
       setModuleStatus('Completado');
       setIsModuleCompleted(true);
+      if (moduleProgress.startTime) setStartTime(moduleProgress.startTime);
     } else if (videoProgressData || (quizAttemptsData && quizAttemptsData.length > 0)) {
       setModuleStatus('En Proceso');
       setIsModuleCompleted(false);
+      if (!startTime) setStartTime(Date.now());
     } else {
       setModuleStatus('No Iniciado');
       setIsModuleCompleted(false);
+      setStartTime(Date.now());
     }
   }, [moduleProgress, videoProgressData, quizAttemptsData]);
 
@@ -275,39 +279,40 @@ const BaseModule = ({
         addPoints(50); // 50 puntos por completar el módulo
         setIsModuleCompleted(true);
 
-        // Guardar progreso en Firebase
+        const completedAt = Date.now();
+
+        // Guardar progreso en Firebase SOLO para el módulo actual, con startTime y completedAt
         if (auth.currentUser) {
           // Actualizar el progreso del módulo
           const moduleRef = ref(database, `moduleProgress/${auth.currentUser.uid}/${moduleId}`);
           await set(moduleRef, {
             completed: true,
-            completedAt: Date.now(),
+            startTime,
+            completedAt,
             score: bestScore,
             videosWatched: Object.keys(videoProgress).length
           });
 
-          // Actualizar el progreso general del usuario
+          // Actualizar el progreso general del usuario SOLO para el módulo actual
           const userProgressRef = ref(database, `users/${auth.currentUser.uid}/progress/${moduleId}`);
           await set(userProgressRef, {
             completed: true,
-            completedAt: Date.now(),
+            startTime,
+            completedAt,
             score: bestScore,
             status: 'completed'
           });
         }
 
-  // Mostrar mensaje de éxito mediante toast (mismo estilo que Profile) y redirigir
-  // Limpiar timers previos
-  toastTimers.current.forEach(t => clearTimeout(t));
-  toastTimers.current = [];
-  setToastClosing(false);
-  setModuleSavedMsg('¡Felicidades! Has completado este módulo exitosamente.');
-  // Programar cierre animado
-  toastTimers.current.push(setTimeout(() => setToastClosing(true), 3200)); // start exit
-  toastTimers.current.push(setTimeout(() => { setModuleSavedMsg(''); setToastClosing(false); }, 3600));
+        // Mostrar mensaje de éxito mediante toast (mismo estilo que Profile) y redirigir
+        toastTimers.current.forEach(t => clearTimeout(t));
+        toastTimers.current = [];
+        setToastClosing(false);
+        setModuleSavedMsg('¡Felicidades! Has completado este módulo exitosamente.');
+        toastTimers.current.push(setTimeout(() => setToastClosing(true), 3200)); // start exit
+        toastTimers.current.push(setTimeout(() => { setModuleSavedMsg(''); setToastClosing(false); }, 3600));
 
-  // Redirigir a la página de módulos tras una pequeña pausa para que el usuario vea el toast
-  setTimeout(() => navigate('/modules'), 900);
+        setTimeout(() => navigate('/modules'), 900);
       } else {
         let message = 'Para completar el módulo necesitas:';
         if (!allVideosWatched) {

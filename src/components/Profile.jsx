@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useProgress } from '../contexts/ProgressContext';
 import { database } from '../config/firebase';
 import { ref, update, onValue } from 'firebase/database';
 import UserProgress from './gamification/UserProgress';
-import Achievements from './gamification/Achievements';
 import { 
   FaUser, FaComments, FaCommentDots, FaHeart,
   FaUserAstronaut, FaUserNinja, FaUserSecret, FaUserTie,
@@ -28,6 +28,7 @@ const AVATAR_OPTIONS = [
 
 const Profile = () => {
   const { currentUser } = useAuth();
+  const { loadUserData } = useProgress();
   const [userData, setUserData] = useState({
     displayName: '',
     email: '',
@@ -52,11 +53,36 @@ const Profile = () => {
           setUserData(prev => ({ ...prev, email: currentUser.email }));
         }
       });
-      const statsRef = ref(database, `users/${currentUser.uid}/stats`);
-      onValue(statsRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) setStats(data);
+      // Escuchar posts del foro para calcular contadores reales del usuario
+      const postsRef = ref(database, 'forum/posts');
+      const unsubscribePosts = onValue(postsRef, (snapshot) => {
+        const data = snapshot.val() || {};
+
+        let postsCount = 0;
+        let commentsCount = 0;
+        let likesGiven = 0; // likes given by the user across posts
+
+        Object.values(data).forEach(post => {
+          if (post.authorId === currentUser.uid) postsCount += 1;
+
+          // Count comments authored by current user
+          if (post.comments) {
+            Object.values(post.comments).forEach(comment => {
+              if (comment.authorId === currentUser.uid) commentsCount += 1;
+            });
+          }
+
+          // Count likes given by current user (userLikes map)
+          if (post.userLikes && post.userLikes[currentUser.uid]) likesGiven += 1;
+        });
+
+        setStats(prev => ({ ...prev, posts: postsCount, comments: commentsCount, likes: likesGiven }));
       });
+
+      // Nota: no nos suscribimos a users/{uid}/stats para evitar que sobrescriba
+      // los contadores del foro; badges y otros datos se toman de users/{uid} (userData).
+
+      // cleanup handled below by return
     }
   }, [currentUser]);
 
@@ -85,6 +111,12 @@ const Profile = () => {
 
   const handleSaved = (data) => {
     setUserData(prev => ({ ...prev, ...data }));
+    // Refresh global user data (ranking, stats) so displayName changes reflect immediately in ranking
+    try {
+      loadUserData && loadUserData();
+    } catch (err) {
+      console.warn('Error refreshing user data after profile save', err);
+    }
     // Limpiar timers previos
     toastTimers.current.forEach(t => clearTimeout(t));
     toastTimers.current = [];
@@ -145,7 +177,6 @@ const Profile = () => {
       <div className="profile-main-content">
         <div className="profile-content">
           <UserProgress />
-          <Achievements />
         </div>
         {stats.badges.length > 0 && (
           <div className="badges-section">

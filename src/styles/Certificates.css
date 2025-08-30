@@ -130,7 +130,7 @@
   width: 100%;
 }
 
-.detail-item {
+.certificate-detail-item {
   display: flex;
   align-items: center;
   gap: clamp(0.8rem, 2vw, 1rem);
@@ -140,7 +140,7 @@
   overflow-wrap: break-word;
 }
 
-.detail-item i {
+.certificate-detail-item i {
   color: #0077cc;
   font-size: clamp(1.1rem, 2.5vw, 1.3rem); /* Iconos fluidos */
 }
@@ -221,20 +221,16 @@
 
 /* Media Queries - Sistema Responsive Completo */
 
-/* ==================== RESPONSIVE DESIGN ==================== */
-
-/* Optimización básica para el rango del sidebar como en Home */
 @media (min-width: 769px) and (max-width: 1200px) {
   .certificates-container {
-    contain: layout; /* Optimización básica sin conflictos */
+    contain: layout;
   }
 }
 
-/* Desktop/Laptop (por defecto - ya definido arriba) */
-@media (min-width: 1024px) {
+/* @media (min-width: 1024px) {
   .certificates-container {
-    padding: clamp(1.5rem, 3vw, 2rem); /* Padding fluido */
-    /* Sin max-width restrictivo para usar todo el espacio */
+    padding: clamp(1.5rem, 3vw, 2rem); 
+
   }
   
   .certificates-container .animated-title h1 {
@@ -245,8 +241,8 @@
   .certificates-grid {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: clamp(1.5rem, 3vw, 2rem);
-    padding: 0 clamp(1rem, 2vw, 2rem); /* Usar todo el ancho disponible */
-    max-width: none; /* Sin límite de ancho para aprovechar sidebar */
+    padding: 0 clamp(1rem, 2vw, 2rem);
+    max-width: none; 
   }
   
   .certificate-card {
@@ -264,7 +260,7 @@
     font-size: 1.45rem;
   }
   
-  .detail-item {
+  .certificate-detail-item {
     font-size: 1.05rem;
   }
   
@@ -273,7 +269,7 @@
     padding: 0.9rem 1.2rem;
     font-size: 1rem;
   }
-}
+} */
 
 /* Tablets medianas y grandes (769px - 1023px) - Patrón estable como Home */
 @media (min-width: 769px) and (max-width: 1023px) {
@@ -324,7 +320,7 @@
     font-size: 1rem;
   }
   
-  .detail-item i {
+  .certificate-detail-item i {
     font-size: 1.2rem;
   }
   
@@ -681,7 +677,7 @@
   color: #1a202c;
   margin: 0;
   white-space: nowrap;
-  font-family: 'EB Garamond', serif;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 /* ==================== SCROLL TO TOP BUTTON ==================== */

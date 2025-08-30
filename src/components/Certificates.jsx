@@ -361,19 +361,19 @@ const Certificates = () => {
               </div>
 
               <div className="certificate-details">
-                <div className="detail-item">
+                <div className="certificate-detail-item">
                   <i className="fas fa-user" />
                   <span>{certificate.recipientName}</span>
                 </div>
-                <div className="detail-item">
+                <div className="certificate-detail-item">
                   <i className="fas fa-graduation-cap" />
                   <span>{certificate.issuer}</span>
                 </div>
-                <div className="detail-item">
+                <div className="certificate-detail-item">
                   <i className="fas fa-check-circle" />
                   <span>Puntuación: {certificate.score}%</span>
                 </div>
-                <div className="detail-item">
+                <div className="certificate-detail-item">
                   <i className="fas fa-shield-alt" />
                   <span>Código: {certificate.verificationCode}</span>
                 </div>

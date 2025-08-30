@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useProgress } from '../contexts/ProgressContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedText from './animations/AnimatedText';
+import { evaluationsData } from '../data/evaluations';
 import { 
   FaTrophy, FaMedal, FaBook, FaChartLine, 
   FaUserGraduate, FaShieldAlt, FaCrown,
@@ -131,94 +132,195 @@ const Progress = () => {
     const quizzesPassed = userData?.quizzesPassed || 0;
     const evaluationResults = userData?.evaluationResults || [];
 
+    // calcular módulos completados
+    const modulesCompleted = userData?.detailedModuleProgress
+      ? userData.detailedModuleProgress.filter(m => m.completed).length
+      : Object.values(userData?.moduleProgress || {}).filter(m => m?.completed).length;
+
+    // helper para marcar desbloqueado por condición
+    const isUnlocked = (cond) => Boolean(cond);
+
     if (points >= 100) {
       achievements.push({
+        id: 'primer_paso',
         title: "Primer Paso",
         description: "Obtuviste tus primeros 100 puntos",
         icon: <FaStar />,
         points: 50,
         color: "#10B981",
-        unlocked: true
+        unlocked: isUnlocked(points >= 100)
       });
     }
 
     if (points >= 500) {
       achievements.push({
+        id: 'en_racha',
         title: "En Racha",
         description: "Acumulaste 500 puntos",
         icon: <FaFire />,
         points: 100,
         color: "#F59E0B",
-        unlocked: true
+        unlocked: isUnlocked(points >= 500)
       });
     }
 
     if (points >= 1000) {
       achievements.push({
+        id: 'especialista',
         title: "Especialista",
         description: "Alcanzaste 1000 puntos",
         icon: <FaBullseye />,
         points: 150,
         color: "#3B82F6",
-        unlocked: true
+        unlocked: isUnlocked(points >= 1000)
       });
     }
 
     if (videosWatched >= 5) {
       achievements.push({
+        id: 'estudiante_dedicado',
         title: "Estudiante Dedicado",
         description: "Viste 5 videos completos",
         icon: <FaBook />,
         points: 75,
         color: "#8B5CF6",
-        unlocked: true
+        unlocked: isUnlocked(videosWatched >= 5)
       });
     }
 
     if (quizzesPassed >= 3) {
       achievements.push({
+        id: 'experto_quizzes',
         title: "Experto en Quizzes",
         description: "Aprobaste 3 quizzes",
         icon: <FaBolt />,
         points: 100,
         color: "#EF4444",
-        unlocked: true
+        unlocked: isUnlocked(quizzesPassed >= 3)
       });
     }
 
     if (evaluationResults.filter(r => r.passed).length >= 2) {
       achievements.push({
+        id: 'evaluador_profesional',
         title: "Evaluador Profesional",
         description: "Aprobaste 2 evaluaciones",
         icon: <FaGem />,
         points: 200,
         color: "#EC4899",
-        unlocked: true
+        unlocked: isUnlocked(evaluationResults.filter(r => r.passed).length >= 2)
       });
     }
 
     // Logros bloqueados para motivar
     if (points < 2000) {
       achievements.push({
+        id: 'defensor_elite',
         title: "Defensor Élite",
         description: "Alcanza 2000 puntos",
         icon: <FaShieldAlt />,
         points: 300,
         color: "#6B7280",
-        unlocked: false
+        unlocked: isUnlocked(points >= 2000)
       });
     }
 
-    if (evaluationResults.filter(r => r.passed).length < 5) {
-      achievements.push({
-        title: "Maestro de Evaluaciones",
-        description: "Aprueba 5 evaluaciones",
-        icon: <FaCrown />,
-        points: 500,
-        color: "#6B7280",
-        unlocked: false
-      });
-    }
+    // Logros basados en módulos
+    achievements.push({
+      id: 'complete_3_modules',
+      title: "Completa 3 Módulos",
+      description: "Completa 3 módulos",
+      icon: <FaBook />,
+      points: 300,
+      color: "#6B7280",
+      unlocked: isUnlocked((modulesCompleted || 0) >= 3)
+    });
+
+    achievements.push({
+      id: 'complete_6_modules',
+      title: "Maestro de Módulos",
+      description: "Completa 6 módulos",
+      icon: <FaCrown />,
+      points: 600,
+      color: "#6B7280",
+      unlocked: isUnlocked((modulesCompleted || 0) >= 6)
+    });
+
+    // --- Logros migrados desde el antiguo componente Achievements.jsx
+    // Estos logros eran estáticos en el componente gamification/Achievements
+    // y aquí aplicamos la misma lógica dinámica usada en Progress.
+    const totalAvailableEvals = evaluationsData ? Object.keys(evaluationsData).length : 0;
+
+    // Primer Módulo
+    achievements.push({
+      id: 'first_module',
+      title: 'Primer Módulo',
+      description: 'Completaste tu primer módulo',
+      icon: '🎯',
+      points: 100,
+      color: '#10B981',
+      unlocked: isUnlocked((modulesCompleted || 0) >= 1)
+    });
+
+    // Puntuación Perfecta
+    achievements.push({
+      id: 'perfect_score',
+      title: 'Puntuación Perfecta',
+      description: 'Obtuviste 100% en una evaluación',
+      icon: '⭐',
+      points: 200,
+      color: '#F59E0B',
+      unlocked: isUnlocked((evaluationResults || []).some(r => Number(r.score) === 100))
+    });
+
+    // Aprendiz Rápido (algún módulo completado en <= 30 minutos si hay datos)
+    const fastLearnerUnlocked = Boolean((userData?.detailedModuleProgress || []).some(m => {
+      const minutes = Number(m?.timeSpentMinutes ?? m?.durationMinutes ?? m?.completionMinutes ?? 999);
+      return Number.isFinite(minutes) && minutes <= 30;
+    }));
+    achievements.push({
+      id: 'fast_learner',
+      title: 'Aprendiz Rápido',
+      description: 'Completaste un módulo en menos de 30 minutos',
+      icon: '⚡',
+      points: 150,
+      color: '#8B5CF6',
+      unlocked: isUnlocked(fastLearnerUnlocked)
+    });
+
+    // Maestro de Módulos (todos los módulos completados)
+    achievements.push({
+  id: 'complete_6_modules',
+      title: 'Maestro de Módulos',
+      description: 'Completaste todos los módulos',
+      icon: '👑',
+      points: 500,
+      color: '#3B82F6',
+      unlocked: isUnlocked((modulesCompleted || 0) >= totalModules)
+    });
+
+    // Experto en Evaluaciones (completaste todas las evaluaciones disponibles)
+    achievements.push({
+      id: 'evaluation_expert',
+      title: 'Experto en Evaluaciones',
+      description: 'Completaste todas las evaluaciones',
+      icon: '🎓',
+      points: 300,
+      color: '#10B981',
+      unlocked: isUnlocked(totalAvailableEvals > 0 && (evaluationResults || []).filter(r => r.completed || typeof r.score === 'number').length >= totalAvailableEvals)
+    });
+
+    // Aprendiz Consistente (7 días seguidos si hay dato de racha)
+    const streak = Number(userData?.consecutiveDays ?? stats?.consecutiveDays ?? userData?.streak ?? stats?.streak ?? 0);
+    achievements.push({
+      id: 'consistent_learner',
+      title: 'Aprendiz Consistente',
+      description: 'Accediste a la plataforma durante 7 días seguidos',
+      icon: '📅',
+      points: 250,
+      color: '#EC4899',
+      unlocked: isUnlocked(streak >= 7)
+    });
 
     return achievements;
   };
@@ -226,21 +328,80 @@ const Progress = () => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#FF6B6B'];
 
   // Datos mejorados de módulos con información detallada
-  const moduleData = userData?.detailedModuleProgress?.map((module) => ({
-    name: `Módulo ${module.moduleId + 1}`,
-    completed: module.completed ? 1 : 0,
-    videosWatched: module.videosWatched || 0,
-    quizScore: module.bestQuizScore || 0,
-    quizPassed: module.quizPassed ? 1 : 0,
-    attempts: module.quizAttempts || 0
-  })) || Object.entries(moduleProgress || {}).map(([id, progress]) => ({
-    name: `Módulo ${parseInt(id) + 1}`,
-    completed: progress?.completed ? 1 : 0,
-    videosWatched: progress?.videosWatched || 0,
-    quizScore: progress?.bestQuizScore || 0,
-    quizPassed: (progress?.bestQuizScore || 0) >= 80 ? 1 : 0,
-    attempts: progress?.quizAttempts || 0
-  }));
+  // Forzar orden y numeración correcta (sólo 6 módulos) usando títulos fijos.
+  const MODULE_TITLES = [
+    'Introducción a la Ciberseguridad',
+    'Gestión de Contraseñas y MFA',
+    'Phishing e Ingeniería Social',
+    'Protección y Privacidad de Datos',
+    'Respuesta a Incidentes',
+    'Simulaciones de Ciberataques'
+  ];
+
+  const totalModules = MODULE_TITLES.length;
+
+  const detailed = userData?.detailedModuleProgress || null;
+
+  const moduleData = Array.from({ length: totalModules }, (_, idx) => {
+    // Buscar progreso detallado por moduleId usando solo 1-based (1..6)
+    let entry = null;
+    const oneBased = idx + 1;
+    if (Array.isArray(detailed)) {
+      entry = detailed.find(m => Number(m.moduleId) === oneBased);
+    }
+
+    // Si no hay entrada detallada, buscar en moduleProgress (objeto con keys 1..6)
+    let prog = null;
+    const oneBasedKey = String(oneBased);
+    if (!entry) {
+      prog = moduleProgress && moduleProgress[oneBasedKey] ? moduleProgress[oneBasedKey] : null;
+    } else {
+      prog = entry;
+    }
+
+    // Derivar mejor puntuación: preferir bestQuizScore, luego quizScore,
+    // y si no existen, buscar en quizAttempts (array u objeto) y tomar el máximo.
+    let rawBestScore = prog?.bestQuizScore ?? prog?.quizScore ?? null;
+    if (rawBestScore === null || typeof rawBestScore === 'undefined') {
+      const attemptsData = prog?.quizAttempts || prog?.attemptsList || null;
+      if (attemptsData) {
+        try {
+          const vals = Array.isArray(attemptsData) ? attemptsData : Object.values(attemptsData || {}).map(a => a?.score ?? a?.value ?? null);
+          const numeric = vals.map(v => (typeof v === 'number' ? v : parseFloat(v))).filter(v => Number.isFinite(v));
+          rawBestScore = numeric.length ? Math.max(...numeric) : 0;
+        } catch (err) {
+          rawBestScore = 0;
+        }
+      } else {
+        rawBestScore = 0;
+      }
+    }
+
+  const bestQuizScore = typeof rawBestScore === 'number' ? rawBestScore : (parseFloat(rawBestScore) || 0);
+  const completedFlag = prog?.completed === true ? 1 : 0;
+    const videosWatched = prog?.videosWatched ?? 0;
+    const quizPassed = bestQuizScore >= 80 ? 1 : 0;
+    const attempts = (() => {
+      if (typeof prog?.quizAttempts === 'number') return prog.quizAttempts;
+      if (Array.isArray(prog?.quizAttempts)) return prog.quizAttempts.length;
+      if (prog?.attempts) return prog.attempts;
+      const attemptsObj = prog?.quizAttempts || prog?.attemptsList || null;
+      if (attemptsObj && typeof attemptsObj === 'object') return Object.keys(attemptsObj).length;
+      return 0;
+    })();
+
+    return {
+      name: `Módulo ${idx + 1}: ${MODULE_TITLES[idx]}`,
+      completed: completedFlag,
+      videosWatched,
+      quizScore: Number.isFinite(bestQuizScore) ? parseFloat(bestQuizScore.toFixed(2)) : 0,
+      quizPassed,
+      attempts
+    };
+  });
+
+  // Mostrar solo módulos aprobados (completados o con quizPassed)
+  const displayedModuleData = moduleData.filter(m => m.completed || m.quizPassed);
 
   // Datos de evaluaciones con más detalle - Formato mejorado para gráficas modernas
   const evaluationData = (userData?.evaluationResults || []).map((result, index) => ({
@@ -264,21 +425,21 @@ const Progress = () => {
   
   const progressData = Array.from({ length: 6 }, (_, i) => {
     const monthIndex = (currentMonth - 5 + i + 12) % 12;
-    const factor = Math.min((i + 1) / 6, 1); // Progresión más realista
+    const factor = Math.min((i + 1) / 6, 1); 
     
     return {
       month: monthNames[monthIndex],
       puntos: Math.floor((userData?.points || 0) * factor),
       videos: Math.floor((userData?.videosWatched || 0) * factor),
       evaluaciones: Math.floor(evaluationData.length * factor),
-      tendencia: Math.floor((userData?.points || 0) * factor * 0.8) // Línea de tendencia
+      tendencia: Math.floor((userData?.points || 0) * factor * 0.8) 
     };
   });
 
   // Datos para ranking con información más rica
   const rankingData = topUsers.slice(0, 8).map((user, index) => ({
     position: index + 1,
-    name: user.name || `Usuario ${index + 1}`,
+    name: user.displayName || user.name || (user.email ? user.email.split('@')[0] : `Usuario ${index + 1}`),
     points: user.points || 0,
     isCurrentUser: user.id === currentUser?.uid,
     fill: user.id === currentUser?.uid ? '#F59E0B' : '#3B82F6'
@@ -310,6 +471,13 @@ const Progress = () => {
 
   const userLevel = calculateLevel(userData.points || 0);
   const progressToNextLevel = calculateProgressToNextLevel(userData.points || 0);
+
+  const formatUserName = (user, index) => {
+    if (!user) return `Usuario ${index + 1}`;
+    const name = user.displayName || user.name || user.username || (user.email ? user.email.split('@')[0] : null);
+    if (!name || /^usuario$/i.test(String(name).trim())) return `Usuario ${index + 1}`;
+    return name;
+  };
 
   // Datos de estadísticas adicionales
   const additionalStats = [
@@ -384,7 +552,7 @@ const Progress = () => {
             >
               <div className="progress-stats-grid">
                 <motion.div 
-                  className="stat-card"
+                  className="progress-card"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
@@ -397,7 +565,7 @@ const Progress = () => {
                 </motion.div>
 
                 <motion.div 
-                  className="stat-card level-card"
+                  className="progress-card level-card"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
@@ -422,7 +590,7 @@ const Progress = () => {
                 </motion.div>
 
                 <motion.div 
-                  className="stat-card"
+                  className="progress-card"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
@@ -438,7 +606,7 @@ const Progress = () => {
                 {additionalStats.map((stat, index) => (
                   <motion.div 
                     key={stat.label}
-                    className="stat-card"
+                    className="progress-card"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 + index * 0.1 }}
@@ -460,9 +628,12 @@ const Progress = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <h2>Progreso Detallado por Módulo</h2>
+              <div className="section-header">
+                <h2><FaBook /> Progreso Detallado por Módulo</h2>
+                <p>Detalle del progreso y puntuaciones por cada módulo</p>
+              </div>
               <div className="modules-detailed-grid">
-                {moduleData.map((module, index) => (
+                {displayedModuleData.map((module, index) => (
                   <motion.div 
                     key={module.name}
                     className="module-detailed-card"
@@ -581,7 +752,7 @@ const Progress = () => {
                       <p className="user-points">{userData.points} puntos</p>
                       <p className="rank-message">
                         {topUsers.findIndex(user => user.id === currentUser?.uid) < 3 
-                          ? "¡Estás en el top 3! 🏆" 
+                          ? "¡Estás dentro del top 3! 🏆" 
                           : topUsers.findIndex(user => user.id === currentUser?.uid) < 10
                           ? "¡Estás en el top 10! 🎖️"
                           : "¡Sigue así para subir en el ranking! 💪"
@@ -622,7 +793,7 @@ const Progress = () => {
                           {index === 2 && <FaTrophy style={{ color: '#CD7C2F' }} />}
                         </div>
                         <div className="podium-info">
-                          <span className="user-name">{user.name || `Usuario ${index + 1}`}</span>
+                          <span className="user-name">{formatUserName(user, index)}</span>
                           <span className="user-score">{user.points} pts</span>
                         </div>
                       </motion.div>

@@ -4,6 +4,7 @@ import { updateProfile } from 'firebase/auth';
 import { ref, update } from 'firebase/database';
 import { database } from '../../config/firebase';
 import { useAuth } from '../../contexts/AuthContext';
+import { updateUserProfile } from '../../services/firestore';
 import { 
   FaUserAstronaut, FaUserNinja, FaUserSecret, FaUserTie,
   FaUserGraduate, FaUserShield, FaUserCog, FaUserAlt,
@@ -66,6 +67,12 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSaved }) => {
       await updateProfile(currentUser, { displayName: form.displayName });
       const userRef = ref(database, `users/${currentUser.uid}`);
       await update(userRef, { displayName: form.displayName, avatarId: form.avatarId });
+      // Also update Firestore users document so ranking (which reads from Firestore) gets the new name
+      try {
+        await updateUserProfile(currentUser.uid, { displayName: form.displayName, avatarId: form.avatarId });
+      } catch (fireErr) {
+        console.warn('No se pudo actualizar Firestore user profile:', fireErr);
+      }
       setSuccess('Guardado correctamente');
       onSaved && onSaved(form);
       onClose();

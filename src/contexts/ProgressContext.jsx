@@ -12,6 +12,9 @@ import {
   saveQuizResult,
   syncUserData
 } from '../services/firestore';
+import { evaluationsData } from '../data/evaluations';
+import { ref, get } from 'firebase/database';
+import { database } from '../config/firebase';
 
 const ProgressContext = createContext();
 
@@ -47,9 +50,9 @@ export function ProgressProvider({ children }) {
       // Sincronizar datos al cargar
       await syncUserData(currentUser.uid);
       
-      // Cargar progreso de módulos con datos completos
+      // Cargar progreso de módulos con datos completos (siempre 1-based)
       const progress = {};
-      for (let i = 0; i < 6; i++) {
+      for (let i = 1; i <= 6; i++) {
         try {
           progress[i] = await getModuleProgress(currentUser.uid, i);
         } catch (moduleError) {
@@ -57,6 +60,8 @@ export function ProgressProvider({ children }) {
           progress[i] = null;
         }
       }
+
+      // No normalizar a 0-based, mantener 1-based
       setModuleProgress(progress);
 
       // Cargar resultados de evaluaciones
@@ -72,6 +77,12 @@ export function ProgressProvider({ children }) {
       try {
         const userStats = await getUserStats(currentUser.uid);
         setStats(userStats);
+        // Comprobar logros globales basados en módulos completados
+        try {
+          await checkGlobalAchievements(userStats);
+        } catch (err) {
+          console.error('Error al comprobar logros globales:', err);
+        }
       } catch (statsError) {
         console.error('Error al cargar estadísticas:', statsError);
         setStats(null);
@@ -80,7 +91,24 @@ export function ProgressProvider({ children }) {
       // Cargar ranking
       try {
         const top = await getTopUsers(10);
-        setTopUsers(top);
+        // Enrich top users with displayName from Realtime DB when Firestore doc lacks a name
+        const enriched = await Promise.all(top.map(async (u) => {
+          try {
+            const userRef = ref(database, `users/${u.id}`);
+            const snap = await get(userRef);
+            const data = snap.exists() ? snap.val() : {};
+            const rtDisplayName = data.displayName || data.name || (data.email ? data.email.split('@')[0] : null);
+            // If RTDB has a displayName, prefer it (override Firestore value)
+            if (rtDisplayName) {
+              return { ...u, displayName: rtDisplayName };
+            }
+
+            return u;
+          } catch (err) {
+            return u;
+          }
+        }));
+        setTopUsers(enriched);
       } catch (rankingError) {
         console.error('Error al cargar ranking:', rankingError);
         setTopUsers([]);
@@ -120,9 +148,44 @@ export function ProgressProvider({ children }) {
       const newStats = await getUserStats(currentUser.uid);
       setStats(newStats);
 
+      // Desbloquear logro de puntuación perfecta si aplica
+      if (Number(result.score) === 100) {
+        try {
+          await unlockAchievement(currentUser.uid, {
+            id: 'perfect_score',
+            title: 'Puntuación Perfecta',
+            description: 'Obtuviste 100% en una evaluación',
+            points: 200
+          });
+        } catch (err) {
+          console.error('Error unlocking perfect_score after evaluation save', err);
+        }
+      }
+      try {
+        await checkGlobalAchievements(newStats);
+      } catch (err) {
+        console.error('Error checking global achievements after saveEvaluation', err);
+      }
+
       // Actualizar ranking
       const newTop = await getTopUsers();
-      setTopUsers(newTop);
+      try {
+        const enrichedTop = await Promise.all(newTop.map(async (u) => {
+          try {
+            const userRef = ref(database, `users/${u.id}`);
+            const snap = await get(userRef);
+            const data = snap.exists() ? snap.val() : {};
+            const rtDisplayName = data.displayName || data.name || (data.email ? data.email.split('@')[0] : null);
+            if (rtDisplayName) return { ...u, displayName: rtDisplayName };
+            return u;
+          } catch (err) {
+            return u;
+          }
+        }));
+        setTopUsers(enrichedTop);
+      } catch (err) {
+        setTopUsers(newTop);
+      }
     } catch (error) {
       console.error('Error saving evaluation:', error);
     }
@@ -166,6 +229,62 @@ export function ProgressProvider({ children }) {
     }
   };
 
+    // Comprobar logros globales basados en estadísticas
+    const checkGlobalAchievements = async (userStats) => {
+      if (!currentUser || !userStats) return;
+
+      const modulesCompleted = userStats.modulesCompleted || 0;
+
+      const globalAchievements = [
+        {
+          id: 'complete_3_modules',
+          title: 'Completar 3 Módulos',
+          description: 'Completaste 3 módulos',
+          points: 300,
+          condition: () => modulesCompleted >= 3
+        },
+        {
+          id: 'complete_6_modules',
+          title: 'Completar 6 Módulos',
+          description: 'Completaste 6 módulos',
+          points: 600,
+          condition: () => modulesCompleted >= 6
+        }
+  ,
+      {
+        id: 'evaluation_expert',
+        title: 'Experto en Evaluaciones',
+        description: 'Completaste todas las evaluaciones',
+        points: 300,
+        condition: () => {
+          const totalEvals = userStats?.totalAvailableEvals || 0;
+          const completedEvals = (userStats?.evaluationResults || []).filter(r => r.completed || typeof r.score === 'number').length;
+          return totalEvals > 0 && completedEvals >= totalEvals;
+        }
+      },
+      {
+        id: 'consistent_learner',
+        title: 'Aprendiz Consistente',
+        description: 'Accediste a la plataforma durante 7 días seguidos',
+        points: 250,
+        condition: () => {
+          const streak = Number(userStats?.consecutiveDays ?? userStats?.streak ?? 0);
+          return streak >= 7;
+        }
+      }
+      ];
+
+      for (const achievement of globalAchievements) {
+        if (achievement.condition()) {
+          try {
+            await unlockAchievement(currentUser.uid, achievement);
+          } catch (err) {
+            console.error('Error unlocking global achievement', achievement.id, err);
+          }
+        }
+      }
+    };
+
   // Función para registrar video visto
   const recordVideoProgress = async (moduleId, videoId) => {
     if (!currentUser) return;
@@ -193,7 +312,6 @@ export function ProgressProvider({ children }) {
     }
 
     try {
-      // Use the currentUser.uid but let saveQuizResult validate auth.currentUser as final source of truth
       const result = await saveQuizResult(currentUser.uid, moduleId, score, attemptNumber);
       
       // Recargar datos si hubo mejora

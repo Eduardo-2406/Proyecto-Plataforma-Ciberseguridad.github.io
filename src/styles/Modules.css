@@ -360,7 +360,6 @@
   }
 }
 
-/* Desktop/Laptop (por defecto - ya definido arriba) */
 @media (min-width: 1024px) {
   .modules-container {
     padding: 2rem;
@@ -375,13 +374,12 @@
     font-size: 1.25rem;
   }
   
-  .modules-grid {
+  /* .modules-grid {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 2rem;
-  }
+  } */
   
   .module-header {
-    /* Debug: unset fixed height for desktop breakpoint. */
     min-height: 0;
     overflow: visible;
   }
@@ -390,7 +388,6 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
-
 /* Tablets (481px - 1023px) */
 @media (min-width: 481px) and (max-width: 1023px) {
   .modules-container {
@@ -411,7 +408,7 @@
   }
   
   .modules-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1 1fr);
     gap: 1.5rem;
     max-width: 800px;
   }

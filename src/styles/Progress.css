@@ -26,7 +26,7 @@
   padding-right: 0;
 }
 
-@media (min-width: 1200px) {
+/* @media (min-width: 1200px) {
   .progress-content {
     max-width: 1400px;
   }
@@ -36,7 +36,7 @@
   .progress-charts {
     grid-template-columns: repeat(2, 1fr);
   }
-}
+} */
 
 .progress-header {
   grid-column: 1 / -1;
@@ -60,7 +60,7 @@
   color: #1a202c;
   margin: 0;
   white-space: nowrap;
-  font-family: 'EB Garamond', serif;
+  font-family: 'Segoe UI', sans-serif;
   line-height: 1.2;
 }
 
@@ -79,7 +79,7 @@
   width: 100%;
 }
 
-.stat-card {
+.progress-card {
   background: #f8fafc;
   padding: clamp(1.5rem, 4vw, 2rem);
   border-radius: clamp(0.8rem, 2vw, 1rem);
@@ -91,7 +91,7 @@
   text-align: center;
 }
 
-.stat-card:hover {
+.progress-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
@@ -112,14 +112,14 @@
   color: #3b82f6;
 }
 
-.stat-card h3 {
+.progress-card h3 {
   font-size: clamp(1.1rem, 2.5vw, 1.25rem);
   color: #64748b;
   margin-bottom: clamp(0.8rem, 2vw, 1rem);
   line-height: 1.3;
 }
 
-.stat-card p {
+.progress-card p {
   font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 700;
   color: #1a1a1a;
@@ -284,44 +284,237 @@
 .ranking-section {
   grid-column: 1 / -1;
   background: #ffffff;
-  padding: clamp(1.5rem, 4vw, 2rem);
-  border-radius: clamp(0.8rem, 2vw, 1rem);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: clamp(2rem, 5vw, 3rem);
+  border-radius: clamp(1.2rem, 3vw, 1.8rem);
+  box-shadow: 0 4px 20px rgba(98, 191, 233, 0.1);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(98, 191, 233, 0.1);
+}
+
+.ranking-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(98, 191, 233, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(98, 191, 233, 0.05) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .ranking-section h2 {
-  font-size: clamp(1.5rem, 4vw, 1.75rem);
-  color: #1a1a1a;
-  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  font-size: clamp(1.8rem, 5vw, 2.2rem);
+  color: #1F2937;
+  margin-bottom: clamp(2rem, 4vw, 2.5rem);
   text-align: center;
-  line-height: 1.3;
+  line-height: 1.2;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
 }
 
 .ranking-card {
-  background: #f8fafc;
-  padding: clamp(1.5rem, 4vw, 2rem);
-  border-radius: clamp(0.8rem, 2vw, 1rem);
+  background: #ffffff;
+  padding: clamp(2rem, 5vw, 2.5rem);
+  border-radius: clamp(1rem, 3vw, 1.5rem);
   text-align: center;
+  border: 1px solid rgba(98, 191, 233, 0.1);
+  box-shadow: 0 2px 15px rgba(98, 191, 233, 0.08);
+  position: relative;
+  z-index: 1;
 }
 
 .user-rank-info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.8rem, 2vw, 1rem);
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+  margin-bottom: 2rem;
 }
 
 .rank-position {
-  font-size: clamp(2.5rem, 6vw, 3rem);
-  font-weight: 700;
-  color: #3b82f6;
+  font-size: clamp(3rem, 8vw, 4rem);
+  font-weight: 800;
+  color: #62BFE9;
   line-height: 1;
 }
 
-.user-points {
-  font-size: clamp(1.2rem, 3vw, 1.5rem);
-  color: #64748b;
+.top-users-showcase {
+  margin-top: 2rem;
+}
+
+.top-users-showcase h3 {
+  color: #1F2937;
+  font-size: clamp(1.4rem, 3.5vw, 1.6rem);
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.podium {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  flex-wrap: wrap;
+  perspective: 1000px;
+}
+
+.podium-position {
+  background: #ffffff;
+  border-radius: 1.2rem;
+  padding: clamp(1.5rem, 4vw, 2rem);
+  text-align: center;
+  box-shadow: 0 2px 15px rgba(98, 191, 233, 0.1);
+  border: 2px solid #F7F9FC;
+  min-width: clamp(140px, 25vw, 180px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.podium-position::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(98, 191, 233, 0.02) 100%);
+  pointer-events: none;
+}
+
+.podium-position:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(98, 191, 233, 0.15);
+  border-color: #62BFE9;
+}
+
+.position-1 {
+  border-color: #62BFE9;
+  background: #ffffff;
+  transform: translateY(-12px) scale(1.03);
+}
+
+.position-1::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: #62BFE9;
+  border-radius: 1.2rem;
+  z-index: -1;
+}
+
+.position-2 {
+  border-color: rgba(98, 191, 233, 0.6);
+  background: #ffffff;
+  transform: translateY(-6px);
+}
+
+.position-2::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: rgba(98, 191, 233, 0.6);
+  border-radius: 1.2rem;
+  z-index: -1;
+}
+
+.position-3 {
+  border-color: rgba(98, 191, 233, 0.4);
+  background: #ffffff;
+}
+
+.position-3::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: rgba(98, 191, 233, 0.4);
+  border-radius: 1.2rem;
+  z-index: -1;
+}
+
+.podium-icon {
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  margin-bottom: 1rem;
+  color: #62BFE9;
+  position: relative;
+  z-index: 1;
+}
+
+.podium-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.user-name {
+  font-weight: 700;
+  color: #1F2937;
+  font-size: clamp(0.9rem, 2.2vw, 1.1rem);
   line-height: 1.2;
+}
+
+.user-score {
+  color: #1F2937;
+  font-size: clamp(0.8rem, 2vw, 0.95rem);
+  font-weight: 600;
+}
+
+.user-points {
+  font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+  color: #1F2937;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.rank-message {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: #1F2937;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.no-rank-info {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  border: 1px solid rgba(98, 191, 233, 0.1);
+  box-shadow: 0 2px 15px rgba(98, 191, 233, 0.08);
+}
+
+.no-rank-info h3 {
+  color: #1F2937;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.no-rank-info p {
+  color: #1F2937;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.motivational-icon {
+  font-size: 3rem;
+  color: #62BFE9;
+  margin-bottom: 1rem;
 }
 
 .loading-container {
@@ -411,9 +604,6 @@
   }
 }
 
-/* ==================== RESPONSIVE DESIGN ==================== */
-
-/* Desktop/Laptop (1024px y arriba) */
 @media (min-width: 1024px) {
   .progress-container {
     padding: 2rem 1rem;
@@ -439,7 +629,7 @@
     gap: 2.5rem;
   }
   
-  .stat-card {
+  .progress-card {
     padding: 2rem;
   }
   
@@ -579,11 +769,11 @@
     padding: 1.2rem;
   }
   
-  .stat-card h3 {
+  .progress-card h3 {
     font-size: 1.1rem;
   }
   
-  .stat-card p {
+  .progress-card p {
     font-size: 1.5rem;
   }
   
@@ -683,7 +873,7 @@
     margin: 0 0.25rem;
   }
   
-  .stat-card {
+  .progress-card {
     padding: 1rem;
   }
   
@@ -907,7 +1097,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: #62BFE9;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -1054,7 +1244,9 @@
 
 /* Estilos mejorados para ranking */
 .user-ranking-card {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: white;
+  box-shadow: 0 2px 15px rgba(98, 191, 233, 0.08);
+  border: 1px solid rgba(98, 191, 233, 0.1);
   border-radius: 1rem;
   padding: 2rem;
   color: white;
@@ -1068,7 +1260,7 @@
 }
 
 .rank-badge {
-  background: rgba(255, 255, 255, 0.2);
+  background: #62BFE9;
   border-radius: 50%;
   width: 80px;
   height: 80px;
@@ -1081,7 +1273,7 @@
 .rank-position {
   font-size: 1.5rem;
   font-weight: 900;
-  color: #fbbf24;
+  color: #ffffff;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -1128,78 +1320,13 @@
   background: #ffffff;
   border-radius: 1rem;
   padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 15px rgba(98, 191, 233, 0.08);
+  border: 1px solid rgba(98, 191, 233, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
-.top-users-showcase h3 {
-  color: #1f2937;
-  font-size: 1.3rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.podium {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.podium-position {
-  background: linear-gradient(135deg, #f9fafb, #ffffff);
-  border-radius: 0.8rem;
-  padding: 1.5rem;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 2px solid #e5e7eb;
-  min-width: 150px;
-  transition: all 0.3s ease;
-}
-
-.podium-position:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.position-1 {
-  border-color: #fbbf24;
-  background: linear-gradient(135deg, #fffbeb, #fef3c7);
-}
-
-.position-2 {
-  border-color: #9ca3af;
-  background: linear-gradient(135deg, #f9fafb, #f3f4f6);
-}
-
-.position-3 {
-  border-color: #cd7c2f;
-  background: linear-gradient(135deg, #fef7ed, #fed7aa);
-}
-
-.podium-icon {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
-
-.podium-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.user-name {
-  font-weight: 600;
-  color: #1f2937;
-  font-size: 0.9rem;
-}
-
-.user-score {
-  color: #6b7280;
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-/* Responsivo */
+/* Responsivo para ranking mejorado */
 @media (max-width: 768px) {
   .progress-charts {
     grid-template-columns: 1fr;
@@ -1208,6 +1335,24 @@
   .podium {
     flex-direction: column;
     align-items: center;
+    gap: 1rem;
+  }
+  
+  .podium-position {
+    min-width: 280px;
+    max-width: 320px;
+  }
+  
+  .position-1,
+  .position-2,
+  .position-3 {
+    transform: none;
+  }
+  
+  .position-1:hover,
+  .position-2:hover,
+  .position-3:hover {
+    transform: translateY(-5px);
   }
   
   .user-rank-info {
@@ -1222,6 +1367,14 @@
   
   .modern-chart-container {
     padding: 1.5rem;
+  }
+  
+  .ranking-section {
+    padding: clamp(1.5rem, 4vw, 2rem);
+  }
+  
+  .ranking-section::before {
+    opacity: 0.7;
   }
 }
 

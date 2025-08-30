@@ -14,6 +14,7 @@ import {
 import { db, auth } from '../config/firebase';
 import { ref, set, get, update } from 'firebase/database';
 import { database } from '../config/firebase';
+import { evaluationsData } from '../data/evaluations';
 
 // Perfil de Usuario
 export const createUserProfile = async (userId, userData) => {
@@ -410,6 +411,7 @@ export const getUserStats = async (userId) => {
     const stats = {
       totalPoints,
       level,
+  totalAvailableEvals: evaluationsData ? Object.keys(evaluationsData).length : 0,
       modulesCompleted,
       totalModules,
       moduleCompletionPercentage: (modulesCompleted / totalModules) * 100,
@@ -444,6 +446,10 @@ export const getUserStats = async (userId) => {
           quizPassed: bestQuizScore >= 80,
           lastUpdated: module?.lastUpdated
         };
+
+    // Incluir racha/consecutiveDays si existe en Realtime o Firestore
+    const consecutiveDays = realtimeUserData?.consecutiveDays ?? userData?.consecutiveDays ?? 0;
+    stats.consecutiveDays = consecutiveDays;
       }).sort((a, b) => a.moduleId - b.moduleId)
     };
     

@@ -9,7 +9,7 @@
 }
 
 .evaluations-container h1 {
-  font-family: 'EB Garamond', serif;
+  font-family: 'Segoe UI', sans-serif;
   font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 500;
   color: #000000;
@@ -19,7 +19,7 @@
 }
 
 .evaluations-container .title {
-  font-family: 'EB Garamond', serif;
+  font-family: 'Segoe UI', sans-serif;
   font-size: clamp(2rem, 4vw, 2.5rem);
   font-weight: 500;
   color: #000000;
@@ -29,7 +29,7 @@
 }
 
 .evaluations-container .subtitle {
-  font-family: 'EB Garamond', serif;
+  font-family: 'Segoe UI', sans-serif;
   font-size: clamp(1rem, 2.5vw, 1.25rem);
   font-weight: 500;
   color: #000000;
@@ -50,7 +50,7 @@
 }
 
 .evaluations-container .animated-title h1 {
-  font-family: 'EB Garamond', serif;
+  font-family: 'Segoe UI', sans-serif;
   font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 500;
   color: #000000;
@@ -65,7 +65,7 @@
 }
 
 .evaluations-container .animated-subtitle h2 {
-  font-family: 'EB Garamond', serif;
+  font-family: 'Segoe UI', sans-serif;
   font-size: clamp(1rem, 2.5vw, 1.25rem);
   font-weight: 500;
   color: #000000;
@@ -185,7 +185,7 @@
 }
 
 .evaluation-content h3 {
-  font-family: 'EB Garamond', serif;
+  font-family: 'Segoe UI', sans-serif;
   font-size: clamp(1.2rem, 2.5vw, 1.5rem);
   font-weight: 600;
   color: #1a202c;
@@ -324,7 +324,7 @@
 }
 
 .login-prompt h2 {
-  font-family: 'EB Garamond', serif;
+  font-family: 'Segoe UI', sans-serif;
   font-size: clamp(1.3rem, 3vw, 1.75rem);
   color: #1a202c;
   margin-bottom: 1rem;
